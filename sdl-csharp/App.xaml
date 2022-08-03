@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:sdl"
              StartupUri="SDLWindow.xaml">
     <Application.Resources>
-         
+    
     </Application.Resources>
 </Application>

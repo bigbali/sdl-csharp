@@ -26,3 +26,5 @@ C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\bin\Debug\Microsoft.WindowsAPICodeP
 C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.pdb
 C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.xml
 C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\obj\Debug\sdl-csharp.csproj.CopyComplete
+C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\obj\Debug\Button.baml
+C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\obj\Debug\style\Button.baml
