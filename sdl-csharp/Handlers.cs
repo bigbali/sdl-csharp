@@ -10,8 +10,22 @@ namespace sdl
 {
     public partial class SDLWindow : Window
     {
-        const string URLInputFieldPlaceholder = "Select URL";
-        const string FolderInputPlaceholder = "Select folder";
+        public struct InputPlaceholders
+        {
+            public string URLInput { set; get; }
+            public string FolderPathInput { set; get; }
+
+            public InputPlaceholders(string url, string folder)
+            {
+                URLInput = url;
+                FolderPathInput = folder;
+            }
+        }
+
+        public static readonly InputPlaceholders Placeholders  = new(
+            "Select URL",
+            "Select folder"
+        );
 
         public struct URLEntry
         {
@@ -23,7 +37,13 @@ namespace sdl
         };
 
         public ObservableCollection<URLEntry> URLEntries = new();
-        public string FolderPath;
+        public string FolderPath { get; set; }
+        public bool IsPlaylist { get; set; } = true;
+
+        private static string getPlaceholder(string inputName)
+        {
+            return (string) Placeholders.GetType().GetProperty(inputName).GetValue(Placeholders);
+        }
 
         private void removeEntry(object sender, RoutedEventArgs e)
         {
@@ -35,9 +55,9 @@ namespace sdl
         private void addURL(object sender, RoutedEventArgs e)
         {
             string newURL = URLInput.Text;
-            URLInput.Text = URLInputFieldPlaceholder;
+            URLInput.Text = Placeholders.URLInput;
 
-            if (newURL == URLInputFieldPlaceholder)
+            if (newURL == Placeholders.URLInput)
             {
                 MessageBox.Show("Please select a valid URL.");
                 return;
@@ -53,63 +73,51 @@ namespace sdl
             MessageBox.Show("URL Invalid");
         }
 
-        private void clearURLInputPlaceholder(object sender, RoutedEventArgs e)
+        private void clearInputPlaceholder(object sender, RoutedEventArgs e)
         {
             TextBox input = (TextBox) sender;
 
-            if (input.Text == URLInputFieldPlaceholder)
+            if (input.Text == getPlaceholder(input.Name))
             {
                 input.Clear();
             }
         }
 
-        private void addURLInputPlaceholder(object sender, RoutedEventArgs e)
+        private void resetInputPlaceholder(object sender, RoutedEventArgs e)
         {
             TextBox input = (TextBox) sender;
 
             if (input.Text == string.Empty)
             {
-                input.Text = URLInputFieldPlaceholder;
+                input.Text = getPlaceholder(input.Name);
             }
         }
 
-        private void Download(bool downloadSingle = true)
+        private void initDownload(object sender, RoutedEventArgs e)
         {
-            ProcessStartInfo process = new ProcessStartInfo("youtube-dl");
-            //process.Arguments = $"\"{url}\" -o \"{folderPath}/%(title)s.%(ext)s\" -x --audio-format mp3 {(downloadSingle ? "--no-playlist" : string.Empty)}";
+            foreach (URLEntry url in URLEntries)
+            {
+                //MessageBox.Show(entry.entry);
+                ProcessStartInfo process = new ProcessStartInfo("youtube-dl");
+                process.Arguments = (
+                    $"\"{url.entry}\"" +
+                    $" -o \"{FolderPath}/%(title)s.%(ext)s\"" +
+                    $" -x --audio-format mp3" +
+                    $" {(IsPlaylist ? "--yes-playlist" : "--no-playlist")}"
+                );
+
+                using (Process downloadProcess = Process.Start(process)) // TODO add safety checks for inputs
+                {
+                    //downloadProcess.WaitForExit();
+                }
+            }
             //process.CreateNoWindow = true;
 
-            using (Process ytdl = Process.Start(process)) // TODO add safety checks for inputs
-            {
-                ytdl.WaitForExit();
-                
-            }
-        }
-        private void toggleUrlLock(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void DownloadSingle(object sender, RoutedEventArgs e)
-        {
-            //URLInput.Text;
-            //System.Windows.MessageBox.Show(folderPath);
-            //Globals.url = urlInputField.Text;
-            //sURL = sUrl.Text;
-            //MessageBox.Show(sURL);
-            Download();
-        }
-        private void DownloadPlaylist(object sender, RoutedEventArgs e)
-        {
-            Download(false);
-        }
-        private void toggleFolderLock(object sender, RoutedEventArgs e)
-        {
             
         }
+      
         private void selectFolder(object sender, RoutedEventArgs e)
         {
-            //FolderBrowserDialog folderDialog = new FolderBrowserDialog();
-
             CommonOpenFileDialog folderDialog = new();
             folderDialog.IsFolderPicker = true;
 
@@ -120,20 +128,25 @@ namespace sdl
 
             if (FolderPath == string.Empty)
             {
-                FolderPathInput.Text = FolderInputPlaceholder;
+                FolderPathInput.Text = Placeholders.FolderPathInput;
                 return;
             }
 
             FolderPathInput.Text = FolderPath;
+        }
 
-            //MessageBox.Show(FolderPath);
-            //if (folder.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            //{
-            //    string[] selectedFolders = betterFolderBrowser1.SelectedFolders;
+        private void updateFolder(object sender, RoutedEventArgs e)
+        {
+            TextBox input = (TextBox) sender;
+            FolderPath = input.Text;
+        }
 
-            //    // If you've disabled multi-selection, use 'SelectedFolder'.
-            //    // string selectedFolder = betterFolderBrowser1.SelectedFolder;
-            //}
+        private void togglePlaylist(object sender, RoutedEventArgs e)
+        {
+            Button button = (Button) sender;
+            IsPlaylist = !IsPlaylist;
+
+            button.Content = IsPlaylist ? "Playlist" : "Single";
         }
     }
 }

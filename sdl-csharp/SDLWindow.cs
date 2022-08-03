@@ -14,6 +14,7 @@ namespace sdl
             //URLGroupURLList.ItemsSource = URLs;
             //URLList.ItemsSource = URLEntries.ConvertAll(new System.Converter<URLEntry, DockPanel>((e) => e.visualEntry));
             //URLList.ItemsSource = URLEntries;
+            DataContext = this;
             URLList.ItemsSource = URLEntries;
 
             //URLList.DisplayMemberPath = "visualEntry";
