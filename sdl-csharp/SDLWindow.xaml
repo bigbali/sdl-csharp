@@ -13,83 +13,37 @@
         Foreground="#FFE8E8E8" 
         Background="#FF7C0606"
         FontSize="16"
-        FontFamily="Raleway"
-        >
-    <!--Window.Resources>
-        <UR x:Key="URLEntries"/>
-    </Window.Resources-->
+        FontFamily="Raleway" >
     <Window.Resources>
-        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#59426380"/>
-        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF577D9A"/>
-        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
-        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
-        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
-        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
-        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
-        <Style x:Key="Raleway">
-            <Setter Property="TextElement.FontFamily" Value="font/#Raleway" />
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="#FFC0C3C7" />
-            <Setter Property="Background" Value="#33444444" />
-            <Setter Property="Foreground" Value="#E5FFFFFF" />
-            <Setter Property="Padding" Value="5, 3, 5, 3" />
-            <Setter Property="Height" Value="30" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
-                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Button.IsDefaulted" Value="true">
-                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="true">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
-                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="15"/>
-                </Style>
-            </Style.Resources>
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="#FF304463" />
-            <Setter Property="Background" Value="#33444444" />
-            <Setter Property="Foreground" Value="#E5FFFFFF" />
-            <Setter Property="Padding" Value="10, 3, 10, 3" />
-            <Setter Property="Height" Value="30" />
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="15"/>
-                </Style>
-            </Style.Resources>
-        </Style>
-        <Style TargetType="ListBox">
-            <Setter Property="Padding" Value="5, 7, 5, 7" />
-            <Style.Resources>
-                <Style TargetType="Border">
-                    <Setter Property="CornerRadius" Value="20, 20, 8, 8"/>
-                </Style>
-            </Style.Resources>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resource/Style/Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="Raleway">
+                <Setter Property="TextElement.FontFamily" Value="Resource/Font/#Raleway" />
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="#FF304463" />
+                <Setter Property="Background" Value="#33444444" />
+                <Setter Property="Foreground" Value="#E5FFFFFF" />
+                <Setter Property="Padding" Value="10, 3, 10, 3" />
+                <Setter Property="Height" Value="30" />
+                <Style.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="15"/>
+                    </Style>
+                </Style.Resources>
+            </Style>
+            <Style TargetType="ListBox">
+                <Setter Property="Padding" Value="5, 7, 5, 7" />
+                <Style.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="20, 20, 8, 8"/>
+                    </Style>
+                </Style.Resources>
+            </Style>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid x:Name="MasterGrid" Background="#FF030812" MinWidth="400" MinHeight="400" UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
@@ -117,17 +71,17 @@
                              TextWrapping="Wrap"
                              Panel.ZIndex="99"
                              HorizontalContentAlignment="Left"
-                             GotFocus="clearInputPlaceholder"
-                             LostFocus="resetInputPlaceholder"
+                             GotFocus="ClearInputPlaceholder"
+                             LostFocus="ResetInputPlaceholder"
                              VerticalContentAlignment="Center" />
                     <Button x:Name="ButtonAddURL"
                             Content="Add URL"
-                            Click="addURL"
+                            Click="AddURL"
                             HorizontalAlignment="Right"
                             Margin="0,35,15,0"
                             VerticalAlignment="Top"
                             Width="100"
-                            Panel.ZIndex="99" FontFamily="Verdana"/>
+                            Panel.ZIndex="99" />
                     <Label
                         Content="Queue"
                         Margin="15,85,0,0"
@@ -148,8 +102,8 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Width="Auto">
-                                    <TextBox Text="{Binding Path=entry}" Width="Auto" Margin="0,0,105,0" FontFamily="Consolas" IsReadOnly="True"/>
-                                    <Button Content="Remove" Width="100" HorizontalAlignment="Right" Click="removeEntry" Margin="309,0,0,0"/>
+                                    <TextBox Text="{Binding Path=Entry}" Width="Auto" Margin="0,0,105,0" FontFamily="Consolas" IsReadOnly="True"/>
+                                    <Button Content="Remove" Width="100" HorizontalAlignment="Right" Click="RemoveEntry" Margin="309,0,0,0"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -181,12 +135,12 @@
                              VerticalAlignment="Top"
                              VerticalContentAlignment="Center"
                              
-                             TextChanged="updateFolder"
-                             GotFocus="clearInputPlaceholder"
-                             LostFocus="resetInputPlaceholder"/>
+                             TextChanged="UpdateFolder"
+                             GotFocus="ClearInputPlaceholder"
+                             LostFocus="ResetInputPlaceholder"/>
                     <Button x:Name="SelectedFolderInbput"
                             Content="Select Folder"
-                            Click="selectFolder"
+                            Click="SelectFolder"
                             HorizontalAlignment="Right"
                             Margin="0,35,15,0"
                             VerticalAlignment="Top"
@@ -198,14 +152,14 @@
                         VerticalAlignment="Top"
                         Width="99"
                         Padding="1,2,1,1" 
-                        Click="togglePlaylist" />
+                        Click="TogglePlaylist" />
                     <Button
                         Content="Download"
                         HorizontalAlignment="Left"
                         Margin="16,182,0,0"
                         VerticalAlignment="Top"
                         Width="138"
-                        Click="initDownload" />
+                        Click="InitDownload" />
                 </Grid>
             </Border>
         </Grid>
