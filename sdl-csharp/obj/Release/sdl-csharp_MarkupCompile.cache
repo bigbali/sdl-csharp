@@ -10,11 +10,11 @@ none
 false
 TRACE
 C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\App.xaml
-2-268287158
+4-2091954054
 1609394812
 7-1807332734
 18-444789645
-SDLWindow.xaml;Resource\Style\Button.xaml;
+Resource\Style\TextBox.xaml;Resource\Style\URLQueueEntry.xaml;SDLWindow.xaml;Resource\Style\Button.xaml;
 
-True
+False
 

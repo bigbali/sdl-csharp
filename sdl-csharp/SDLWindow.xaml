@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sdl"
         mc:Ignorable="d"
-        d:DesignWidth="1200"
+        d:DesignWidth="1600"
         Title="Simple YouTube Downloader" 
         Width="Auto" 
         Height="Auto" 
@@ -18,22 +18,11 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resource/Style/Button.xaml" />
+                <ResourceDictionary Source="Resource/Style/TextBox.xaml" />
+                <ResourceDictionary Source="Resource/Style/URLQueueEntry.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <Style x:Key="Raleway">
                 <Setter Property="TextElement.FontFamily" Value="Resource/Font/#Raleway" />
-            </Style>
-            <Style TargetType="TextBox">
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="BorderBrush" Value="#FF304463" />
-                <Setter Property="Background" Value="#33444444" />
-                <Setter Property="Foreground" Value="#E5FFFFFF" />
-                <Setter Property="Padding" Value="10, 3, 10, 3" />
-                <Setter Property="Height" Value="30" />
-                <Style.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="15"/>
-                    </Style>
-                </Style.Resources>
             </Style>
             <Style TargetType="ListBox">
                 <Setter Property="Padding" Value="5, 7, 5, 7" />
@@ -92,18 +81,93 @@
                         VerticalAlignment="Top" RenderTransformOrigin="0.481,1.493"/>
                     <ListBox x:Name="URLList"
                              d:ItemsSource="{d:SampleData ItemCount=3 }"
-                             Margin="15,109,120,15"
+                             Margin="15,109,15,15"
                              Panel.ZIndex="100"
                              Background="#4C2E415A"
                              HorizontalContentAlignment="Stretch"
                              VerticalContentAlignment="Top"
                              BorderThickness="1"
-                             BorderBrush="#FF304463">
+                             BorderBrush="#FF304463" Padding="5,4,5,7">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Width="Auto">
-                                    <TextBox Text="{Binding Path=Entry}" Width="Auto" Margin="0,0,105,0" FontFamily="Consolas" IsReadOnly="True"/>
-                                    <Button Content="Remove" Width="100" HorizontalAlignment="Right" Click="RemoveEntry" Margin="309,0,0,0"/>
+                                <Grid Width="Auto" Height="33">
+                                    <TextBox Text="{Binding Path=Entry}" Width="Auto" Margin="0,2,256,1" FontFamily="Consolas" IsReadOnly="True" VerticalContentAlignment="Center">
+                                        <TextBox.Style>
+                                            <Style BasedOn="{StaticResource ResourceKey={x:Type TextBox}}" TargetType="{x:Type TextBox}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type TextBox}">
+                                                            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1, 0, 0, 0" Background="{TemplateBinding Background}" SnapsToDevicePixels="True" CornerRadius="0, 15, 15, 0">
+                                                                <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+                                    <Button Width="150" HorizontalAlignment="Right" Click="InitIndividualDownload" Margin="0,2,101,1" Padding="0" >
+                                        <!-- Individual download button -->
+                                        <Grid Width="140">
+                                            <Label Content="{Binding Path=Label}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalContentAlignment="Bottom" Width="115" Padding="8, 0, 0, 0" Foreground="White"/>
+                                            <Ellipse HorizontalAlignment="Right" Width="20" Height="20">
+                                                <Ellipse.Clip>
+                                                    <CombinedGeometry GeometryCombineMode="Exclude">
+                                                        <CombinedGeometry.Geometry1>
+                                                            <CombinedGeometry GeometryCombineMode="Exclude">
+                                                                <CombinedGeometry.Geometry1>
+                                                                    <RectangleGeometry Rect="-1000,-1000,2000,2000"/>
+                                                                </CombinedGeometry.Geometry1>
+                                                                <CombinedGeometry.Geometry2>
+                                                                    <EllipseGeometry  Center="10, 10" RadiusX="7" RadiusY="7"/>
+                                                                </CombinedGeometry.Geometry2>
+                                                            </CombinedGeometry>
+                                                        </CombinedGeometry.Geometry1>
+                                                        <CombinedGeometry.Geometry2>
+                                                            <PathGeometry>
+                                                                <PathGeometry.Figures>
+                                                                    <PathFigureCollection>
+                                                                        <PathFigure IsClosed="True" StartPoint="10,10">
+                                                                            <PathFigure.Segments>
+                                                                                <PathSegmentCollection>
+                                                                                    <LineSegment Point="0,15" />
+                                                                                    <LineSegment Point="0,5" />
+                                                                                </PathSegmentCollection>
+                                                                            </PathFigure.Segments>
+                                                                        </PathFigure>
+                                                                    </PathFigureCollection>
+                                                                </PathGeometry.Figures>
+                                                            </PathGeometry>
+                                                        </CombinedGeometry.Geometry2>
+                                                    </CombinedGeometry>
+                                                </Ellipse.Clip>
+                                                <Ellipse.Style>
+                                                    <Style TargetType="Ellipse">
+                                                        <Setter Property="Fill" Value="White" />
+                                                        <Setter Property="Opacity" Value="0" />
+                                                        <Setter Property="RenderTransform">
+                                                            <Setter.Value>
+                                                                <RotateTransform CenterX="10" CenterY="10" Angle="0"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                                                <DataTrigger.EnterActions>
+                                                                    <BeginStoryboard>
+                                                                        <Storyboard>
+                                                                            <DoubleAnimation Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2" AutoReverse="False" />
+                                                                            <DoubleAnimation Storyboard.TargetProperty="(TextBox.RenderTransform).(RotateTransform.Angle)" From="0" To="360" Duration="0:0:3" AutoReverse="False" RepeatBehavior="Forever" />
+                                                                        </Storyboard>
+                                                                    </BeginStoryboard>
+                                                                </DataTrigger.EnterActions>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Ellipse.Style>
+                                            </Ellipse>
+                                        </Grid>
+                                    </Button>
+                                    <Button Content="Remove" Width="96" HorizontalAlignment="Right" Click="RemoveEntry" Margin="0,0,0,0" Padding="5,3,5,3" />
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

@@ -28,3 +28,5 @@ C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\bin\Debug\Microsoft.WindowsAPICodeP
 C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\obj\Debug\sdl-csharp.csproj.CopyComplete
 C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\obj\Debug\Resource\Style\Button.baml
 C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\obj\Debug\App.baml
+C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\obj\Debug\Resource\Style\TextBox.baml
+C:\Users\bigba\Desktop\sdl-csharp\sdl-csharp\obj\Debug\Resource\Style\URLQueueEntry.baml

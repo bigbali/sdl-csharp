@@ -10,7 +10,6 @@ namespace sdl_csharp
     {
         private void ProcessExited(SDLWindow.URLEntry url, EventArgs e) // sender will already be destroyed
         {
-            MessageBox.Show(url.Entry);
             SDLWindow.UIContext.Send((x) => // allow changing URLEntries from a thread other than main
             {
                 SDLWindow.URLEntries.Remove(url);
@@ -21,14 +20,18 @@ namespace sdl_csharp
         // At this point, process has net yet been terminated
         private void ProcessHasFaulted(SDLWindow.URLEntry entry, object sender, DataReceivedEventArgs e)
         {
+            Console.WriteLine($"Fault: {e.Data}");
         }
 
         private void ProcessHasReceivedOutput(SDLWindow.URLEntry entry, object sender, DataReceivedEventArgs e)
         {
+            Console.WriteLine(e.Data);
         }
 
         public void BeginDownload(SDLWindow.URLEntry url, string folderPath, bool isPlaylist)
         {
+            url.IsDownloading = true;
+
             Task.Factory.StartNew(() =>
             {
                 ProcessStartInfo process = new("youtube-dl")
@@ -39,12 +42,12 @@ namespace sdl_csharp
                     $" -x --audio-format mp3" +
                     $" {(isPlaylist ? "--yes-playlist" : "--no-playlist")}"
                 ),
-                    RedirectStandardError = true,
+                    RedirectStandardError  = true,
                     RedirectStandardOutput = true,
-                    RedirectStandardInput = true,
-                    UseShellExecute = false
+                    RedirectStandardInput  = true,
+                    UseShellExecute        = false,
+                    CreateNoWindow         = true
                 };
-
 
                 using Process downloadProcess = new()
                 {

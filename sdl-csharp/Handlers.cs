@@ -1,6 +1,5 @@
 ﻿using System.Windows;
-using TextBox = System.Windows.Controls.TextBox;
-using Button = System.Windows.Controls.Button;
+using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using sdl_csharp;
 
@@ -13,10 +12,20 @@ namespace sdl
             return (string) Placeholders.GetType().GetProperty(inputName).GetValue(Placeholders);
         }
 
+        private static string GetHash(object sender, RoutedEventArgs e)
+        {
+            return sender.GetHashCode().ToString();
+        }
+
+        private static void SpinnerAnimation(URLEntry entry)
+        {
+            //MessageBox.Show("Hey, yo");
+        }
+
         private void RemoveEntry(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            URLEntry entry = (URLEntry)button.DataContext;
+            URLEntry entry = (URLEntry) button.DataContext;
             URLEntries.Remove(entry);
         }
 
@@ -59,6 +68,14 @@ namespace sdl
             {
                 input.Text = GetPlaceholder(input.Name);
             }
+        }
+
+        private void InitIndividualDownload(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            URLEntry entry = (URLEntry) button.DataContext;
+            Download download = new();
+            download.BeginDownload(entry, FolderPath, false);
         }
 
         private void InitDownload(object sender, RoutedEventArgs e)
