@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using sdl_csharp;
 
@@ -57,6 +58,7 @@ namespace sdl
             if (input.Text == GetPlaceholder(input.Name))
             {
                 input.Clear();
+                input.Foreground = new SolidColorBrush(Colors.White);
             }
         }
 
@@ -67,6 +69,7 @@ namespace sdl
             if (input.Text == string.Empty)
             {
                 input.Text = GetPlaceholder(input.Name);
+                input.Foreground = new SolidColorBrush(Colors.Gray);
             }
         }
 
@@ -112,12 +115,36 @@ namespace sdl
             FolderPath = input.Text;
         }
 
+        private void SetSubFolder(object sender, RoutedEventArgs e)
+        {
+            SubFolderPath = SubFolderPathInput.Text;
+        }
+
+        private void UpdateSubFolder(object sender, RoutedEventArgs e)
+        {
+            TextBox subFolderInput = (TextBox) sender;
+            SubFolderPath = subFolderInput.Text;
+        }
+
         private void TogglePlaylist(object sender, RoutedEventArgs e)
         {
             Button button = (Button) sender;
             IsPlaylist = !IsPlaylist;
 
-            button.Content = IsPlaylist ? "Playlist" : "Single";
+            if (IsPlaylist)
+            {
+                button.HorizontalAlignment = HorizontalAlignment.Left;
+                LabelPlaylistToggle_Playlist.Opacity = 1f;
+                LabelPlaylistToggle_Single.Opacity = 0.35f;
+            }
+            else
+            {
+                button.HorizontalAlignment = HorizontalAlignment.Right;
+                LabelPlaylistToggle_Playlist.Opacity = 0.35f;
+                LabelPlaylistToggle_Single.Opacity = 1f;
+            }
+
+            //button.Content = IsPlaylist ? "Playlist" : "Single";
         }
     }
 }

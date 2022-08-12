@@ -30,6 +30,7 @@ namespace sdl_csharp
 
         public void BeginDownload(SDLWindow.URLEntry url, string folderPath, bool isPlaylist)
         {
+            string _folderPath = $"{folderPath}{(SDLWindow.SubFolderPath.Length > 0 ? $"/{SDLWindow.SubFolderPath}" : string.Empty)}";
             url.IsDownloading = true;
 
             Task.Factory.StartNew(() =>
@@ -38,7 +39,7 @@ namespace sdl_csharp
                 {
                     Arguments = (
                     $"\"{url.Entry}\"" +
-                    $" -o \"{folderPath}/%(title)s.%(ext)s\"" +
+                    $" -o \"{_folderPath}/%(title)s.%(ext)s\"" +
                     $" -x --audio-format mp3" +
                     $" {(isPlaylist ? "--yes-playlist" : "--no-playlist")}"
                 ),

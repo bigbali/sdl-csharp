@@ -75,14 +75,15 @@ namespace sdl
             }
         }
         public static ObservableCollection<URLEntry> URLEntries = new();
-        public static string FolderPath { get; set; }
+        public static string FolderPath { get; set; } = string.Empty;
+        public static string SubFolderPath { get; set; } = string.Empty;
         public static bool IsPlaylist { get; set; } = true;
 
         public static readonly SynchronizationContext UIContext = SynchronizationContext.Current;
         public static readonly InputPlaceholders Placeholders = new(
            "Select URL",
            "Select folder"
-       );
+        );
 
         public SDLWindow()
         {

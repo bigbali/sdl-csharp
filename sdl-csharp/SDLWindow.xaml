@@ -106,7 +106,7 @@
                                             </Style>
                                         </TextBox.Style>
                                     </TextBox>
-                                    <Button Width="150" HorizontalAlignment="Right" Click="InitIndividualDownload" Margin="0,2,101,1" Padding="0" >
+                                    <Button Width="150" HorizontalAlignment="Right" Click="InitIndividualDownload" Margin="0,2,101,1" Padding="0">
                                         <!-- Individual download button -->
                                         <Grid Width="140">
                                             <Label Content="{Binding Path=Label}" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalContentAlignment="Bottom" Width="115" Padding="8, 0, 0, 0" Foreground="White"/>
@@ -130,8 +130,8 @@
                                                                         <PathFigure IsClosed="True" StartPoint="10,10">
                                                                             <PathFigure.Segments>
                                                                                 <PathSegmentCollection>
-                                                                                    <LineSegment Point="0,15" />
-                                                                                    <LineSegment Point="0,5" />
+                                                                                    <LineSegment Point="-1, 18" />
+                                                                                    <LineSegment Point="-1, 2" />
                                                                                 </PathSegmentCollection>
                                                                             </PathFigure.Segments>
                                                                         </PathFigure>
@@ -198,7 +198,6 @@
                              TextWrapping="Wrap"
                              VerticalAlignment="Top"
                              VerticalContentAlignment="Center"
-                             
                              TextChanged="UpdateFolder"
                              GotFocus="ClearInputPlaceholder"
                              LostFocus="ResetInputPlaceholder"/>
@@ -209,21 +208,38 @@
                             Margin="0,35,15,0"
                             VerticalAlignment="Top"
                             Width="120" />
-                    <Button
-                        Content="Playlist"
-                        HorizontalAlignment="Left"
-                        Margin="10,136,0,0"
-                        VerticalAlignment="Top"
-                        Width="99"
-                        Padding="1,2,1,1" 
-                        Click="TogglePlaylist" />
+                    <Label  Content="Subfolder" Height="30" Margin="15,70,0,345" Padding="0,5,5,5" Foreground="White"/>
+                    <TextBox x:Name="SubFolderPathInput" Height="30" Margin="15,102,452,313" TextChanged="UpdateSubFolder"/>
+                    <Button x:Name="SubFolderPathSetButton" Margin="0,102,367,313"  Content="Set" Click="SetSubFolder" Width="80" HorizontalAlignment="Right"/>
+                    <!-- Put in subfolder -->
+                    <Border Height="30" Margin="0,102,140,0" BorderThickness="1" BorderBrush="Yellow" HorizontalAlignment="Right" VerticalAlignment="Top" Width="222" CornerRadius="15" Padding="6,0,0,0">
+                        <Grid Height="30">
+                            <Label Content="Put in subfolder" Foreground="White"/>
+                            <Button Margin="145,0,-1,1" />
+                        </Grid>
+                    </Border>
+                    <Border Height="30" Margin="0,152,251,0" BorderThickness="1" BorderBrush="Yellow" HorizontalAlignment="Right" VerticalAlignment="Top" Width="347" CornerRadius="15" Padding="6,0,0,0">
+                        <Grid Height="30">
+                            <Label Content="Infer subpath from playlist title" Foreground="White"/>
+                            <Button Margin="145,0,-1,1" Width="80" HorizontalAlignment="Right" />
+                        </Grid>
+                    </Border>
+                    <!-- Playlist toggle -->
+                    <Border Height="32" Margin="15,150,603,0" BorderThickness="1" HorizontalAlignment="Left" BorderBrush="#FF304463" VerticalAlignment="Top" Width="160" CornerRadius="15">
+                        <Grid Height="32">
+                            <Label x:Name="LabelPlaylistToggle_Playlist" Content="Playlist" Foreground="White" HorizontalAlignment="Left" Width="78" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <Label x:Name="LabelPlaylistToggle_Single" Content="Single" Foreground="White" HorizontalAlignment="Right" Width="80" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Opacity="0.35"/>
+                            <Button x:Name="ButtonPlaylistToggle" HorizontalAlignment="Left" Width="80" Click="TogglePlaylist" Padding="0,0,0,0" Margin="0,0,0,1"/>
+                        </Grid>
+                    </Border>
                     <Button
                         Content="Download"
                         HorizontalAlignment="Left"
-                        Margin="16,182,0,0"
+                        Margin="15,298,0,0"
                         VerticalAlignment="Top"
                         Width="138"
                         Click="InitDownload" />
+                    <CheckBox x:Name="CheckBoxRemoveWhenFinished" Content="Remove entries when downloaded" HorizontalAlignment="Left" Margin="15,266,0,0" VerticalAlignment="Top" Foreground="White"/>
                 </Grid>
             </Border>
         </Grid>
