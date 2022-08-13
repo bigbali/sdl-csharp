@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sdl"
+        xmlns:control="clr-namespace:sdl_csharp.Resource.Control"
         mc:Ignorable="d"
         d:DesignWidth="1600"
         Title="Simple YouTube Downloader" 
@@ -240,6 +241,7 @@
                         Width="138"
                         Click="InitDownload" />
                     <CheckBox x:Name="CheckBoxRemoveWhenFinished" Content="Remove entries when downloaded" HorizontalAlignment="Left" Margin="15,266,0,0" VerticalAlignment="Top" Foreground="White"/>
+                    <control:ToggleButton Content="Put contents in subfolder" ButtonWidth="80" Width="300" HorizontalAlignment="Right"/>
                 </Grid>
             </Border>
         </Grid>

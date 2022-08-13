@@ -4,11 +4,6 @@
              xmlns:local="clr-namespace:sdl"
              StartupUri="SDLWindow.xaml">
     <Application.Resources>
-        <!--ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Button.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary-->
         <Style x:Key="Raleway">
             <Setter Property="TextElement.FontFamily" Value="Resource/Font/#Raleway" />
         </Style>
