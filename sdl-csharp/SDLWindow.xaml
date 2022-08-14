@@ -210,23 +210,10 @@
                             VerticalAlignment="Top"
                             Width="120" />
                     <Label  Content="Subfolder" Height="30" Margin="15,70,0,345" Padding="0,5,5,5" Foreground="White"/>
-                    <TextBox x:Name="SubFolderPathInput" Height="30" Margin="15,102,452,313" TextChanged="UpdateSubFolder"/>
+                    <TextBox x:Name="SubFolderPathInput" Height="30" Margin="15,102,452,313" TextChanged="UpdateSubFolder" VerticalContentAlignment="Center"/>
                     <Button x:Name="SubFolderPathSetButton" Margin="0,102,367,313"  Content="Set" Click="SetSubFolder" Width="80" HorizontalAlignment="Right"/>
-                    <!-- Put in subfolder -->
-                    <Border Height="30" Margin="0,102,140,0" BorderThickness="1" BorderBrush="Yellow" HorizontalAlignment="Right" VerticalAlignment="Top" Width="222" CornerRadius="15" Padding="6,0,0,0">
-                        <Grid Height="30">
-                            <Label Content="Put in subfolder" Foreground="White"/>
-                            <Button Margin="145,0,-1,1" />
-                        </Grid>
-                    </Border>
-                    <Border Height="30" Margin="0,152,251,0" BorderThickness="1" BorderBrush="Yellow" HorizontalAlignment="Right" VerticalAlignment="Top" Width="347" CornerRadius="15" Padding="6,0,0,0">
-                        <Grid Height="30">
-                            <Label Content="Infer subpath from playlist title" Foreground="White"/>
-                            <Button Margin="145,0,-1,1" Width="80" HorizontalAlignment="Right" />
-                        </Grid>
-                    </Border>
                     <!-- Playlist toggle -->
-                    <Border Height="32" Margin="15,150,603,0" BorderThickness="1" HorizontalAlignment="Left" BorderBrush="#FF304463" VerticalAlignment="Top" Width="160" CornerRadius="15">
+                    <Border Height="32" Margin="15,201,0,0" BorderThickness="1" HorizontalAlignment="Left" BorderBrush="#FF304463" VerticalAlignment="Top" Width="160" CornerRadius="15">
                         <Grid Height="32">
                             <Label x:Name="LabelPlaylistToggle_Playlist" Content="Playlist" Foreground="White" HorizontalAlignment="Left" Width="78" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
                             <Label x:Name="LabelPlaylistToggle_Single" Content="Single" Foreground="White" HorizontalAlignment="Right" Width="80" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Opacity="0.35"/>
@@ -241,7 +228,20 @@
                         Width="138"
                         Click="InitDownload" />
                     <CheckBox x:Name="CheckBoxRemoveWhenFinished" Content="Remove entries when downloaded" HorizontalAlignment="Left" Margin="15,266,0,0" VerticalAlignment="Top" Foreground="White"/>
-                    <control:ToggleButton Content="Put contents in subfolder" ButtonWidth="80" Width="300" HorizontalAlignment="Right"/>
+                    <control:ToggleButton Content="Put contents in subfolder"
+                                          Width="250" Height="24"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Top"
+                                          Margin="15,147,0,0"
+                                          Click="ToggleUseSubFolderPath"
+                                          State="{Binding UseSubFolderPath, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SDLWindow}}"/>
+                    <control:ToggleButton Content="Infer subpath from playlist title"
+                                          Width="290" Height="24"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Top"
+                                          Margin="275,147,0,0"
+                                          Click="ToggleInferSubFolderPath"
+                                          State="{Binding InferSubFolderPath, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SDLWindow}}"/>
                 </Grid>
             </Border>
         </Grid>

@@ -5,8 +5,15 @@ using System.Windows;
 
 namespace sdl
 {
-    public partial class SDLWindow : Window
+    public partial class SDLWindow : Window, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public struct InputPlaceholders
         {
             public string URLInput { set; get; }
@@ -28,8 +35,8 @@ namespace sdl
 
         public class URLEntry: INotifyPropertyChanged
         {
-            private string _x = DownloadLabel.Default;
-            private bool _y;
+            private string label = DownloadLabel.Default;
+            private bool isDownloading = false;
 
             public event PropertyChangedEventHandler PropertyChanged;
 
@@ -47,25 +54,25 @@ namespace sdl
             {
                 get
                 {
-                    return _x;
+                    return label;
                 }
                 set
                 {
-                    _x = value;
+                    label = value;
                     OnPropertyChanged("Label");
                 }
             }
             public bool IsDownloading {
                 get
                 {
-                    return _y;
+                    return isDownloading;
                 }
                 set
                 {
                     Label = value
                         ? DownloadLabel.Downloading
                         : DownloadLabel.Default;
-                    _y = value;
+                    isDownloading = value;
                     OnPropertyChanged("IsDownloading");
                 }
             }
@@ -77,6 +84,34 @@ namespace sdl
         public static ObservableCollection<URLEntry> URLEntries = new();
         public static string FolderPath { get; set; } = string.Empty;
         public static string SubFolderPath { get; set; } = string.Empty;
+
+        private bool useSubFolderPath = false;
+        private bool inferSubFolderPath = false;
+        public bool UseSubFolderPath {
+            get
+            {
+                return useSubFolderPath;
+            }
+            set
+            {
+                useSubFolderPath = value;
+                OnPropertyChanged("UseSubFolderPath");
+            }
+        }
+
+        public bool InferSubFolderPath
+        {
+            get
+            {
+                return inferSubFolderPath;
+            }
+            set
+            {
+                inferSubFolderPath = value;
+                OnPropertyChanged("InferSubFolderPath");
+            }
+        }
+
         public static bool IsPlaylist { get; set; } = true;
 
         public static readonly SynchronizationContext UIContext = SynchronizationContext.Current;

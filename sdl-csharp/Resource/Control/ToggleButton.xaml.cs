@@ -1,24 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace sdl_csharp.Resource.Control
 {
     /// <summary>
     /// Interaction logic for Toggle.xaml
     /// </summary>
-    public partial class ToggleButton : UserControl
+    public partial class ToggleButton : Button
     {
         public ToggleButton()
         {
@@ -26,18 +14,13 @@ namespace sdl_csharp.Resource.Control
             DataContext = this;
         }
 
-        public int ButtonWidth
-        {
-            get { return (int)GetValue(ButtonWidthProperty); }
-            set { SetValue(ButtonWidthProperty, value); }
-        }
+        public static readonly DependencyProperty StateProperty = 
+            DependencyProperty.Register("State", typeof(bool), typeof(ToggleButton), new PropertyMetadata(false));
 
-        // Using a DependencyProperty as the backing store for ButtonWidth.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ButtonWidthProperty = DependencyProperty.Register( // This got removed, but wanna remember the implementation, so let's keep for now
-            "ButtonWidth",
-            typeof(int),
-            typeof(ToggleButton),
-            new PropertyMetadata(40)
-        );
+        public bool State
+        {
+            get { return (bool)GetValue(StateProperty); }
+            set { SetValue(StateProperty, value); }
+        }
     }
 }

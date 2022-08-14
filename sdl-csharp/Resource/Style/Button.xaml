@@ -7,7 +7,6 @@
     <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
     <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
     <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
-    <!-- ↓↓↓ Magic stuff ↓↓↓ [by setting the key to the type of button, we can apply it globally] -->
     <Style x:Key="{x:Type Button}" TargetType="{x:Type Button}">
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="BorderBrush" Value="#FFC0C3C7" />
@@ -15,6 +14,7 @@
         <Setter Property="Foreground" Value="#E5FFFFFF" />
         <Setter Property="Padding" Value="5, 3, 5, 3" />
         <Setter Property="Height" Value="30" />
+        <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">

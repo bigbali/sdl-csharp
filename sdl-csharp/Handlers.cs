@@ -143,8 +143,16 @@ namespace sdl
                 LabelPlaylistToggle_Playlist.Opacity = 0.35f;
                 LabelPlaylistToggle_Single.Opacity = 1f;
             }
+        }
 
-            //button.Content = IsPlaylist ? "Playlist" : "Single";
+        private void ToggleUseSubFolderPath(object sender, RoutedEventArgs e)
+        {
+            UseSubFolderPath = !UseSubFolderPath;
+        }
+
+        private void ToggleInferSubFolderPath(object sender, RoutedEventArgs e)
+        {
+            InferSubFolderPath = !InferSubFolderPath;
         }
     }
 }
