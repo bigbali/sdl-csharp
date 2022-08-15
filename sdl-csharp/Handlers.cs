@@ -128,21 +128,7 @@ namespace sdl
 
         private void TogglePlaylist(object sender, RoutedEventArgs e)
         {
-            Button button = (Button) sender;
             IsPlaylist = !IsPlaylist;
-
-            if (IsPlaylist)
-            {
-                button.HorizontalAlignment = HorizontalAlignment.Left;
-                LabelPlaylistToggle_Playlist.Opacity = 1f;
-                LabelPlaylistToggle_Single.Opacity = 0.35f;
-            }
-            else
-            {
-                button.HorizontalAlignment = HorizontalAlignment.Right;
-                LabelPlaylistToggle_Playlist.Opacity = 0.35f;
-                LabelPlaylistToggle_Single.Opacity = 1f;
-            }
         }
 
         private void ToggleUseSubFolderPath(object sender, RoutedEventArgs e)

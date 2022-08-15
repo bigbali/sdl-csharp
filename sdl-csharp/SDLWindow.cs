@@ -87,6 +87,8 @@ namespace sdl
 
         private bool useSubFolderPath = false;
         private bool inferSubFolderPath = false;
+        private bool isPlaylist = false;
+
         public bool UseSubFolderPath {
             get
             {
@@ -112,7 +114,20 @@ namespace sdl
             }
         }
 
-        public static bool IsPlaylist { get; set; } = true;
+        public bool IsPlaylist
+        {
+            get
+            {
+                return isPlaylist;
+            }
+            set
+            {
+                isPlaylist = value;
+                OnPropertyChanged("IsPlaylist");
+            }
+        }
+
+        //public static bool IsPlaylist { get; set; } = true;
 
         public static readonly SynchronizationContext UIContext = SynchronizationContext.Current;
         public static readonly InputPlaceholders Placeholders = new(
