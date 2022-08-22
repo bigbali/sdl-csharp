@@ -1,37 +1,58 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 using System.Windows;
 using sdl;
 
 namespace sdl_csharp
 {
-    internal class Download
+    internal static class Download
     {
-        private void ProcessExited(SDLWindow.URLEntry url, EventArgs e) // sender will already be destroyed
+        public static SDLWindow SDLWindowReference { get; set; }
+        private static void ProcessExited(URLEntry url, EventArgs e) // sender will already be destroyed
         {
-            SDLWindow.UIContext.Send((x) => // allow changing URLEntries from a thread other than main
+            SDLWindowReference.WindowSettings.UIContext.Send((x) => // allow changing URLEntries from a thread other than main
             {
-                SDLWindow.URLEntries.Remove(url);
+                if (SDLWindowReference.WindowSettings.RemoveEntries)
+                {
+                    SDLWindowReference.WindowSettings.URLEntries.Remove(url);
+                    return;
+                }
+
+                url.StatusDone();
             }, null);
         }
 
         // Called regardless of error status, apparently
         // At this point, process has net yet been terminated
-        private void ProcessHasFaulted(SDLWindow.URLEntry entry, object sender, DataReceivedEventArgs e)
+        private static void ProcessHasFaulted(URLEntry entry, object sender, DataReceivedEventArgs e)
         {
             Console.WriteLine($"Fault: {e.Data}");
         }
 
-        private void ProcessHasReceivedOutput(SDLWindow.URLEntry entry, object sender, DataReceivedEventArgs e)
+        private static void ProcessHasReceivedOutput(URLEntry entry, object sender, DataReceivedEventArgs e)
         {
             Console.WriteLine(e.Data);
         }
 
-        public void BeginDownload(SDLWindow.URLEntry url, string folderPath, bool isPlaylist)
+        public static void BeginDownload(URLEntry url, string folderPath, bool isPlaylist)
         {
-            string _folderPath = $"{folderPath}{(SDLWindow.SubFolderPath.Length > 0 ? $"/{SDLWindow.SubFolderPath}" : string.Empty)}";
-            url.IsDownloading = true;
+            string _folderPath = folderPath + 
+                ((SDLWindowReference.WindowSettings.SubFolderPath.Length > 0 && SDLWindowReference.WindowSettings.UseSubFolderPath == true)
+                    ? $"/{SDLWindowReference.WindowSettings.SubFolderPath}"
+                    : string.Empty);
+
+            string _format = SDLWindowReference.WindowSettings.IsAudio
+                ? " --extract-audio --audio-format mp3"
+                : " --format \"bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b\"";
+
+            string _playlist = isPlaylist
+                ? " --yes-playlist"
+                : " --no-playlist";
+
+            url.StatusDownloading();
 
             Task.Factory.StartNew(() =>
             {
@@ -40,8 +61,8 @@ namespace sdl_csharp
                     Arguments = (
                     $"\"{url.Entry}\"" +
                     $" -o \"{_folderPath}/%(title)s.%(ext)s\"" +
-                    $" -x --audio-format mp3" +
-                    $" {(isPlaylist ? "--yes-playlist" : "--no-playlist")}"
+                    _format +
+                    _playlist
                 ),
                     RedirectStandardError  = true,
                     RedirectStandardOutput = true,
@@ -67,6 +88,70 @@ namespace sdl_csharp
                 downloadProcess.WaitForExit();
             }).ContinueWith(
                 (x) => { /* no-op */ }
+            );
+        }
+
+        public static void ReceivedData(URLEntry url, object sender, DataReceivedEventArgs e)
+        {
+            if (e.Data != null && e.Data.Length > 0)
+            {
+                //Console.WriteLine(e.Data);
+                //url.SettingsJSON = e.Data;
+                //MessageBox.Show("wtf");
+
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                Dictionary<string, object>  data = serializer.Deserialize<Dictionary<string, object>>(e.Data);
+
+
+                //url.Data = data;
+
+                foreach (KeyValuePair<string, object> y in data)
+                {
+                    if (y.Value != null)
+                    {
+                        //Console.WriteLine($"{y.Key} => {y.Value}");
+                        if (y.Key == "playlist_title")
+                        {
+                            //url.Dudu.playlist_title = (string)y.Value;
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void FetchData(URLEntry url)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                ProcessStartInfo process = new("youtube-dl")
+                {
+                    Arguments = (
+                    $"\"{url.Entry}\"" +
+                    " -j --yes-playlist"
+                ),
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using Process downloadProcess = new()
+                {
+                    StartInfo = process,
+                    EnableRaisingEvents = true
+                };
+
+                downloadProcess.OutputDataReceived += (sender, e) => ReceivedData(url, sender, e);
+
+                downloadProcess.Start();
+                downloadProcess.BeginOutputReadLine();
+
+                downloadProcess.WaitForExit();
+            }).ContinueWith(
+                (x) => { /* no-op */
+                    //MessageBox.Show(url.SettingsJSON);
+                }
             );
         }
     }

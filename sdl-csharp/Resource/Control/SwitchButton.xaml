@@ -1,14 +1,15 @@
 ﻿<Button x:Class="sdl_csharp.Resource.Control.SwitchButton"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:sdl_csharp.Resource.Control"
-             xmlns:sdl="clr-namespace:sdl"
-             mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type=sdl:SDLWindow}"
-             d:DesignHeight="100"
-             d:DesignWidth="400">
+        x:Name="SwitchButtonElement"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:sdl_csharp.Resource.Control"
+        xmlns:sdl="clr-namespace:sdl"
+        mc:Ignorable="d" 
+        d:DataContext="{d:DesignInstance Type=sdl:SDLWindow}"
+        d:DesignHeight="100"
+        d:DesignWidth="400">
     <Button.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -124,7 +125,7 @@
     <Button.Template>
         <ControlTemplate>
             <Button Style="{StaticResource SwitchButton}">
-                <Border Style="{StaticResource SwitchButton.Border}">
+                <Border Style="{StaticResource SwitchButton.Border}" DataContext="{Binding ElementName=SwitchButtonElement}">
                     <Grid>
                         <Label Style="{StaticResource SwitchButton.Label1}" Content="{Binding Content1, FallbackValue='Content1'}" HorizontalAlignment="Left" />
                         <Label Style="{StaticResource SwitchButton.Label2}" Content="{Binding Content2, FallbackValue='Content2'}" HorizontalAlignment="Right"/>

@@ -3,15 +3,11 @@ using System.Windows.Controls;
 
 namespace sdl_csharp.Resource.Control
 {
-    /// <summary>
-    /// Interaction logic for Toggle.xaml
-    /// </summary>
     public partial class ToggleButton : Button
     {
         public ToggleButton()
         {
             InitializeComponent();
-            DataContext = this;
         }
 
         public static readonly DependencyProperty StateProperty = 

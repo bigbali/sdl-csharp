@@ -1,11 +1,14 @@
 ﻿<Button x:Class="sdl_csharp.Resource.Control.ToggleButton"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:sdl_csharp.Resource.Control" xmlns:sdl="clr-namespace:sdl"
-             mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="400">
+        x:Name="ToggleButtonElement"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:local="clr-namespace:sdl_csharp.Resource.Control"
+        xmlns:sdl="clr-namespace:sdl"
+        mc:Ignorable="d" 
+        d:DesignHeight="100"
+        d:DesignWidth="400">
     <Button.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -113,7 +116,7 @@
     <Button.Template>
         <ControlTemplate>
             <Button Style="{StaticResource ToggleButton}">
-                <Grid>
+                <Grid DataContext="{Binding ElementName=ToggleButtonElement}">
                     <Border Style="{StaticResource ToggleButton.Border}">
                         <Button Style="{StaticResource ToggleButton.Button}"/>
                     </Border>

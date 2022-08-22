@@ -1,0 +1,56 @@
+﻿<TextBox x:Class="sdl_csharp.Resource.Control.TextInput"
+         x:Name="TextInputElement"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+         xmlns:local="clr-namespace:sdl_csharp.Resource.Control"
+         mc:Ignorable="d" 
+         d:DesignHeight="100"
+         d:DesignWidth="200">
+    <TextBox.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/TextBox.xaml"/>
+                <ResourceDictionary>
+                    <Style x:Key="TextInput" TargetType="{x:Type Grid}">
+                        <Setter Property="Height"   Value="30" />
+                        <Setter Property="MinWidth" Value="100" />
+                    </Style>
+                    <Style x:Key="TextInput.TextBox" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+                        <Setter   Property="VerticalContentAlignment"   Value="Center" />
+                        <Setter   Property="Text"                       Value="{Binding Text}" />
+                        <d:Setter Property="Text"                       Value="TextInput" />
+                    </Style>
+                    <Style x:Key="TextInput.Placeholder" TargetType="{x:Type Label}">
+                        <Setter   Property="VerticalContentAlignment"   Value="Center" />
+                        <Setter   Property="Padding"                    Value="10, 3, 10, 3" />
+                        <Setter   Property="Foreground"                 Value="Gray"  />
+                        <Setter   Property="IsHitTestVisible"           Value="False" /> <!-- Since the placeholder overlaps TextBox, allow clicks to pass through -->
+                        <Setter   Property="Opacity"                    Value="0" />
+                        <Setter   Property="Content"                    Value="{Binding Placeholder}" />
+                        <d:Setter Property="Opacity"                    Value="1" />
+                        <d:Setter Property="Content"                    Value="Placeholder" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Value="False" Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Children[0].IsFocused}" />
+                                    <Condition Value=""      Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Children[0].Text}" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Opacity" Value="1"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </TextBox.Resources>
+    <TextBox.Template>
+        <ControlTemplate>
+            <Grid Style="{StaticResource TextInput}" DataContext="{Binding ElementName=TextInputElement}">
+                <TextBox Style="{StaticResource TextInput.TextBox}"/>
+                <Label   Style="{StaticResource TextInput.Placeholder}" />
+            </Grid>
+        </ControlTemplate>
+    </TextBox.Template>
+</TextBox>

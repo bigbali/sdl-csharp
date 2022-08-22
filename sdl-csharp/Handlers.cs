@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Specialized;
+using System.Security.Policy;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -8,85 +11,103 @@ namespace sdl
 {
     public partial class SDLWindow : Window
     {
-        private static string GetPlaceholder(string inputName) // This is how we get the value dynamically, based on the name of the control element
+        private void URLAdded(object sender, NotifyCollectionChangedEventArgs e)
         {
-            return (string) Placeholders.GetType().GetProperty(inputName).GetValue(Placeholders);
-        }
-
-        private static string GetHash(object sender, RoutedEventArgs e)
-        {
-            return sender.GetHashCode().ToString();
-        }
-
-        private static void SpinnerAnimation(URLEntry entry)
-        {
-            //MessageBox.Show("Hey, yo");
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                URLEntry newUrl = (URLEntry) e.NewItems[0];
+                Download.FetchData(newUrl);
+            }
         }
 
         private void RemoveEntry(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             URLEntry entry = (URLEntry) button.DataContext;
-            URLEntries.Remove(entry);
+            WindowSettings.URLEntries.Remove(entry);
         }
 
         private void AddURL(object sender, RoutedEventArgs e)
         {
             string newURL = URLInput.Text;
-            URLInput.Text = Placeholders.URLInput;
-
-            if (newURL == Placeholders.URLInput)
-            {
-                MessageBox.Show("Please select a valid URL.");
-                return;
-            }
 
             if (newURL != string.Empty && newURL.StartsWith("http")) {
                 URLEntry urlEntry = new(newURL);
-                URLEntries.Add(urlEntry);
+                WindowSettings.URLEntries.Add(urlEntry);
 
                 return;
             }
 
+            MessageBox.Show(newURL.ToString());
             MessageBox.Show("URL Invalid");
         }
-
-        private void ClearInputPlaceholder(object sender, RoutedEventArgs e)
-        {
-            TextBox input = (TextBox) sender;
-
-            if (input.Text == GetPlaceholder(input.Name))
-            {
-                input.Clear();
-                input.Foreground = new SolidColorBrush(Colors.White);
-            }
-        }
-
-        private void ResetInputPlaceholder(object sender, RoutedEventArgs e)
-        {
-            TextBox input = (TextBox) sender;
-
-            if (input.Text == string.Empty)
-            {
-                input.Text = GetPlaceholder(input.Name);
-                input.Foreground = new SolidColorBrush(Colors.Gray);
-            }
-        }
-
         private void InitIndividualDownload(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            URLEntry entry = (URLEntry) button.DataContext;
-            Download download = new();
-            download.BeginDownload(entry, FolderPath, false);
+            URLEntry url = (URLEntry) button.DataContext;
+
+            if (url.IsDownloading)
+            {
+                MessageBox.Show("This entry has not yet finished downloading.\nPlease wait.",
+                                "Entry is downloading",
+                                MessageBoxButton.OK);
+                return;
+
+            }
+
+            bool retry = url.IsDone && MessageBox.Show("This entry has already been downloaded.\nDo you want to retry?",
+                                                     "Entry already downloaded",
+                                                      MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+
+            if (retry)
+            {
+                url.Reset();
+            }
+
+            Download.BeginDownload(url, WindowSettings.FolderPath, false);
         }
 
         private void InitDownload(object sender, RoutedEventArgs e)
         {
-            foreach (URLEntry url in URLEntries) // For every URL, start a new thread with a download process
+            bool includesDownloadedEntry = false;
+            bool includesDownloadingEntry = false;
+            foreach (URLEntry url in WindowSettings.URLEntries) // Premilinary checks
             {
-                Download download = new();
-                download.BeginDownload(url, FolderPath, IsPlaylist);
+                if (url.IsDone && !includesDownloadedEntry)
+                {
+                    includesDownloadedEntry = true;
+                }
+
+                if (url.IsDownloading && !includesDownloadingEntry)
+                {
+                    includesDownloadingEntry = true;
+                }
+            }
+
+            if (includesDownloadedEntry && MessageBox.Show("One or more entries have already been downloaded.\nDo you want to retry?",
+                                                           "Entries already downloaded",
+                                                            MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            if (includesDownloadingEntry)
+            {
+                MessageBox.Show("One or more entries have not yet finished downloading.\nPlease wait.",
+                                "Entries are downloading",
+                                 MessageBoxButton.OK);
+                return;
+
+            }
+
+            foreach (URLEntry url in WindowSettings.URLEntries) // For every URL, start a new thread with a download process
+            {
+                if (url.IsDone)
+                {
+                    url.Reset();
+                }
+
+                Download.BeginDownload(url, WindowSettings.FolderPath, WindowSettings.IsPlaylist);
             }
         }
 
@@ -97,48 +118,59 @@ namespace sdl
 
             if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                FolderPath = folderDialog.FileName;
+                WindowSettings.FolderPath = folderDialog.FileName;
             }
 
-            if (FolderPath == string.Empty)
+            if (WindowSettings.FolderPath == string.Empty)
             {
-                FolderPathInput.Text = Placeholders.FolderPathInput;
+                MessageBox.Show("Please select a folder.",
+                                "No folder selected",
+                                 MessageBoxButton.OK);
+
                 return;
             }
 
-            FolderPathInput.Text = FolderPath;
+            //FolderPathInput.Text = FolderPath;
         }
 
         private void UpdateFolder(object sender, RoutedEventArgs e)
         {
             TextBox input = (TextBox) sender;
-            FolderPath = input.Text;
+            WindowSettings.FolderPath = input.Text;
         }
 
         private void SetSubFolder(object sender, RoutedEventArgs e)
         {
-            SubFolderPath = SubFolderPathInput.Text;
+            WindowSettings.SubFolderPath = SubFolderPathInput.Text;
         }
 
         private void UpdateSubFolder(object sender, RoutedEventArgs e)
         {
             TextBox subFolderInput = (TextBox) sender;
-            SubFolderPath = subFolderInput.Text;
+            WindowSettings.SubFolderPath = subFolderInput.Text;
         }
 
         private void TogglePlaylist(object sender, RoutedEventArgs e)
         {
-            IsPlaylist = !IsPlaylist;
+            WindowSettings.IsPlaylist = !WindowSettings.IsPlaylist;
+        }
+        private void ToggleAudio(object sender, RoutedEventArgs e)
+        {
+            WindowSettings.IsAudio = !WindowSettings.IsAudio;
         }
 
         private void ToggleUseSubFolderPath(object sender, RoutedEventArgs e)
         {
-            UseSubFolderPath = !UseSubFolderPath;
+            WindowSettings.UseSubFolderPath = !WindowSettings.UseSubFolderPath;
         }
 
         private void ToggleInferSubFolderPath(object sender, RoutedEventArgs e)
         {
-            InferSubFolderPath = !InferSubFolderPath;
+            WindowSettings.InferSubFolderPath = !WindowSettings.InferSubFolderPath;
+        }
+        private void ToggleRemoveEntries(object sender, RoutedEventArgs e)
+        {
+            WindowSettings.RemoveEntries = !WindowSettings.RemoveEntries;
         }
     }
 }
