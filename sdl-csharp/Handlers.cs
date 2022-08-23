@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Specialized;
-using System.Security.Policy;
+﻿using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using sdl_csharp;
 
@@ -30,6 +27,7 @@ namespace sdl
         private void AddURL(object sender, RoutedEventArgs e)
         {
             string newURL = URLInput.Text;
+            URLInput.Clear();
 
             if (newURL != string.Empty && newURL.StartsWith("http")) {
                 URLEntry urlEntry = new(newURL);
@@ -38,8 +36,9 @@ namespace sdl
                 return;
             }
 
-            MessageBox.Show(newURL.ToString());
-            MessageBox.Show("URL Invalid");
+            MessageBox.Show("A URL must start with 'http'.",
+                            "URL is invalid",
+                            MessageBoxButton.OK);
         }
         private void InitIndividualDownload(object sender, RoutedEventArgs e)
         {
@@ -69,9 +68,18 @@ namespace sdl
 
         private void InitDownload(object sender, RoutedEventArgs e)
         {
+            if (WindowSettings.URLEntries.Count == 0)
+            {
+                MessageBox.Show("Please specify some URLs to be downloaded!",
+                                "No entries to download",
+                                 MessageBoxButton.OK);
+                return;
+
+            }
+
             bool includesDownloadedEntry = false;
             bool includesDownloadingEntry = false;
-            foreach (URLEntry url in WindowSettings.URLEntries) // Premilinary checks
+            foreach (URLEntry url in WindowSettings.URLEntries) // Preminilary checks
             {
                 if (url.IsDone && !includesDownloadedEntry)
                 {
@@ -129,26 +137,19 @@ namespace sdl
 
                 return;
             }
-
-            //FolderPathInput.Text = FolderPath;
         }
 
-        private void UpdateFolder(object sender, RoutedEventArgs e)
-        {
-            TextBox input = (TextBox) sender;
-            WindowSettings.FolderPath = input.Text;
-        }
+        //private void UpdateFolder(object sender, RoutedEventArgs e)
+        //{
+        //    TextBox input = (TextBox) sender;
+        //    WindowSettings.FolderPath = input.Text;
+        //}
 
-        private void SetSubFolder(object sender, RoutedEventArgs e)
-        {
-            WindowSettings.SubFolderPath = SubFolderPathInput.Text;
-        }
-
-        private void UpdateSubFolder(object sender, RoutedEventArgs e)
-        {
-            TextBox subFolderInput = (TextBox) sender;
-            WindowSettings.SubFolderPath = subFolderInput.Text;
-        }
+        //private void UpdateSubFolder(object sender, RoutedEventArgs e)
+        //{
+        //    TextBox subFolderInput = (TextBox) sender;
+        //    WindowSettings.SubFolderPath = subFolderInput.Text;
+        //}
 
         private void TogglePlaylist(object sender, RoutedEventArgs e)
         {

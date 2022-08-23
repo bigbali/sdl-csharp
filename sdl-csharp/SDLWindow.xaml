@@ -11,8 +11,6 @@
         Width="Auto" 
         Height="Auto" 
         SizeToContent="WidthAndHeight" 
-        Foreground="#FFE8E8E8" 
-        Background="#FF7C0606"
         FontSize="16"
         DataContext="{Binding RelativeSource={RelativeSource Self}, Path=WindowSettings}"
         FontFamily="Raleway" >
@@ -23,24 +21,22 @@
                 <ResourceDictionary Source="Resource/Style/Label.xaml" />
                 <ResourceDictionary Source="Resource/Style/TextBox.xaml" />
                 <ResourceDictionary Source="Resource/Style/URLQueueEntry.xaml" />
+                <ResourceDictionary Source="Resource/Style/General.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style x:Key="Raleway">
-                <Setter Property="TextElement.FontFamily" Value="Resource/Font/#Raleway" />
-            </Style>
             <Style TargetType="ListBox">
                 <Setter Property="Padding" Value="5, 7, 5, 7" />
                 <Style.Resources>
                     <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="20, 20, 8, 8"/>
+                        <Setter Property="CornerRadius" Value="6"/>
                     </Style>
                 </Style.Resources>
             </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid x:Name="MasterGrid"
-          Background="#FF030812"
-          MinWidth="400"
-          MinHeight="400"
+          Background="{StaticResource Color.Window.Background}"
+          MinWidth="1400"
+          MinHeight="960"
           UseLayoutRounding="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -48,71 +44,73 @@
         </Grid.ColumnDefinitions>
         <Grid x:Name="URLGroup"
               HorizontalAlignment="Stretch"
-              VerticalAlignment="Top"
+              VerticalAlignment="Stretch"
               Grid.Column="0">
-            <Border BorderBrush="Black"
+            <!-- Background="#3F46484A" -->
+            <Border BorderBrush="{StaticResource Color.Border}"
                     BorderThickness="1"
-                    Background="#3F46484A"
-                    CornerRadius="16"
-                    Margin="10,10,10,149">
-                <Grid VerticalAlignment="Top">
+                    Background="{StaticResource Color.Border.Background}"
+                    CornerRadius="6"
+                    Margin="10,10,5,10">
+                <Grid VerticalAlignment="Stretch"
+                      Margin="0,0,0,15">
                     <Label x:Name="URLLabel"
-                           Width="Auto"
-                           Foreground="White"
-                           Panel.ZIndex="103"
-                           BorderBrush="Black"
+                           Foreground="{StaticResource Color.Text}"
                            Content="URL"
-                           Margin="20,15,15,410"
-                           Padding="0,0,5,0" 
+                           Margin="0,0,0,0"
+                           Padding="15,10,15,5" 
                            VerticalContentAlignment="Center"
                            VerticalAlignment="Top" />
                     <control:TextInput x:Name="URLInput"
                              Placeholder="Select URL"
                              TextWrapping="Wrap"
-                             Panel.ZIndex="99"
                              Height="30"
                              HorizontalContentAlignment="Left"
                              VerticalContentAlignment="Center"
                              VerticalAlignment="Top"
-                             Margin="15,34,125,0" />
+                             Margin="15,34,120,0" />
                     <Button x:Name="ButtonAddURL"
                             Content="Add URL"
                             Click="AddURL"
                             HorizontalAlignment="Right"
-                            Margin="0,35,15,0"
+                            Margin="0,34,15,0"
                             VerticalAlignment="Top"
-                            Width="100"
-                            Panel.ZIndex="99" />
+                            Width="100" />
                     <Label
                         Content="Queue"
-                        Margin="20,90,0,0"
+                        Margin="0,74.2,0,0"
                         Foreground="White"
                         Panel.ZIndex="104"
-                        Padding="0,0,5,0"
-                        Width="80"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top" RenderTransformOrigin="0.481,1.493"/>
+                        Padding="15,10,15,5" 
+                        VerticalAlignment="Top" />
+                    <!-- Separate into own component -->
                     <ListBox x:Name="URLList"
-                             d:ItemsSource="{d:SampleData ItemCount=3 }"
-                             Margin="15,109,15,15"
-                             Panel.ZIndex="100"
-                             Background="#4C2E415A"
+                             Margin="15,108,15,0"
+                             Background="{StaticResource Color.URLQueue.Background}"
+                             VerticalAlignment="Stretch"
                              HorizontalContentAlignment="Stretch"
                              VerticalContentAlignment="Top"
                              BorderThickness="1"
-                             BorderBrush="#FF304463" Padding="5,4,5,7"
-                             ItemsSource="{Binding URLEntries}">
+                             BorderBrush="{StaticResource Color.URLQueue.Border}" 
+                             Padding="0"
+                             ItemsSource="{Binding URLEntries}"
+                             d:ItemsSource="{d:SampleData ItemCount=3 }">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid Width="Auto" Height="100">
+                                <Grid Height="100">
                                     <Grid Height="33" VerticalAlignment="Top">
-                                        <TextBox Text="{Binding Path=Entry}" Width="Auto" Margin="0,2,256,1" FontFamily="Consolas" IsReadOnly="True" VerticalContentAlignment="Center">
+                                        <TextBox Text="{Binding Path=Entry}"
+                                                 Width="Auto"
+                                                 Margin="0,0,256,0"
+                                                 FontFamily="Consolas"
+                                                 IsReadOnly="True"
+                                                 VerticalContentAlignment="Center">
                                             <TextBox.Style>
                                                 <Style BasedOn="{StaticResource ResourceKey={x:Type TextBox}}" TargetType="{x:Type TextBox}">
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="{x:Type TextBox}">
-                                                                <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1, 0, 0, 0" Background="{TemplateBinding Background}" SnapsToDevicePixels="True" CornerRadius="0, 15, 15, 0">
+                                                                <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="3, 0, 0, 0" Background="{TemplateBinding Background}" SnapsToDevicePixels="True" CornerRadius="6, 6, 6, 6">
                                                                     <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
                                                                 </Border>
                                                             </ControlTemplate>
@@ -198,8 +196,11 @@
                                                 </Ellipse>
                                             </Grid>
                                         </Button>
-                                        <!--<Button Content="Remove" Width="96" HorizontalAlignment="Right" Click="RemoveEntry" Margin="0,0,0,0" Padding="5,3,5,3" />-->
-                                        <Button Content="Remove" Width="96" HorizontalAlignment="Right" Click="RemoveEntry" Margin="0,0,0,0" Padding="5,3,5,3"/>
+                                        <Button Content="Remove"
+                                                Width="96"
+                                                HorizontalAlignment="Right"
+                                                Click="RemoveEntry"
+                                                Padding="5,3,5,3"/>
                                     </Grid>
                                 </Grid>
                             </DataTemplate>
@@ -208,21 +209,24 @@
                 </Grid>
             </Border>
         </Grid>
-        <Grid  Grid.Column="1" x:Name="FolderGroup" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <Border BorderBrush="Black" BorderThickness="1" Background="#3F46484A" CornerRadius="16" Margin="10,10,10,149">
+        <Grid x:Name="FolderGroup"
+              Grid.Column="1"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch">
+            <Border BorderBrush="{StaticResource Color.Border}"
+                    BorderThickness="1"
+                    Background="{StaticResource Color.Border.Background}"
+                    CornerRadius="6"
+                    Margin="5,10,10,10">
                 <Grid>
                     <Label x:Name="FolderLabel"
                            Content="Folder"
-                           Width="Auto"
-                           Foreground="White"
                            Panel.ZIndex="103"
-                           BorderBrush="Black"
-                           Margin="20,15,15,410"
+                           Padding="15,10,15,5"
                            VerticalContentAlignment="Center"
-                           Padding="0,0,5,0"
                            VerticalAlignment="Top"/>
                     <control:TextInput x:Name="FolderPathInput"
-                             Margin="15,35,140,0"
+                             Margin="15,34,140,0"
                              TextWrapping="Wrap"
                              VerticalAlignment="Top"
                              VerticalContentAlignment="Center"
@@ -232,8 +236,8 @@
                             Content="Select Folder"
                             Click="SelectFolder"
                             HorizontalAlignment="Right"
-                            Margin="0,35,15,0"
                             VerticalAlignment="Top"
+                            Margin="0,34,15,0"
                             Width="120" />
                     <control:TextInput x:Name="SubFolderPathInput"
                                        Height="30"

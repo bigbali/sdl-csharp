@@ -1,7 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="General.xaml" />
+    </ResourceDictionary.MergedDictionaries>
     <Style  x:Key="{x:Type Label}" TargetType="{x:Type Label}">
-        <Setter Property="Foreground" Value="{StaticResource TextColor}" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{StaticResource Color.Text}" />
+        <Setter Property="FontSize"   Value="16" />
+        <Setter Property="FontWeight" Value="Thin" />
     </Style>
 </ResourceDictionary>

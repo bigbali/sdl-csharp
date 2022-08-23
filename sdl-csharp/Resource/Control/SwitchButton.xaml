@@ -35,7 +35,7 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#11426380" TargetName="border"/>
+                                            <Setter Property="Background" Value="Green" TargetName="border"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -57,6 +57,7 @@
                         <Setter Property="HorizontalContentAlignment" Value="Center" />
                         <Setter Property="VerticalContentAlignment" Value="Center" />
                         <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+                        <Setter Property="Panel.ZIndex" Value="2" />
                         <Setter Property="Content" Value="{Binding Content, FallbackValue='No content'}" />
                     </Style>
                     <Style x:Key="SwitchButton.Label1" TargetType="{x:Type Label}" BasedOn="{StaticResource SwitchButton.Label}">
