@@ -36,12 +36,41 @@ namespace sdl_csharp
             Console.WriteLine(e.Data);
         }
 
+        private static bool SetPlaylistData(URLEntry url, string key, object value)
+        {
+            var p = url.Data.Playlist;
+
+            switch (key)
+            {
+                case "title":
+                    p.Title = (string)value;
+                    return true;
+
+                case "playlist_count":
+                    p.Count = Convert.ToUInt16(value);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static bool SetSingleData(URLEntry url, string key, object value)
+        {
+            return false;
+        }
+
         public static void BeginDownload(URLEntry url, string folderPath, bool isPlaylist)
         {
             string _folderPath = folderPath + 
                 ((SDLWindowReference.WindowSettings.SubFolderPath.Length > 0 && SDLWindowReference.WindowSettings.UseSubFolderPath == true)
                     ? $"/{SDLWindowReference.WindowSettings.SubFolderPath}"
                     : string.Empty);
+
+            // if infer is set and url refers to playlist, use playlist name instead of this
+            //if (SDLWindowReference.WindowSettings.InferSubFolderPath && url.Data.IsPlaylist && url.Data.PlaylistTitle != null)
+            //{
+            //    _folderPath = $"${folderPath}/{url.Data.PlaylistTitle}";
+            //}
 
             string _format = SDLWindowReference.WindowSettings.IsAudio
                 ? " --extract-audio --audio-format mp3"
@@ -90,43 +119,70 @@ namespace sdl_csharp
             );
         }
 
-        public static void ReceivedData(URLEntry url, object sender, DataReceivedEventArgs e)
+        private static void ReceivedData(URLEntry url, object sender, DataReceivedEventArgs e)
         {
-            if (e.Data != null && e.Data.Length > 0)
+            if (e.Data == null || e.Data.Length == 0) return;
+
+            JavaScriptSerializer serializer = new();
+            Dictionary<string, object> data =
+                serializer.Deserialize<Dictionary<string, object>>(e.Data);
+
+            bool isPlaylist = false;
+            bool hasDataChanged = false; // will check if any data has been changed, so we won't refresh the UI needlessly
+
+            if (data.TryGetValue("_type", out object _type))
             {
-                //Console.WriteLine(e.Data);
-                //url.SettingsJSON = e.Data;
-                //MessageBox.Show("wtf");
-
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                Dictionary<string, object>  data = serializer.Deserialize<Dictionary<string, object>>(e.Data);
-
-
-                //url.Data = data;
-
-                foreach (KeyValuePair<string, object> y in data)
+                if ((string)_type == "playlist")
                 {
-                    if (y.Value != null)
-                    {
-                        //Console.WriteLine($"{y.Key} => {y.Value}");
-                        if (y.Key == "playlist_title")
-                        {
-                            //url.Dudu.playlist_title = (string)y.Value;
-                        }
-                    }
+                    isPlaylist = true;
+                    url.Data.IsPlaylist = true;
+                }
+                else if((string)_type != "video")
+                {
+                    Console.WriteLine("Something is wrong");
+                    Console.WriteLine($"_type: {_type}");
+                    return;
                 }
             }
+
+            foreach (KeyValuePair<string, object> pair in data)
+            {
+                if (pair.Value == null) continue;
+
+                Console.WriteLine(pair.ToString());
+
+                if ((isPlaylist && SetPlaylistData(url, pair.Key, pair.Value))
+                    || (!isPlaylist && SetSingleData(url, pair.Key, pair.Value)))
+                {
+                    hasDataChanged = true;
+                }
+
+                if (hasDataChanged) // Manually tell WPF that we have changed this, as the feller is apparently unable to tell
+                {
+                    url.OnPropertyChanged("Data");
+                }
+            }
+
+            Console.WriteLine(url.Data.Playlist.Title);
+            Console.WriteLine(url.Data.Playlist.Count);
         }
 
         public static void FetchData(URLEntry url)
         {
+            string ExtractorArguments = "--extractor-args youtube:player_skip=webpage,configs,js;player_client=android,web";
+
+            // TODO: we get playlist if we provide a url to a playlist member. We need in that case a single with a reference to the playlist!
+
             Task.Factory.StartNew(() =>
             {
+                Console.WriteLine("Initiating prefetch");
                 ProcessStartInfo process = new("youtube-dl")
                 {
+                    // --dump-single-json
                     Arguments = (
-                    $"\"{url.Entry}\"" +
-                    " -j --yes-playlist"
+                    $"\"{url.Entry}\"" + 
+                    //$" --print \"%(title)j\" --yes-playlist --flat-playlist {ExtractorArguments}"
+                    $" --dump-single-json --yes-playlist --flat-playlist {ExtractorArguments}"
                 ),
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
@@ -142,14 +198,15 @@ namespace sdl_csharp
                 };
 
                 downloadProcess.OutputDataReceived += (sender, e) => ReceivedData(url, sender, e);
+                downloadProcess.ErrorDataReceived  += (sender, e) => Console.WriteLine($"Fault: {e.Data}");
 
                 downloadProcess.Start();
                 downloadProcess.BeginOutputReadLine();
+                downloadProcess.BeginErrorReadLine();
 
                 downloadProcess.WaitForExit();
             }).ContinueWith(
                 (x) => { /* no-op */
-                    //MessageBox.Show(url.SettingsJSON);
                 }
             );
         }

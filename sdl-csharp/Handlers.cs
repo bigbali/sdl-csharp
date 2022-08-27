@@ -1,5 +1,4 @@
-﻿using System.Collections.Specialized;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using sdl_csharp;
@@ -8,22 +7,12 @@ namespace sdl
 {
     public partial class SDLWindow : Window
     {
-        private void URLAdded(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                URLEntry newUrl = (URLEntry) e.NewItems[0];
-                Download.FetchData(newUrl);
-            }
-        }
-
         private void RemoveEntry(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             URLEntry entry = (URLEntry) button.DataContext;
             WindowSettings.URLEntries.Remove(entry);
         }
-
         private void AddURL(object sender, RoutedEventArgs e)
         {
             string newURL = URLInput.Text;
@@ -65,7 +54,6 @@ namespace sdl
 
             Download.BeginDownload(url, WindowSettings.FolderPath, false);
         }
-
         private void InitDownload(object sender, RoutedEventArgs e)
         {
             if (WindowSettings.URLEntries.Count == 0)
@@ -118,7 +106,6 @@ namespace sdl
                 Download.BeginDownload(url, WindowSettings.FolderPath, WindowSettings.IsPlaylist);
             }
         }
-
         private void SelectFolder(object sender, RoutedEventArgs e)
         {
             CommonOpenFileDialog folderDialog = new();
@@ -138,19 +125,6 @@ namespace sdl
                 return;
             }
         }
-
-        //private void UpdateFolder(object sender, RoutedEventArgs e)
-        //{
-        //    TextBox input = (TextBox) sender;
-        //    WindowSettings.FolderPath = input.Text;
-        //}
-
-        //private void UpdateSubFolder(object sender, RoutedEventArgs e)
-        //{
-        //    TextBox subFolderInput = (TextBox) sender;
-        //    WindowSettings.SubFolderPath = subFolderInput.Text;
-        //}
-
         private void TogglePlaylist(object sender, RoutedEventArgs e)
         {
             WindowSettings.IsPlaylist = !WindowSettings.IsPlaylist;
@@ -159,12 +133,10 @@ namespace sdl
         {
             WindowSettings.IsAudio = !WindowSettings.IsAudio;
         }
-
         private void ToggleUseSubFolderPath(object sender, RoutedEventArgs e)
         {
             WindowSettings.UseSubFolderPath = !WindowSettings.UseSubFolderPath;
         }
-
         private void ToggleInferSubFolderPath(object sender, RoutedEventArgs e)
         {
             WindowSettings.InferSubFolderPath = !WindowSettings.InferSubFolderPath;

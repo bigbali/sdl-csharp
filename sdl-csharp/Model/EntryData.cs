@@ -7,51 +7,85 @@ namespace sdl_csharp.Model
     /// </summary>
     public class EntryData: NotifyPropertyChanged
     {
-        private string title;
-        private string thumbnail;
-        private string length;
-        private string playlistTitle;
-        private string playlistThumbnail;
-        private short  playlistLength;
-        private bool   isPlaylist;
+        public class SINGLE: NotifyPropertyChanged
+        {
+            private string title;
+            private string thumbnail;
+            private ushort length;
+            private bool   isPlaylistMember;
+            private string playlistTitle;
+            private string playlistThumbnail;
+            private ushort playlistCount;
 
-        public string Title
-        {
-            get => title;
-            set => Set(ref title, value);
+            public string Title
+            {
+                get => title;
+                set => Set(ref title, value);
+            }
+            public string Thumbnail
+            {
+                get => thumbnail;
+                set => Set(ref thumbnail, value);
+            }
+            public ushort Length
+            {
+                get => length;
+                set => Set(ref length, value);
+            }
+            public bool IsPlaylistMember
+            {
+                get => isPlaylistMember;
+                set => Set(ref isPlaylistMember, value);
+            }
+            public string PlaylistTitle
+            {
+                get => playlistTitle;
+                set => Set(ref playlistTitle, value);
+            }
+            public string PlaylistThumbnail
+            {
+                get => playlistThumbnail;
+                set => Set(ref playlistThumbnail, value);
+            }
+            public ushort PlaylistCount
+            {
+                get => playlistCount;
+                set => Set(ref playlistCount, value);
+            }
         }
 
-        public string Thumbnail
+        public class PLAYLIST : NotifyPropertyChanged
         {
-            get => thumbnail;
-            set => Set(ref thumbnail, value);
-        }
-        public string Length
-        {
-            get => length;
-            set => Set(ref length, value);
-        }
-        public string PlaylistTitle
-        {
-            get => playlistTitle;
-            set => Set(ref playlistTitle, value);
-        }
-        public string PlaylistThumbnail
-        {
-            get => playlistThumbnail;
-            set => Set(ref playlistThumbnail, value);
+            private string title;
+            private string thumbnail;
+            private ushort count;
+
+            public string Title
+            {
+                get => title;
+                set => Set(ref title, value);
+            }
+            public string Thumbnail
+            {
+                get => thumbnail;
+                set => Set(ref thumbnail, value);
+            }
+            public ushort Count
+            {
+                get => count;
+                set => Set(ref count, value);
+            }
         }
 
-        public short PlaylistLength
-        {
-            get => playlistLength;
-            set => Set(ref playlistLength, value);
-        }
+        private bool isPlaylist = false;
 
         public bool IsPlaylist
         {
             get => isPlaylist;
             set => Set(ref isPlaylist, value);
         }
+
+        public SINGLE Single = new();
+        public PLAYLIST Playlist = new();
     }
 }

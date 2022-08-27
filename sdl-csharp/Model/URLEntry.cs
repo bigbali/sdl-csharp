@@ -9,7 +9,7 @@ namespace sdl
         private string label         = DownloadLabel.Default;
         private bool   isDownloading = false;
         private bool   isDone        = false;
-        private EntryData Data { get; set; } = new();
+        public EntryData Data { get; set; } = new();
         public string Entry { get; set; }
         public bool IsDone {
             get => isDone;

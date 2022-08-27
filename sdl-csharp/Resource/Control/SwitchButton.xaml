@@ -22,8 +22,6 @@
                         <Setter Property="VerticalContentAlignment"   Value="Center" />
                         <Setter Property="Width"                      Value="160" />
                         <Setter Property="Height"                     Value="32" />
-                        <Setter Property="Background"                 Value="Transparent" />
-                        <Setter Property="BorderThickness"            Value="0" />
                         <Setter Property="Padding"                    Value="0" />
                         <Setter Property="Cursor"                     Value="Hand" />
                         <Setter Property="Template">
@@ -35,7 +33,7 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="Green" TargetName="border"/>
+                                            <Setter Property="Background" Value="{StaticResource Color.Button.Background.Hover}" TargetName="border"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -45,10 +43,9 @@
                     <!-- Border -->
                     <Style x:Key="SwitchButton.Border" TargetType="{x:Type Border}">
                         <Setter Property="BorderThickness" Value="1" />
-                        <Setter Property="BorderBrush" Value="{StaticResource SwitchButtonBorder.Brush}" />
+                        <Setter Property="BorderBrush" Value="{StaticResource Color.Border}" />
                         <Setter Property="CornerRadius" Value="15" />
                         <Setter Property="Width" Value="160" />
-                        <Setter Property="HorizontalAlignment" Value="Left" />
                     </Style>
                     <!-- Label -->
                     <Style x:Key="SwitchButton.Label" TargetType="{x:Type Label}">

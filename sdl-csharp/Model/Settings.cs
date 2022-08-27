@@ -1,6 +1,7 @@
 ﻿using sdl;
 using sdl_csharp.Utility;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Threading;
 
 namespace sdl_csharp.Resource.Model
@@ -55,6 +56,19 @@ namespace sdl_csharp.Resource.Model
         public string SubFolderPath { 
             get => _subFolderPath;
             set => Set(ref _subFolderPath, value);
+        }
+        private void URLEntriesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                URLEntry newUrl = (URLEntry)e.NewItems[0];
+                Download.FetchData(newUrl);
+            }
+        }
+
+        public Settings()
+        {
+            URLEntries.CollectionChanged += URLEntriesChanged;
         }
     }
 }
