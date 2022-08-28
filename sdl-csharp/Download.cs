@@ -54,7 +54,7 @@ namespace sdl_csharp
             }
         }
 
-        private static bool SetSingleData(URLEntry url, string key, object value)
+        private static bool SetSingleData(URLEntry url, string key, object value, bool isPlaylistMember = false)
         {
             return false;
         }
@@ -128,14 +128,28 @@ namespace sdl_csharp
                 serializer.Deserialize<Dictionary<string, object>>(e.Data);
 
             bool isPlaylist = false;
+            bool isPlaylistMember = false;
             bool hasDataChanged = false; // will check if any data has been changed, so we won't refresh the UI needlessly
 
-            if (data.TryGetValue("_type", out object _type))
+            if (data.TryGetValue("_type", out object _type)) // "playlist" || "video"
             {
                 if ((string)_type == "playlist")
                 {
-                    isPlaylist = true;
-                    url.Data.IsPlaylist = true;
+                    // Check if ourl and wurl are present
+                    if (data.TryGetValue("original_url", out object ourl) && data.TryGetValue("webpage_url", out object wurl)
+                        && ourl != wurl // if they don't match, we have a single
+                        && ((string)ourl).StartsWith("https://youtu.be")) // in this case we expect the video to be a member of a playlist
+                    {
+                        isPlaylistMember = true;
+                        Console.WriteLine("===============================================");
+                        Console.WriteLine("========== ENTRY IS PLAYLIST MEMBER! ==========");
+                        Console.WriteLine("===============================================");
+                    }
+                    else
+                    {
+                        isPlaylist = true;
+                        url.Data.IsPlaylist = true;
+                    }
                 }
                 else if((string)_type != "video")
                 {
@@ -152,7 +166,8 @@ namespace sdl_csharp
                 Console.WriteLine(pair.ToString());
 
                 if ((isPlaylist && SetPlaylistData(url, pair.Key, pair.Value))
-                    || (!isPlaylist && SetSingleData(url, pair.Key, pair.Value)))
+                    || (!isPlaylist && SetSingleData(url, pair.Key, pair.Value))
+                    || (isPlaylistMember && SetSingleData(url, pair.Key, pair.Value, isPlaylistMember)))
                 {
                     hasDataChanged = true;
                 }
@@ -169,9 +184,10 @@ namespace sdl_csharp
 
         public static void FetchData(URLEntry url)
         {
-            string ExtractorArguments = "--extractor-args youtube:player_skip=webpage,configs,js;player_client=android,web";
+            //string ExtractorArguments = "--extractor-args youtube:player_skip=webpage,configs,js;player_client=android,web";
 
             // TODO: we get playlist if we provide a url to a playlist member. We need in that case a single with a reference to the playlist!
+            // download both list and single and compare original_url and webpage_url?
 
             Task.Factory.StartNew(() =>
             {
@@ -182,7 +198,7 @@ namespace sdl_csharp
                     Arguments = (
                     $"\"{url.Entry}\"" + 
                     //$" --print \"%(title)j\" --yes-playlist --flat-playlist {ExtractorArguments}"
-                    $" --dump-single-json --yes-playlist --flat-playlist {ExtractorArguments}"
+                    $" --dump-single-json --flat-playlist"
                 ),
                     RedirectStandardError = true,
                     RedirectStandardOutput = true,
