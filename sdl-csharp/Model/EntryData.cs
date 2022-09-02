@@ -3,19 +3,22 @@
 namespace sdl_csharp.Model
 {
     /// <summary>
-    /// Contains data about the entry, such as title, thumbnail URL and possibly playlist information.
+    /// Contains data about the entry, grouped based on type.
     /// </summary>
     public class EntryData: NotifyPropertyChanged
     {
+        public static class VideoType
+        {
+            public const string SINGLE          = "SINGLE";
+            public const string PLAYLIST_MEMBER = "PLAYLIST_MEMBER";
+            public const string PLAYLIST        = "PLAYLIST";
+        }
+
         public class SINGLE: NotifyPropertyChanged
         {
             private string title;
             private string thumbnail;
-            private ushort length;
-            private bool   isPlaylistMember;
-            private string playlistTitle;
-            private string playlistThumbnail;
-            private ushort playlistCount;
+            private string duration;
 
             public string Title
             {
@@ -27,15 +30,36 @@ namespace sdl_csharp.Model
                 get => thumbnail;
                 set => Set(ref thumbnail, value);
             }
-            public ushort Length
+            public string Duration
             {
-                get => length;
-                set => Set(ref length, value);
+                get => duration;
+                set => Set(ref duration, value);
             }
-            public bool IsPlaylistMember
+        }
+
+        public class PLAYLIST_MEMBER: NotifyPropertyChanged
+        {
+            private string memberTitle;
+            private string memberThumbnail;
+            private string memberDuration;
+            private string playlistTitle;
+            private string playlistThumbnail;
+            private ushort playlistCount;
+
+            public string MemberTitle
             {
-                get => isPlaylistMember;
-                set => Set(ref isPlaylistMember, value);
+                get => memberTitle;
+                set => Set(ref memberTitle, value);
+            }
+            public string MemberThumbnail
+            {
+                get => memberThumbnail;
+                set => Set(ref memberThumbnail, value);
+            }
+            public string MemberDuration
+            {
+                get => memberDuration;
+                set => Set(ref memberDuration, value);
             }
             public string PlaylistTitle
             {
@@ -77,15 +101,42 @@ namespace sdl_csharp.Model
             }
         }
 
-        private bool isPlaylist = false;
+        private string type = null;
 
-        public bool IsPlaylist
+        
+
+        /// <summary>
+        /// One of: Single, Playlist Member, Playlist.
+        /// </summary>
+        public object Data
         {
-            get => isPlaylist;
-            set => Set(ref isPlaylist, value);
+            get
+            {
+                if (Type == VideoType.SINGLE)
+                    return Single;
+                if (Type == VideoType.PLAYLIST_MEMBER)
+                    return PlaylistMember;
+                if (Type == VideoType.PLAYLIST)
+                    return Playlist;
+
+                return null;
+            }
         }
 
         public SINGLE Single = new();
+        public PLAYLIST_MEMBER PlaylistMember = new();
         public PLAYLIST Playlist = new();
+        public string Type
+        {
+            get => type;
+            set {
+                if (value is VideoType.SINGLE
+                    or VideoType.PLAYLIST_MEMBER
+                    or VideoType.PLAYLIST)
+                {
+                    Set(ref type, value);
+                }
+            }
+        }
     }
 }
