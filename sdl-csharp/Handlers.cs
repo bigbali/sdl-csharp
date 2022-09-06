@@ -13,10 +13,18 @@ namespace sdl
             URLEntry entry = (URLEntry) button.DataContext;
             WindowSettings.URLEntries.Remove(entry);
         }
-        private void AddURL(object sender, RoutedEventArgs e)
+        private void AddEntry(object sender, RoutedEventArgs e)
         {
             string newURL = URLInput.Text;
             URLInput.Clear();
+
+            if (newURL.Contains("list=RDMM"))
+            {
+                MessageBox.Show("This playlist cannot be downloaded, because it's a personalised medley.",
+                                "Playlist is not valid",
+                                MessageBoxButton.OK);
+                return;
+            }
 
             if (newURL != string.Empty && newURL.StartsWith("http")) {
                 URLEntry urlEntry = new(newURL);
@@ -43,9 +51,10 @@ namespace sdl
 
             }
 
-            bool retry = url.IsDone && MessageBox.Show("This entry has already been downloaded.\nDo you want to retry?",
-                                                     "Entry already downloaded",
-                                                      MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+            bool retry = url.IsDone
+                && MessageBox.Show("This entry has already been downloaded.\nDo you want to retry?",
+                                    "Entry already downloaded",
+                                    MessageBoxButton.YesNo) == MessageBoxResult.Yes;
 
             if (retry)
             {
@@ -80,9 +89,10 @@ namespace sdl
                 }
             }
 
-            if (includesDownloadedEntry && MessageBox.Show("One or more entries have already been downloaded.\nDo you want to retry?",
-                                                           "Entries already downloaded",
-                                                            MessageBoxButton.YesNo) != MessageBoxResult.Yes)
+            if (includesDownloadedEntry
+                && MessageBox.Show("One or more entries have already been downloaded.\nDo you want to retry?",
+                                    "Entries already downloaded",
+                                    MessageBoxButton.YesNo) != MessageBoxResult.Yes)
             {
                 return;
             }

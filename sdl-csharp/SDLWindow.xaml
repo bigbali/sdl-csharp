@@ -71,7 +71,7 @@
                              Margin="15,34,120,0" />
                     <Button x:Name="ButtonAddURL"
                             Content="Add URL"
-                            Click="AddURL"
+                            Click="AddEntry"
                             HorizontalAlignment="Right"
                             Margin="0,34,15,0"
                             VerticalAlignment="Top"

@@ -12,6 +12,9 @@ using System.Windows;
 using sdl;
 using sdl_csharp.Model;
 using VideoLibrary;
+using static sdl_csharp.Model.EntryData;
+using YoutubeExplode;
+using System.Net.Http;
 
 namespace sdl_csharp
 {
@@ -232,7 +235,12 @@ namespace sdl_csharp
             Console.WriteLine(url.Data.Playlist.Count);
         }
 
-        public static string GetVideoKindByURI(URLEntry url, NameValueCollection queryParams)
+        public static string GetVideoKindByURI(
+            URLEntry url,
+            NameValueCollection queryParams,
+            ref string vId,
+            ref string pId,
+            ref string indexId)
         {
             try
             {
@@ -242,7 +250,10 @@ namespace sdl_csharp
                     if (queryParams["v"] is not null && queryParams["list"] is null)
                     {
                         Console.WriteLine("SINGLE");
-                        return EntryData.VideoType.SINGLE; ;
+
+                        vId = queryParams["v"];
+
+                        return VideoType.SINGLE; ;
                     }
 
                     // PLAYLIST MEMBER
@@ -251,14 +262,22 @@ namespace sdl_csharp
                         && queryParams["index"] is not null)
                     {
                         Console.WriteLine("MEMBER");
-                        return EntryData.VideoType.PLAYLIST_MEMBER;
+
+                        vId = queryParams["v"];
+                        pId = queryParams["list"];
+                        indexId = queryParams["index"];
+
+                        return VideoType.PLAYLIST_MEMBER;
                     }
 
                     // PLAYLIST
                     if (queryParams["list"] is not null)
                     {
                         Console.WriteLine("PLAYLIST");
-                        return EntryData.VideoType.PLAYLIST;
+
+                        pId = queryParams["list"];
+
+                        return VideoType.PLAYLIST;
                     }
                 }
 
@@ -267,7 +286,10 @@ namespace sdl_csharp
                     && queryParams["list"] is not null)
                 {
                     Console.WriteLine("PLAYLIST");
-                    return EntryData.VideoType.PLAYLIST;
+
+                    pId = queryParams["list"];
+
+                    return VideoType.PLAYLIST;
                 }
 
                 if (url.Entry.StartsWith("https://youtu.be"))
@@ -276,14 +298,24 @@ namespace sdl_csharp
                     if (queryParams["v"] is null && queryParams["list"] is null)
                     {
                         Console.WriteLine("SINGLE");
-                        return EntryData.VideoType.SINGLE;
+
+                        vId = url.Entry.Remove(0, "https://youtu.be/".Length);
+
+                        return VideoType.SINGLE;
                     }
 
                     // PLAYLIST MEMBER
-                    if (queryParams["list"] is not null)
+                    if (queryParams["v"] is null && queryParams["list"] is not null)
                     {
                         Console.WriteLine("MEMBER");
-                        return EntryData.VideoType.PLAYLIST_MEMBER;
+
+                        string vIdFirstPartRemoved = url.Entry.Remove(0, "https://youtu.be/".Length);
+                        int vIdListParamStartIndex = vIdFirstPartRemoved.IndexOf('?'); // Presume ?list= starts at this point
+
+                        vId = vIdFirstPartRemoved.Remove(vIdListParamStartIndex);
+                        pId = queryParams["list"];
+
+                        return VideoType.PLAYLIST_MEMBER;
                     }
                 }
             }
@@ -295,50 +327,50 @@ namespace sdl_csharp
             return null;
         }
 
-        public static void FetchData(URLEntry url)
+        public static async void FetchData(URLEntry url)
         {
-            Task.Factory.StartNew(() =>
+            UriBuilder uri = new(url.Entry);
+            NameValueCollection queryParams = HttpUtility.ParseQueryString(uri.Query);
+
+            string vId = null;
+            string pId = null;
+            string indexId = null;
+
+            url.Data.Type = GetVideoKindByURI(url, queryParams, ref vId, ref pId, ref indexId);
+
+            MessageBox.Show($"Type: {url.Data.Type}\n" +
+                            $"VID: {vId}\n" +
+                            $"PID: {pId}\n" +
+                            $"IID: {indexId}");
+
+            HttpClient httpClient = new();
+            YoutubeClient client = new(httpClient);
+
+            if (vId is not null && url.Data.Type is VideoType.SINGLE)
             {
-                //YouTube     client = YouTube.Default; // can't handle /playlist <--
-                //YouTubeVideo video = client.GetVideo(url.Entry);
+                var v = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={vId}");
 
-                //var videoSplitByList = url.Entry.Split(new[] { "?list=" }, StringSplitOptions.None);
+                (url.Data.Data as SINGLE).Title     = v.Title;
+                (url.Data.Data as SINGLE).Thumbnail = v.Thumbnails[0].Url;
+                (url.Data.Data as SINGLE).Duration  = v.Duration.ToString();
+            }
 
-                //string videoId = videoSplitByList[0].Remove(0,
-                //    (isPlaylist 
-                //        ? "https://www.youtube.com/" 
-                //        : "https://youtu.be/"
-                //    ).Length);
+            if (vId is not null && pId is not null && url.Data.Type is VideoType.PLAYLIST_MEMBER)
+            {
+                var v = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={vId}");
+                var p = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={pId}");
 
-                //string playlistId = videoSplitByList.Length > 1
-                //    ? videoSplitByList[1]
-                //    : null;
+                (url.Data.Data as PLAYLIST_MEMBER).MemberTitle       = v.Title;
+                (url.Data.Data as PLAYLIST_MEMBER).MemberThumbnail   = v.Thumbnails[0].Url;
+                (url.Data.Data as PLAYLIST_MEMBER).MemberDuration    = v.Duration.ToString();
+                (url.Data.Data as PLAYLIST_MEMBER).PlaylistTitle     = p.Title;
+                (url.Data.Data as PLAYLIST_MEMBER).PlaylistThumbnail = p.Thumbnails[0].Url;
+                (url.Data.Data as PLAYLIST_MEMBER).PlaylistCount     = (ushort) p.Thumbnails.Count;
+                // Count thumbnails as there is no data regarding playlist length
 
-                var uri = new UriBuilder(url.Entry);
-                NameValueCollection queryParams = HttpUtility.ParseQueryString(uri.Query);
-
-                url.Data.Type = GetVideoKindByURI(url, queryParams);
-
-                MessageBox.Show(url.Data.Type);
-
-                // Playlist
-                // https://www.youtube.com/watch?v=QMMJpFvGMlU&list=OLAK5uy_k0voqAMErjYWLKExWDMZFEWpInRV-fW5w
-                // https://www.youtube.com/playlist?list=PLidIjcybOMhyKTdhJUd4STFOEJWsQZAeZ
-
-                // Playlist member
-                // https://youtu.be/mgSHazBbDNU?list=RDMM
-                // https://www.youtube.com/watch?v=mgSHazBbDNU&list=RDMM&index=26
-
-                // Single
-                // https://youtu.be/dBW0_4wJ1kA
-                // https://www.youtube.com/watch?v=EJKFKLvWN0Y
-
-                //Console.WriteLine($"vID: {videoId}");
-                //Console.WriteLine($"pID: {playlistId}");
-            }).ContinueWith(
-                (x) => { /* no-op */
-                }
-            );
+                Console.WriteLine((url.Data.Data as PLAYLIST_MEMBER).MemberTitle);
+                Console.WriteLine((url.Data.Data as PLAYLIST_MEMBER).PlaylistTitle);
+            }
         }
     }
 }
