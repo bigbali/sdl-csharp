@@ -15,6 +15,7 @@ using VideoLibrary;
 using static sdl_csharp.Model.EntryData;
 using YoutubeExplode;
 using System.Net.Http;
+using YoutubeExplode.Common;
 
 namespace sdl_csharp
 {
@@ -59,53 +60,6 @@ namespace sdl_csharp
 
                 case "playlist_count":
                     p.Count = Convert.ToUInt16(value);
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        private static bool SetSingleData(URLEntry url, string key, object value, bool isPlaylistMember = false)
-        {
-            var p = url.Data.Single;
-
-            if (isPlaylistMember)
-            {
-                //p.IsPlaylistMember = true;
-
-                switch (key)
-                {
-                    case "entries":
-                        foreach (Dictionary<string, object>item in (ArrayList)value)
-                        {
-                            foreach (KeyValuePair<string, object> pair in item)
-                            {
-                                Console.WriteLine("==================");
-                                Console.WriteLine(pair.ToString());
-                            }
-                        }
-                        return false;
-                    //case "duration":
-                    //    p.Length = (ushort)(Convert.ToUInt16(value) / 60);
-                    //    return true;
-                    //case "thumbnail":
-                    //    p.Thumbnail = (string)value;
-                    //    return true;
-                    default:
-                        return false;
-                }
-            }
-
-            switch (key)
-            {
-                case "title":
-                    p.Title = (string)value;
-                    return true;
-                case "duration":
-                    //p.Length = (ushort)(Convert.ToUInt16(value) / 60);
-                    return true;
-                case "thumbnail":
-                    p.Thumbnail = (string)value;
                     return true;
                 default:
                     return false;
@@ -172,69 +126,6 @@ namespace sdl_csharp
             );
         }
 
-        private static void ReceivedData(URLEntry url, object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data == null || e.Data.Length == 0) return;
-
-            JavaScriptSerializer serializer = new();
-            Dictionary<string, object> data =
-                serializer.Deserialize<Dictionary<string, object>>(e.Data);
-
-            bool isPlaylist = false;
-            bool isPlaylistMember = false;
-            bool hasDataChanged = false; // will check if any data has been changed, so we won't refresh the UI needlessly
-
-            if (data.TryGetValue("_type", out object _type)) // "playlist" || "video"
-            {
-                if ((string)_type == "playlist")
-                {
-                    // Check if ourl and wurl are present
-                    if (data.TryGetValue("original_url", out object ourl) && data.TryGetValue("webpage_url", out object wurl)
-                        && ourl != wurl                                   // here, if they don't match we presume we have a single
-                        && ((string)ourl).StartsWith("https://youtu.be")) // in this case we expect the video to be a member of a playlist
-                    {
-                        isPlaylistMember = true;
-                        Console.WriteLine("===============================================");
-                        Console.WriteLine("========== ENTRY IS PLAYLIST MEMBER! ==========");
-                        Console.WriteLine("===============================================");
-                    }
-                    else
-                    {
-                        isPlaylist = true;
-                        //url.Data.IsPlaylist = true;
-                    }
-                }
-                else if((string)_type != "video")
-                {
-                    Console.WriteLine("Something is wrong");
-                    Console.WriteLine($"_type: {_type}");
-                    return;
-                }
-            }
-
-            foreach (KeyValuePair<string, object> pair in data)
-            {
-                if (pair.Value == null) continue;
-
-                Console.WriteLine(pair.ToString());
-
-                if ((isPlaylist && SetPlaylistData(url, pair.Key, pair.Value))
-                    || (!isPlaylist && SetSingleData(url, pair.Key, pair.Value))
-                    || (isPlaylistMember && SetSingleData(url, pair.Key, pair.Value, isPlaylistMember)))
-                {
-                    hasDataChanged = true;
-                }
-
-                if (hasDataChanged) // Manually tell WPF that we have changed this, as the feller is apparently unable to tell
-                {
-                    url.OnPropertyChanged("Data");
-                }
-            }
-
-            Console.WriteLine(url.Data.Playlist.Title);
-            Console.WriteLine(url.Data.Playlist.Count);
-        }
-
         public static string GetVideoKindByURI(
             URLEntry url,
             NameValueCollection queryParams,
@@ -285,10 +176,7 @@ namespace sdl_csharp
                 if (url.Entry.StartsWith("https://www.youtube.com/playlist")
                     && queryParams["list"] is not null)
                 {
-                    Console.WriteLine("PLAYLIST");
-
                     pId = queryParams["list"];
-
                     return VideoType.PLAYLIST;
                 }
 
@@ -297,18 +185,13 @@ namespace sdl_csharp
                     // SINGLE
                     if (queryParams["v"] is null && queryParams["list"] is null)
                     {
-                        Console.WriteLine("SINGLE");
-
                         vId = url.Entry.Remove(0, "https://youtu.be/".Length);
-
                         return VideoType.SINGLE;
                     }
 
                     // PLAYLIST MEMBER
                     if (queryParams["v"] is null && queryParams["list"] is not null)
                     {
-                        Console.WriteLine("MEMBER");
-
                         string vIdFirstPartRemoved = url.Entry.Remove(0, "https://youtu.be/".Length);
                         int vIdListParamStartIndex = vIdFirstPartRemoved.IndexOf('?'); // Presume ?list= starts at this point
 
@@ -321,7 +204,7 @@ namespace sdl_csharp
             }
             catch(Exception e)
             {
-                Console.WriteLine($"DEBUG: {e.Message}");
+                Console.WriteLine($"DEBUG_GET_VIDEO_KIND_BY_URL_EXCEPTION: {e.Message}");
             }
 
             return null;
@@ -346,6 +229,7 @@ namespace sdl_csharp
             HttpClient httpClient = new();
             YoutubeClient client = new(httpClient);
 
+            // SINGLE
             if (vId is not null && url.Data.Type is VideoType.SINGLE)
             {
                 var v = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={vId}");
@@ -355,22 +239,35 @@ namespace sdl_csharp
                 (url.Data.Data as SINGLE).Duration  = v.Duration.ToString();
             }
 
+            // MEMBER
             if (vId is not null && pId is not null && url.Data.Type is VideoType.PLAYLIST_MEMBER)
             {
                 var v = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={vId}");
                 var p = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={pId}");
+                var pAllVideos = await client.Playlists.GetVideosAsync($"https://youtube.com/playlist?list={pId}");
 
                 (url.Data.Data as PLAYLIST_MEMBER).MemberTitle       = v.Title;
                 (url.Data.Data as PLAYLIST_MEMBER).MemberThumbnail   = v.Thumbnails[0].Url;
                 (url.Data.Data as PLAYLIST_MEMBER).MemberDuration    = v.Duration.ToString();
                 (url.Data.Data as PLAYLIST_MEMBER).PlaylistTitle     = p.Title;
                 (url.Data.Data as PLAYLIST_MEMBER).PlaylistThumbnail = p.Thumbnails[0].Url;
-                (url.Data.Data as PLAYLIST_MEMBER).PlaylistCount     = (ushort) p.Thumbnails.Count;
-                // Count thumbnails as there is no data regarding playlist length
-
-                Console.WriteLine((url.Data.Data as PLAYLIST_MEMBER).MemberTitle);
-                Console.WriteLine((url.Data.Data as PLAYLIST_MEMBER).PlaylistTitle);
+                (url.Data.Data as PLAYLIST_MEMBER).PlaylistCount     = (ushort) pAllVideos.Count;
             }
+
+            //PLAYLIST
+            if (pId is not null && url.Data.Type is VideoType.PLAYLIST)
+            {
+                var p = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={pId}");
+                var pAllVideos = await client.Playlists.GetVideosAsync($"https://youtube.com/playlist?list={pId}");
+
+                (url.Data.Data as PLAYLIST).Title     = p.Title;
+                (url.Data.Data as PLAYLIST).Thumbnail = p.Thumbnails[0].Url;
+                (url.Data.Data as PLAYLIST).Count     = (ushort)pAllVideos.Count;
+            }
+
+            url.Data.DEBUG_PRINT_SINGLE();
+            url.Data.DEBUG_PRINT_MEMBER();
+            url.Data.DEBUG_PRINT_PLAYLIST();
         }
     }
 }

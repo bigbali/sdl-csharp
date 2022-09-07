@@ -1,4 +1,5 @@
 ﻿using sdl_csharp.Utility;
+using System;
 
 namespace sdl_csharp.Model
 {
@@ -103,8 +104,6 @@ namespace sdl_csharp.Model
 
         private string type = null;
 
-        
-
         /// <summary>
         /// One of: Single, Playlist Member, Playlist.
         /// </summary>
@@ -136,6 +135,45 @@ namespace sdl_csharp.Model
                 {
                     Set(ref type, value);
                 }
+            }
+        }
+
+        public void DEBUG_PRINT_SINGLE()
+        {
+            if (Type is VideoType.SINGLE)
+            {
+                string S = "DEBUG_SINGLE_";
+                Console.WriteLine(S + "TITLE: " + Single.Title);
+                Console.WriteLine(S + "THUMBNAIL: " + Single.Thumbnail);
+                Console.WriteLine(S + "DURATION: " + Single.Duration);
+            }
+        }
+
+        public void DEBUG_PRINT_MEMBER()
+        {
+            if (Type is VideoType.PLAYLIST_MEMBER)
+            {
+                string S = "DEBUG_MEMBER_SINGLE_";
+                string P = "DEBUG_MEMBER_PLAYLIST_";
+
+                Console.WriteLine(S + "TITLE: " + PlaylistMember.MemberTitle);
+                Console.WriteLine(S + "THUMBNAIL: " + PlaylistMember.MemberThumbnail);
+                Console.WriteLine(S + "DURATION: " + PlaylistMember.MemberDuration);
+
+                Console.WriteLine(P + "TITLE: " + PlaylistMember.PlaylistTitle);
+                Console.WriteLine(P + "THUMBNAIL: " + PlaylistMember.PlaylistThumbnail);
+                Console.WriteLine(P + "COUNT: " + PlaylistMember.PlaylistCount);
+            }
+        }
+
+        public void DEBUG_PRINT_PLAYLIST()
+        {
+            if (Type is VideoType.PLAYLIST)
+            {
+                string P = "DEBUG_PLAYLIST_";
+                Console.WriteLine(P + "TITLE: " + Playlist.Title);
+                Console.WriteLine(P + "THUMBNAIL: " + Playlist.Thumbnail);
+                Console.WriteLine(P + "COUNT: " + Playlist.Count);
             }
         }
     }
