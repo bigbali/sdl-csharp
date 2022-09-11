@@ -20,24 +20,26 @@ namespace sdl
 
             if (newURL.Contains("list=RDMM"))
             {
-                MessageBox.Show("This playlist cannot be downloaded, because it's a personalised medley.",
+                MessageBox.Show("This playlist cannot be downloaded because it's personalised (is bound to your YouTube profile).",
                                 "Playlist is not valid",
                                 MessageBoxButton.OK);
                 return;
             }
 
-            if (newURL != string.Empty && newURL.StartsWith("http")) {
+            if (newURL != string.Empty
+                && (newURL.StartsWith("https://youtu.be") || newURL.StartsWith("https://www.youtube.com"))) {
                 URLEntry urlEntry = new(newURL);
                 WindowSettings.URLEntries.Add(urlEntry);
 
                 return;
             }
 
-            MessageBox.Show("A URL must start with 'http'.",
+            MessageBox.Show("This URL appears to be invalid.\n" +
+                            "A valid URL must link to a YouTube video or playlist.",
                             "URL is invalid",
                             MessageBoxButton.OK);
         }
-        private void InitIndividualDownload(object sender, RoutedEventArgs e)
+        public void InitIndividualDownload(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             URLEntry url = (URLEntry) button.DataContext;

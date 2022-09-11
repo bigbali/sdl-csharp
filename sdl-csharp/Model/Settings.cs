@@ -24,31 +24,26 @@ namespace sdl_csharp.Resource.Model
             get => _useSubFolderPath;
             set => Set(ref _useSubFolderPath, value);
         }
-
         public bool InferSubFolderPath
         {
             get => _inferSubFolderPath;
             set => Set(ref _inferSubFolderPath, value);
         }
-
         public bool IsPlaylist
         {
             get => _isPlaylist;
             set => Set(ref _isPlaylist, value);
         }
-
         public bool IsAudio
         {
             get => _isAudio;
             set => Set(ref _isAudio, value);
         }
-
         public bool RemoveEntries
         {
             get => _removeEntries;
             set => Set(ref _removeEntries, value);
         }
-
         public string FolderPath {
             get => _folderPath;
             set => Set(ref _folderPath, value);
@@ -65,7 +60,6 @@ namespace sdl_csharp.Resource.Model
                 Download.FetchData(newUrl);
             }
         }
-
         public Settings()
         {
             URLEntries.CollectionChanged += URLEntriesChanged;

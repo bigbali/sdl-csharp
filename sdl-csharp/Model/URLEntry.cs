@@ -9,6 +9,7 @@ namespace sdl
         private string label         = DownloadLabel.Default;
         private bool   isDownloading = false;
         private bool   isDone        = false;
+        private bool   isInvalid     = false;
         public EntryData Data { get; set; } = new();
         public string Entry { get; set; }
         public bool IsDone {
@@ -18,6 +19,11 @@ namespace sdl
         public bool IsDownloading {
             get => isDownloading;
             set => Set(ref isDownloading, value);
+        }
+        public bool IsInvalid
+        {
+            get => isInvalid;
+            set => Set(ref isInvalid, value);
         }
         public string Label
         {
@@ -35,6 +41,13 @@ namespace sdl
             IsDownloading = false;
             IsDone = true;
             Label = DownloadLabel.Done;
+        }
+        public void StatusInvalid()
+        {
+            IsDownloading = false;
+            IsDone = false;
+            IsInvalid = true;
+            Label = DownloadLabel.Default;
         }
         public void Reset()
         {

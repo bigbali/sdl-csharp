@@ -7,7 +7,6 @@
         xmlns:local="clr-namespace:sdl_csharp.Resource.Control"
         xmlns:sdl="clr-namespace:sdl"
         mc:Ignorable="d" 
-        d:DataContext="{d:DesignInstance Type=sdl:SDLWindow}"
         d:DesignHeight="100"
         d:DesignWidth="400">
     <Button.Resources>

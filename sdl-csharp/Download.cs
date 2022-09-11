@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Script.Serialization;
 using System.Windows;
-using sdl;
-using sdl_csharp.Model;
 using VideoLibrary;
-using static sdl_csharp.Model.EntryData;
 using YoutubeExplode;
 using System.Net.Http;
 using YoutubeExplode.Common;
+using sdl;
+using sdl_csharp.Model;
+using static sdl_csharp.Model.EntryData;
 
 namespace sdl_csharp
 {
@@ -48,30 +48,14 @@ namespace sdl_csharp
             Console.WriteLine(e.Data);
         }
 
-        private static bool SetPlaylistData(URLEntry url, string key, object value)
-        {
-            var p = url.Data.Playlist;
-
-            switch (key)
-            {
-                case "title":
-                    p.Title = (string)value;
-                    return true;
-
-                case "playlist_count":
-                    p.Count = Convert.ToUInt16(value);
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
         public static void BeginDownload(URLEntry url, string folderPath, bool isPlaylist)
         {
-            string _folderPath = folderPath + 
-                ((SDLWindowReference.WindowSettings.SubFolderPath.Length > 0 && SDLWindowReference.WindowSettings.UseSubFolderPath == true)
-                    ? $"/{SDLWindowReference.WindowSettings.SubFolderPath}"
-                    : string.Empty);
+            string _folderPath = folderPath != string.Empty 
+                ? folderPath // If there is no folder path set, use desktop instead
+                : Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\SDL Downloads" + 
+                    ((SDLWindowReference.WindowSettings.SubFolderPath != string.Empty && SDLWindowReference.WindowSettings.UseSubFolderPath == true)
+                        ? $"/{SDLWindowReference.WindowSettings.SubFolderPath}"
+                        : string.Empty);
 
             // if infer is set and url refers to playlist, use playlist name instead of this
             //if (SDLWindowReference.WindowSettings.InferSubFolderPath && url.Data.IsPlaylist && url.Data.PlaylistTitle != null)
@@ -130,8 +114,7 @@ namespace sdl_csharp
             URLEntry url,
             NameValueCollection queryParams,
             ref string vId,
-            ref string pId,
-            ref string indexId)
+            ref string pId)
         {
             try
             {
@@ -156,7 +139,6 @@ namespace sdl_csharp
 
                         vId = queryParams["v"];
                         pId = queryParams["list"];
-                        indexId = queryParams["index"];
 
                         return VideoType.PLAYLIST_MEMBER;
                     }
@@ -217,14 +199,12 @@ namespace sdl_csharp
 
             string vId = null;
             string pId = null;
-            string indexId = null;
 
-            url.Data.Type = GetVideoKindByURI(url, queryParams, ref vId, ref pId, ref indexId);
+            url.Data.Type = GetVideoKindByURI(url, queryParams, ref vId, ref pId);
 
             MessageBox.Show($"Type: {url.Data.Type}\n" +
                             $"VID: {vId}\n" +
-                            $"PID: {pId}\n" +
-                            $"IID: {indexId}");
+                            $"PID: {pId}\n");
 
             HttpClient httpClient = new();
             YoutubeClient client = new(httpClient);
@@ -254,7 +234,7 @@ namespace sdl_csharp
                 (url.Data.Data as PLAYLIST_MEMBER).PlaylistCount     = (ushort) pAllVideos.Count;
             }
 
-            //PLAYLIST
+            // PLAYLIST
             if (pId is not null && url.Data.Type is VideoType.PLAYLIST)
             {
                 var p = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={pId}");
@@ -263,6 +243,14 @@ namespace sdl_csharp
                 (url.Data.Data as PLAYLIST).Title     = p.Title;
                 (url.Data.Data as PLAYLIST).Thumbnail = p.Thumbnails[0].Url;
                 (url.Data.Data as PLAYLIST).Count     = (ushort)pAllVideos.Count;
+            }
+
+            if (vId is null && pId is null) // Presume that URL is invalid
+            {
+                url.StatusInvalid();
+                MessageBox.Show($"{url.Entry} appears to be invalid.",
+                                "URL is not valid",
+                                MessageBoxButton.OK);
             }
 
             url.Data.DEBUG_PRINT_SINGLE();
