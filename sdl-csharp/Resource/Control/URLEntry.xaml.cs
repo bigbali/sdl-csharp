@@ -27,5 +27,9 @@ namespace sdl_csharp.Resource.Control
         {
             SDLWindowReference.InitIndividualDownload(sender, e);
         }
+        private void ForwardToRemoveEntry(object sender, RoutedEventArgs e)
+        {
+            SDLWindowReference.RemoveEntry(sender, e);
+        }
     }
 }

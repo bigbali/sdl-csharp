@@ -1,5 +1,6 @@
 ﻿using sdl_csharp.Utility;
 using System;
+using System.Windows;
 
 namespace sdl_csharp.Model
 {
@@ -8,13 +9,18 @@ namespace sdl_csharp.Model
     /// </summary>
     public class EntryData: NotifyPropertyChanged
     {
+        private static string TrimZero(string duration)
+        {
+            return duration is not null && duration.StartsWith("00")
+            ? duration.Remove(0, 3) // Trim if less than an hour long
+            : duration;
+        }
         public static class VideoType
         {
             public const string SINGLE          = "SINGLE";
             public const string PLAYLIST_MEMBER = "PLAYLIST_MEMBER";
             public const string PLAYLIST        = "PLAYLIST";
         }
-
         public class SINGLE: NotifyPropertyChanged
         {
             private string title;
@@ -33,11 +39,10 @@ namespace sdl_csharp.Model
             }
             public string Duration
             {
-                get => duration;
+                get => TrimZero(duration);
                 set => Set(ref duration, value);
             }
         }
-
         public class PLAYLIST_MEMBER: NotifyPropertyChanged
         {
             private string memberTitle;
@@ -59,7 +64,7 @@ namespace sdl_csharp.Model
             }
             public string MemberDuration
             {
-                get => memberDuration;
+                get => TrimZero(memberDuration);
                 set => Set(ref memberDuration, value);
             }
             public string PlaylistTitle

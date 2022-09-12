@@ -57,11 +57,17 @@ namespace sdl_csharp
                         ? $"/{SDLWindowReference.WindowSettings.SubFolderPath}"
                         : string.Empty);
 
-            // if infer is set and url refers to playlist, use playlist name instead of this
-            //if (SDLWindowReference.WindowSettings.InferSubFolderPath && url.Data.IsPlaylist && url.Data.PlaylistTitle != null)
-            //{
-            //    _folderPath = $"${folderPath}/{url.Data.PlaylistTitle}";
-            //}
+            if (SDLWindowReference.WindowSettings.InferSubFolderPath) // If inferring is enabled, infer from playlist title
+            {
+                if (url.Data.Type is VideoType.PLAYLIST)
+                {
+                    _folderPath += $"/{(url.Data.Data as PLAYLIST).Title}";
+                }
+                if (url.Data.Type is VideoType.PLAYLIST_MEMBER)
+                {
+                    _folderPath += $"/{(url.Data.Data as PLAYLIST_MEMBER).PlaylistTitle}";
+                }
+            }
 
             string _format = SDLWindowReference.WindowSettings.IsAudio
                 ? " --extract-audio --audio-format mp3"

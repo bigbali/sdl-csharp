@@ -7,13 +7,13 @@ namespace sdl
 {
     public partial class SDLWindow : Window
     {
-        private void RemoveEntry(object sender, RoutedEventArgs e)
+        public void RemoveEntry(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             URLEntry entry = (URLEntry) button.DataContext;
             WindowSettings.URLEntries.Remove(entry);
         }
-        private void AddEntry(object sender, RoutedEventArgs e)
+        public void AddEntry(object sender, RoutedEventArgs e)
         {
             string newURL = URLInput.Text;
             URLInput.Clear();
@@ -63,7 +63,7 @@ namespace sdl
                 url.Reset();
             }
 
-            Download.BeginDownload(url, WindowSettings.FolderPath, false);
+            Download.BeginDownload(url, WindowSettings.FolderPath, WindowSettings.IsPlaylist);
         }
         private void InitDownload(object sender, RoutedEventArgs e)
         {
