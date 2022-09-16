@@ -50,12 +50,14 @@ namespace sdl_csharp
 
         public static void BeginDownload(URLEntry url, string folderPath, bool isPlaylist)
         {
-            string _folderPath = folderPath != string.Empty 
+            string _folderPath = folderPath != string.Empty
                 ? folderPath // If there is no folder path set, use desktop instead
-                : Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\SDL Downloads" + 
-                    ((SDLWindowReference.WindowSettings.SubFolderPath != string.Empty && SDLWindowReference.WindowSettings.UseSubFolderPath == true)
-                        ? $"/{SDLWindowReference.WindowSettings.SubFolderPath}"
-                        : string.Empty);
+                : Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\SDL Downloads";
+
+            if (SDLWindowReference.WindowSettings.UseSubFolderPath)
+            {
+                _folderPath += $"/{SDLWindowReference.WindowSettings.SubFolderPath}";
+            }
 
             if (SDLWindowReference.WindowSettings.InferSubFolderPath) // If inferring is enabled, infer from playlist title
             {

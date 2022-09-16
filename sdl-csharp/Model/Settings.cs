@@ -10,9 +10,9 @@ namespace sdl_csharp.Resource.Model
     {
         private bool _useSubFolderPath   = false;
         private bool _inferSubFolderPath = false;
+        private bool _removeEntries      = false;
         private bool _isPlaylist         = true;
         private bool _isAudio            = true;
-        private bool _removeEntries      = true;
         private string _folderPath       = string.Empty;
         private string _subFolderPath    = string.Empty;
   

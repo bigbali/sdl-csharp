@@ -24,6 +24,7 @@
         <Grid Height="33"
               VerticalAlignment="Top">
             <Border Width="Auto"
+                    MinWidth="350"
                     Height="30"
                     Panel.ZIndex="100"
                     VerticalAlignment="Center"
