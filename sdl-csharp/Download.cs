@@ -210,9 +210,9 @@ namespace sdl_csharp
 
             url.Data.Type = GetVideoKindByURI(url, queryParams, ref vId, ref pId);
 
-            MessageBox.Show($"Type: {url.Data.Type}\n" +
-                            $"VID: {vId}\n" +
-                            $"PID: {pId}\n");
+            //MessageBox.Show($"Type: {url.Data.Type}\n" +
+            //                $"VID: {vId}\n" +
+            //                $"PID: {pId}\n");
 
             HttpClient httpClient = new();
             YoutubeClient client = new(httpClient);
