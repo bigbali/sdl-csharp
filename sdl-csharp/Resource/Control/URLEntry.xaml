@@ -179,11 +179,7 @@
                   Height="97"
                   Width="120">
                 <Border CornerRadius="6">
-                    <Border.Background>
-                        <ImageBrush Stretch="UniformToFill"
-                                    ImageSource="{Binding Data.Thumbnail}"
-                                    d:ImageSource="https://miro.medium.com/max/1600/1*oVzDjN7eCObQsmkRZpHEVQ.jpeg"/>
-                    </Border.Background>
+                   
                     <Border.Resources>
                         <Style TargetType="Border">
                             <Setter Property="Opacity" Value="0"/>
@@ -302,11 +298,6 @@
                   Height="97"
                   Width="120">
                 <Border CornerRadius="6">
-                    <Border.Background>
-                        <ImageBrush Stretch="UniformToFill"
-                                    ImageSource="{Binding Data.MemberThumbnail}"
-                                    d:ImageSource="https://miro.medium.com/max/1600/1*oVzDjN7eCObQsmkRZpHEVQ.jpeg"/>
-                    </Border.Background>
                     <Border.Resources>
                         <Style TargetType="Border">
                             <Setter Property="Opacity" Value="0"/>

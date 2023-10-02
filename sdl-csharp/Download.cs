@@ -1,29 +1,26 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Net;
-using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Script.Serialization;
 using System.Windows;
-using VideoLibrary;
 using YoutubeExplode;
 using System.Net.Http;
 using YoutubeExplode.Common;
 using sdl;
-using sdl_csharp.Model;
 using static sdl_csharp.Model.EntryData;
+using System.IO;
 
 namespace sdl_csharp
 {
     internal static class Download
     {
         public static SDLWindow SDLWindowReference { get; set; }
+        private static DateTime downloadStartedAt;
         private static void ProcessExited(URLEntry url, EventArgs e) // sender will already be destroyed
         {
+            Console.WriteLine($"Exit: {url}");
+
             SDLWindowReference.WindowSettings.UIContext.Send((x) => // allow changing URLEntries from a thread other than main
             {
                 if (SDLWindowReference.WindowSettings.RemoveEntries)
@@ -43,13 +40,24 @@ namespace sdl_csharp
             Console.WriteLine($"Fault: {e.Data}");
         }
 
+        private static readonly object _logLock = new();
+
         private static void ProcessHasReceivedOutput(URLEntry entry, object sender, DataReceivedEventArgs e)
         {
+            if (e.Data == null) return;
+
+            lock (_logLock)
+            {
+                File.AppendAllText(
+                    $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\{$"sdl-{downloadStartedAt.ToString("yyyy-MM-dd_HH-mm-ss")}.txt"}", 
+                    $"{entry.Entry}: {e.Data}{Environment.NewLine}");
+            }
             Console.WriteLine(e.Data);
         }
 
         public static void BeginDownload(URLEntry url, string folderPath, bool isPlaylist)
         {
+            Console.WriteLine("BEGIN DOWNLOAD");
             string _folderPath = folderPath != string.Empty
                 ? folderPath // If there is no folder path set, use desktop instead
                 : Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\SDL Downloads";
@@ -71,6 +79,10 @@ namespace sdl_csharp
                 }
             }
 
+            Console.WriteLine($"Download folder: {_folderPath}");
+
+            downloadStartedAt = DateTime.Now;
+
             string _format = SDLWindowReference.WindowSettings.IsAudio
                 ? " --extract-audio --audio-format mp3"
                 : " --format \"bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b\"";
@@ -83,15 +95,15 @@ namespace sdl_csharp
 
             Task.Factory.StartNew(() =>
             {
-                ProcessStartInfo process = new("youtube-dl")
+                ProcessStartInfo process = new("./youtube-dl.exe")
                 {
                     Arguments = (
-                    $"\"{url.Entry}\"" +
-                    $" -o \"{_folderPath}/%(title)s.%(ext)s\"" +
-                    _format +
-                    _playlist
-                ),
-                    RedirectStandardError  = true,
+                        $"\"{url.Entry}\"" +  //  ↓ sanitized title
+                        $" -o \"{_folderPath}/%(title)s.%(ext)s\"" +
+                        _format +
+                        _playlist
+                    ),
+                    RedirectStandardError = true,
                     RedirectStandardOutput = true,
                     RedirectStandardInput  = true,
                     UseShellExecute        = false,
@@ -103,6 +115,8 @@ namespace sdl_csharp
                     StartInfo = process,
                     EnableRaisingEvents = true
                 };
+
+                Console.WriteLine(process.Arguments);
 
                 downloadProcess.Exited             += (sender, e) => ProcessExited(url, e);
                 downloadProcess.OutputDataReceived += (sender, e) => ProcessHasReceivedOutput(url, sender, e);
@@ -250,7 +264,7 @@ namespace sdl_csharp
 
                 (url.Data.Data as PLAYLIST).Title     = p.Title;
                 (url.Data.Data as PLAYLIST).Thumbnail = p.Thumbnails[0].Url;
-                (url.Data.Data as PLAYLIST).Count     = (ushort)pAllVideos.Count;
+                (url.Data.Data as PLAYLIST).Count     = (ushort) pAllVideos.Count;
             }
 
             if (vId is null && pId is null) // Presume that URL is invalid

@@ -15,7 +15,9 @@ namespace sdl_csharp.Resource.Model
         private bool _isAudio            = true;
         private string _folderPath       = string.Empty;
         private string _subFolderPath    = string.Empty;
-  
+
+        public bool AutomaticNumbering { get; init; } = false;
+
         public readonly SynchronizationContext UIContext  = SynchronizationContext.Current;
         public ObservableCollection<URLEntry> URLEntries { get; set; } = new();
 

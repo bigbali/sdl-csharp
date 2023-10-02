@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using sdl_csharp;
@@ -15,6 +16,8 @@ namespace sdl
         }
         public void AddEntry(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine("ADD ENTRY");
+
             string newURL = URLInput.Text;
             URLInput.Clear();
 
@@ -41,6 +44,8 @@ namespace sdl
         }
         public void InitIndividualDownload(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine("INIT INDIVIDUAL DOWNLOAD");
+
             Button button = sender as Button;
             URLEntry url = (URLEntry) button.DataContext;
 
@@ -67,6 +72,7 @@ namespace sdl
         }
         private void InitDownload(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine("INIT DOWNLOAD");
             if (WindowSettings.URLEntries.Count == 0)
             {
                 MessageBox.Show("Please specify some URLs to be downloaded!",
