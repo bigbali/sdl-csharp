@@ -3,8 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:sdl_csharp.Resource.Control"
-             xmlns:sdl="clr-namespace:sdl"
              Margin="0,0,0,-6"
              mc:Ignorable="d" 
              Height="140"
@@ -449,7 +447,7 @@
                 <Border CornerRadius="6">
                     <Border.Background>
                         <ImageBrush Stretch="UniformToFill"
-                                    ImageSource="{Binding Data.Thumbnail}"
+                                    ImageSource="{Binding Path=Data.Thumbnail, TargetNullValue='https://miro.medium.com/max/1600/1*oVzDjN7eCObQsmkRZpHEVQ.jpeg'}"
                                     d:ImageSource="https://miro.medium.com/max/1600/1*oVzDjN7eCObQsmkRZpHEVQ.jpeg"/>
                     </Border.Background>
                     <Border.Resources>

@@ -1,4 +1,4 @@
-﻿using sdl;
+﻿using sdl_csharp.Model.Entry;
 using sdl_csharp.Utility;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,18 +8,35 @@ namespace sdl_csharp.Resource.Model
 {
     public class Settings: NotifyPropertyChanged
     {
+        private static Settings _instance;
+        private Settings()
+        {
+            //URLEntries.CollectionChanged += URLEntriesChanged;
+        }
+
+        public static Settings Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new Settings();
+                }
+                return _instance;
+            }
+        }
+
         private bool _useSubFolderPath   = false;
         private bool _inferSubFolderPath = false;
+        private bool _automaticNumbering = false;
         private bool _removeEntries      = false;
         private bool _isPlaylist         = true;
         private bool _isAudio            = true;
         private string _folderPath       = string.Empty;
         private string _subFolderPath    = string.Empty;
 
-        public bool AutomaticNumbering { get; init; } = false;
-
         public readonly SynchronizationContext UIContext  = SynchronizationContext.Current;
-        public ObservableCollection<URLEntry> URLEntries { get; set; } = new();
+        public ObservableCollection<Entry> URLEntries { get; set; } = new();
 
         public bool UseSubFolderPath
         {
@@ -41,6 +58,11 @@ namespace sdl_csharp.Resource.Model
             get => _isAudio;
             set => Set(ref _isAudio, value);
         }
+        public bool AutomaticNumbering
+        {
+            get => _automaticNumbering;
+            set => Set(ref _automaticNumbering, value);
+        }
         public bool RemoveEntries
         {
             get => _removeEntries;
@@ -54,17 +76,13 @@ namespace sdl_csharp.Resource.Model
             get => _subFolderPath;
             set => Set(ref _subFolderPath, value);
         }
-        private void URLEntriesChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                URLEntry newUrl = (URLEntry)e.NewItems[0];
-                Download.FetchData(newUrl);
-            }
-        }
-        public Settings()
-        {
-            URLEntries.CollectionChanged += URLEntriesChanged;
-        }
+        //private void URLEntriesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    if (e.Action == NotifyCollectionChangedAction.Add)
+        //    {
+        //        URLEntry newUrl = (URLEntry)e.NewItems[0];
+        //        Download.FetchData(newUrl);
+        //    }
+        //}
     }
 }

@@ -2,24 +2,23 @@
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using sdl_csharp;
+using sdl_csharp.Model.Entry;
 
-namespace sdl
+namespace sdl_csharp
 {
     public partial class SDLWindow : Window
     {
         public void RemoveEntry(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            URLEntry entry = (URLEntry) button.DataContext;
+            Entry entry = (Entry) button.DataContext;
             WindowSettings.URLEntries.Remove(entry);
         }
         public void AddEntry(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("ADD ENTRY");
-
             string newURL = URLInput.Text;
             URLInput.Clear();
+            Console.WriteLine($"Add entry {newURL}");
 
             if (newURL.Contains("list=RDMM"))
             {
@@ -31,8 +30,10 @@ namespace sdl
 
             if (newURL != string.Empty
                 && (newURL.StartsWith("https://youtu.be") || newURL.StartsWith("https://www.youtube.com"))) {
-                URLEntry urlEntry = new(newURL);
+                Entry urlEntry = new(newURL);
                 WindowSettings.URLEntries.Add(urlEntry);
+
+                Console.WriteLine(urlEntry);
 
                 return;
             }
@@ -47,7 +48,7 @@ namespace sdl
             Console.WriteLine("INIT INDIVIDUAL DOWNLOAD");
 
             Button button = sender as Button;
-            URLEntry url = (URLEntry) button.DataContext;
+            Entry url = (Entry) button.DataContext;
 
             if (url.IsDownloading)
             {
@@ -84,14 +85,14 @@ namespace sdl
 
             bool includesDownloadedEntry = false;
             bool includesDownloadingEntry = false;
-            foreach (URLEntry url in WindowSettings.URLEntries) // Preminilary checks
+            foreach (Entry entry in WindowSettings.URLEntries) // Preminilary checks
             {
-                if (url.IsDone && !includesDownloadedEntry)
+                if (entry.IsDone && !includesDownloadedEntry)
                 {
                     includesDownloadedEntry = true;
                 }
 
-                if (url.IsDownloading && !includesDownloadingEntry)
+                if (entry.IsDownloading && !includesDownloadingEntry)
                 {
                     includesDownloadingEntry = true;
                 }
@@ -114,14 +115,14 @@ namespace sdl
 
             }
 
-            foreach (URLEntry url in WindowSettings.URLEntries) // For every URL, start a new thread with a download process
+            foreach (Entry entry in WindowSettings.URLEntries) // For every URL, start a new thread with a download process
             {
-                if (url.IsDone)
+                if (entry.IsDone)
                 {
-                    url.Reset();
+                    entry.Reset();
                 }
 
-                Download.BeginDownload(url, WindowSettings.FolderPath, WindowSettings.IsPlaylist);
+                Download.BeginDownload(entry, WindowSettings.FolderPath, WindowSettings.IsPlaylist);
             }
         }
         private void SelectFolder(object sender, RoutedEventArgs e)
@@ -142,6 +143,11 @@ namespace sdl
 
                 return;
             }
+        }
+        private void ToggleNumbering(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine($"numbering {!WindowSettings.AutomaticNumbering}");
+            WindowSettings.AutomaticNumbering = !WindowSettings.AutomaticNumbering;
         }
         private void TogglePlaylist(object sender, RoutedEventArgs e)
         {

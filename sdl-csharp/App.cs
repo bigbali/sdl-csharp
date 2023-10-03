@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace sdl
+namespace sdl_csharp
 {
     /// <summary>
     /// Interaction logic for App.xaml

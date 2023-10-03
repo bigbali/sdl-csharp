@@ -1,7 +1,7 @@
-﻿<Application x:Class="sdl.App"
+﻿<Application x:Class="sdl_csharp.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:sdl"
+             xmlns:local="clr-namespace:sdl_csharp"
              StartupUri="SDLWindow.xaml">
     <Application.Resources>
         <SolidColorBrush x:Key="TextColor" Color="#E5FFFFFF" />

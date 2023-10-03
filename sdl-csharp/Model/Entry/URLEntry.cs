@@ -1,22 +1,22 @@
-﻿using sdl_csharp.Model;
-using sdl_csharp.Utility;
+﻿using sdl_csharp.Utility;
 using static sdl_csharp.Resource.Global;
 
-namespace sdl
+namespace sdl_csharp.Model.Entry
 {
-    public class URLEntry : NotifyPropertyChanged
+    public partial class Entry : NotifyPropertyChanged
     {
-        private string label         = DownloadLabel.Default;
-        private bool   isDownloading = false;
-        private bool   isDone        = false;
-        private bool   isInvalid     = false;
-        public EntryData Data { get; set; } = new();
-        public string Entry { get; set; }
-        public bool IsDone {
+        private string label = DownloadLabel.Default;
+        private bool isDownloading = false;
+        private bool isDone = false;
+        private bool isInvalid = false;
+        //public string Entry { get; set; }
+        public bool IsDone
+        {
             get => isDone;
             set => Set(ref isDone, value);
         }
-        public bool IsDownloading {
+        public bool IsDownloading
+        {
             get => isDownloading;
             set => Set(ref isDownloading, value);
         }
@@ -54,10 +54,6 @@ namespace sdl
             IsDownloading = false;
             IsDone = false;
             Label = DownloadLabel.Default;
-        }
-        public URLEntry(string urlString)
-        {
-            Entry = urlString;
         }
     }
 }

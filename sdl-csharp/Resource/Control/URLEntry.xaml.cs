@@ -1,4 +1,4 @@
-﻿using sdl;
+﻿using sdl_csharp;
 using System.Windows;
 using System.Windows.Controls;
 

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:sdl_csharp.Resource.Control"
-             xmlns:sdl="clr-namespace:sdl"
+             xmlns:sdl="clr-namespace:sdl_csharp"
              mc:Ignorable="d" 
              d:DesignHeight="100"
              d:DesignWidth="400">
