@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -12,18 +13,18 @@ namespace sdl_csharp
         {
             Button button = sender as Button;
             Entry entry = (Entry) button.DataContext;
-            WindowSettings.URLEntries.Remove(entry);
+            WindowSettings.Entries.Remove(entry);
         }
         public void AddEntry(object sender, RoutedEventArgs e)
         {
             string newURL = URLInput.Text;
             URLInput.Clear();
-            Console.WriteLine($"Add entry {newURL}");
+            Utility.Logger.Log($"Add entry {newURL}");
 
             if (newURL.Contains("list=RDMM"))
             {
                 MessageBox.Show("This playlist cannot be downloaded because it's personalised (is bound to your YouTube profile).",
-                                "Playlist is not valid",
+                                "EntryDataPlaylist is not valid",
                                 MessageBoxButton.OK);
                 return;
             }
@@ -31,9 +32,9 @@ namespace sdl_csharp
             if (newURL != string.Empty
                 && (newURL.StartsWith("https://youtu.be") || newURL.StartsWith("https://www.youtube.com"))) {
                 Entry urlEntry = new(newURL);
-                WindowSettings.URLEntries.Add(urlEntry);
+                WindowSettings.Entries.Add(urlEntry);
 
-                Console.WriteLine(urlEntry);
+                //Utility.Logger.Log(urlEntry.ToString());
 
                 return;
             }
@@ -45,7 +46,7 @@ namespace sdl_csharp
         }
         public void InitIndividualDownload(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("INIT INDIVIDUAL DOWNLOAD");
+            Utility.Logger.Log("INIT INDIVIDUAL DOWNLOAD");
 
             Button button = sender as Button;
             Entry url = (Entry) button.DataContext;
@@ -73,8 +74,8 @@ namespace sdl_csharp
         }
         private void InitDownload(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("INIT DOWNLOAD");
-            if (WindowSettings.URLEntries.Count == 0)
+            Utility.Logger.Log("INIT DOWNLOAD");
+            if (WindowSettings.Entries.Count == 0)
             {
                 MessageBox.Show("Please specify some URLs to be downloaded!",
                                 "No entries to download",
@@ -85,7 +86,7 @@ namespace sdl_csharp
 
             bool includesDownloadedEntry = false;
             bool includesDownloadingEntry = false;
-            foreach (Entry entry in WindowSettings.URLEntries) // Preminilary checks
+            foreach (Entry entry in WindowSettings.Entries) // Preminilary checks
             {
                 if (entry.IsDone && !includesDownloadedEntry)
                 {
@@ -115,7 +116,7 @@ namespace sdl_csharp
 
             }
 
-            foreach (Entry entry in WindowSettings.URLEntries) // For every URL, start a new thread with a download process
+            foreach (Entry entry in WindowSettings.Entries) // For every URL, start a new thread with a download process
             {
                 if (entry.IsDone)
                 {
@@ -146,7 +147,7 @@ namespace sdl_csharp
         }
         private void ToggleNumbering(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine($"numbering {!WindowSettings.AutomaticNumbering}");
+            Utility.Logger.Log($"numbering {!WindowSettings.AutomaticNumbering}");
             WindowSettings.AutomaticNumbering = !WindowSettings.AutomaticNumbering;
         }
         private void TogglePlaylist(object sender, RoutedEventArgs e)

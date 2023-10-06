@@ -23,6 +23,8 @@ namespace sdl_csharp.Utility
                 return false;
             }
 
+            Logger.Log($"CHANGED: {propertyName}");
+
             storage = value;
             OnPropertyChanged(propertyName);
             return true;

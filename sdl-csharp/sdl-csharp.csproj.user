@@ -2,6 +2,32 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
+    <Compile Update="Resource\Control\Entry\EntryControls.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Resource\Control\Entry\EntryMember.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Resource\Control\Entry\EntryPlaylist.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Resource\Control\Entry\EntrySingle.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Resource\Control\Entry\EntryControls.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resource\Control\Entry\EntryMember.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resource\Control\Entry\EntryPlaylist.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resource\Control\Entry\EntrySingle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Resource\Style\TextBox.xaml">
       <SubType>Designer</SubType>
     </Page>

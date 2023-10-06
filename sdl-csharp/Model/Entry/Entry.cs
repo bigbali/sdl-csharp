@@ -1,7 +1,6 @@
 ﻿using sdl_csharp.Utility;
-using System;
 using System.Net.Http;
-using System.Windows;
+using System.Threading.Tasks;
 using YoutubeExplode;
 using YoutubeExplode.Common;
 
@@ -9,6 +8,20 @@ namespace sdl_csharp.Model.Entry
 {
     public partial class Entry : NotifyPropertyChanged
     {
+        private VideoType  type;
+        private IEntryData data;
+        private string url = null;
+        private string videoId = null;
+        private string playlistId = null;
+
+        public VideoType Type { get => type; private set => Set(ref type, value); }
+
+        public IEntryData Data { get => data; private set => Set(ref data, value); }
+
+        public string URL { get => url; private set => Set(ref url, value); }
+
+        public interface IEntryData {};
+
         public enum VideoType
         {
             SINGLE,
@@ -16,114 +29,99 @@ namespace sdl_csharp.Model.Entry
             PLAYLIST
         }
 
-        public interface IVideoData { };
-
-        private string VideoId    = null;
-        private string PlaylistId = null;
-        public VideoType Type  { get; private set; }
-        public IVideoData Data { get; private set; }
-        public string URL = null;
-
         public Entry(string url)
         {
             URL = url;
-            Console.WriteLine($"Entry {url}");
 
-            Type = Model.Entry.Data.GetType(url, ref VideoId, ref PlaylistId) ?? Type;
-            IVideoData videoData = Type switch
+            Logger.Log($"Entry {url}");
+
+            Type = GetType(url, ref videoId, ref playlistId) ?? Type;
+            Data = CreateVideoData();
+        }
+
+        private IEntryData CreateVideoData()
+        {
+            return Type switch
             {
-                VideoType.SINGLE   => new Single(),
-                VideoType.MEMBER   => new Member(),
-                VideoType.PLAYLIST => new Playlist(),
+                VideoType.SINGLE => new EntryDataSingle(),
+                VideoType.MEMBER => new EntryDataMember(),
+                VideoType.PLAYLIST => new EntryDataPlaylist(),
                 _ => null
             };
-
-            Fetch(url, videoData);
-
-            Data = videoData;
         }
 
-        public class Single : IVideoData
-        {
-            public string Author { get; set; }
-            public string Title { get; set; }
-            public string Duration { get; set; }
-            public string Thumbnail { get; set; }
-        }
-
-        public class Member: IVideoData
-        {
-            public string Author { get; set; }
-            public string Title { get; set; }
-            public string Duration { get; set; }
-            public string Thumbnail { get; set; }
-            public string PlaylistTitle { get; set; }
-            public string PlaylistThumbnail { get; set; }
-            public ushort PlaylistCount { get; set; }
-        }
-
-        public class Playlist: IVideoData
-        {
-            public string Author { get; set; }
-            public string Title { get; set; }
-            public string Thumbnail { get; set; }
-            public ushort Count { get; set; }
-        }
-
-        private async void Fetch(string url, IVideoData data)
+        public async Task FetchAsync()
         {
             HttpClient httpClient = new();
             YoutubeClient client = new(httpClient);
 
-            Console.WriteLine("Fetching...");
+            Logger.Log($"Fetching for type {Type}");
 
-            Single S = data as Single;
-            Member M = data as Member;
-            Playlist P = data as Playlist;
-
-
-            // SINGLE
-            if (VideoId is not null && Type is VideoType.SINGLE)
+            if (videoId is not null)
             {
-                var v = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={VideoId}");
-
-                S.Title     = v.Title;
-                S.Thumbnail = v.Thumbnails[0].Url;
-                S.Duration  = v.Duration.ToString();
+                if (Type is VideoType.SINGLE)
+                {
+                    await FetchSingleAsync(client);
+                } else if (Type is VideoType.MEMBER && playlistId is not null)
+                {
+                    await FetchMemberAsync(client);
+                }
+            } else if (playlistId is not null && Type is VideoType.PLAYLIST)
+            {
+                await FetchPlaylistAsync(client);
+            } else
+            {
+                Logger.Log($"URL appears to be invalid: {URL}");
             }
+        }
 
-            // MEMBER
-            if (VideoId is not null && PlaylistId is not null && Type is VideoType.MEMBER)
+        private async Task FetchSingleAsync(YoutubeClient client)
+        {
+            Logger.Log();
+            var v = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={videoId}");
+            if (Data is EntryDataSingle data)
             {
-                var v = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={VideoId}");
-                var p = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={PlaylistId}");
-                var pAll = await client.Playlists.GetVideosAsync($"https://youtube.com/playlist?list={PlaylistId}");
-
-                M.Title = v.Title;
-                M.Thumbnail = v.Thumbnails[0].Url;
-                M.Duration = v.Duration.ToString();
-                M.Author = v.Author.ChannelTitle;
-                M.PlaylistTitle = p.Title;
-                M.PlaylistThumbnail = p.Thumbnails[0].Url;
-                M.PlaylistCount = (ushort) pAll.Count;
+                data.Title = v.Title;
+                data.Thumbnail = v.Thumbnails[0].Url;
+                data.Duration = v.Duration.ToString();
+                data.Author = v.Author.ChannelTitle;
+                Logger.Log(data.Title);
             }
+        }
 
-            // PLAYLIST
-            if (PlaylistId is not null && Type is VideoType.PLAYLIST)
+        private async Task FetchMemberAsync(YoutubeClient client)
+        {
+            Logger.Log();
+            var v = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={videoId}");
+            var p = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={playlistId}");
+            var pAll = await client.Playlists.GetVideosAsync($"https://youtube.com/playlist?list={playlistId}");
+
+            if (Data is EntryDataMember data)
             {
-                var p = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={PlaylistId}");
-                var pAll = await client.Playlists.GetVideosAsync($"https://youtube.com/playlist?list={PlaylistId}");
-
-                P.Title = p.Title;
-                P.Thumbnail = p.Thumbnails[0].Url;
-                P.Count = (ushort) pAll.Count;
+                data.Title = v.Title;
+                data.Thumbnail = v.Thumbnails[0].Url;
+                data.Duration = v.Duration.ToString();
+                data.Author = v.Author.ChannelTitle;
+                data.PlaylistTitle = p.Title;
+                data.PlaylistThumbnail = p.Thumbnails[0].Url;
+                data.PlaylistCount = (ushort) pAll.Count;
+                Logger.Log(data.Title);
             }
+        }
 
-            if (VideoId is null && PlaylistId is null) // Presume that URL is invalid
+        private async Task FetchPlaylistAsync(YoutubeClient client)
+        {
+            Logger.Log();
+            var p = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={playlistId}");
+            var pAll = await client.Playlists.GetVideosAsync($"https://youtube.com/playlist?list={playlistId}");
+
+            if (Data is EntryDataPlaylist data)
             {
-                MessageBox.Show($"{url} appears to be invalid.",
-                                "URL is not valid",
-                                MessageBoxButton.OK);
+                data.Title = p.Title;
+                data.Thumbnail = p.Thumbnails[0].Url;
+                data.Author = p.Author?.ChannelTitle ?? "Anyád";
+                data.Count = (ushort) pAll.Count;
+                Logger.Log(data.Title);
             }
         }
     }

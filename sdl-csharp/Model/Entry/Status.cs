@@ -5,11 +5,27 @@ namespace sdl_csharp.Model.Entry
 {
     public partial class Entry : NotifyPropertyChanged
     {
+        // TODO use this
+        public enum Status
+        {
+            INITIALIZED,
+            DOWNLOADING,
+            DONE,
+            ERROR
+        }
+
         private string label = DownloadLabel.Default;
         private bool isDownloading = false;
         private bool isDone = false;
         private bool isInvalid = false;
-        //public string Entry { get; set; }
+        private bool isError = false;
+
+        public bool IsError
+        {
+            get => isError;
+            set => Set(ref isError, value);
+        }
+
         public bool IsDone
         {
             get => isDone;

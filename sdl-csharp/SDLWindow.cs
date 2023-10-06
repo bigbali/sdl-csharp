@@ -1,5 +1,7 @@
 ﻿using sdl_csharp.Resource.Model;
+using sdl_csharp.Utility;
 using System;
+using System.Diagnostics;
 using System.Windows;
 
 namespace sdl_csharp
@@ -11,7 +13,7 @@ namespace sdl_csharp
         {
             InitializeComponent();
 
-            Console.WriteLine("MIAPICSA");
+            Logger.Log("Startup");
 
             // We use this to keep track of our main window from across multiple threads
             Download.SDLWindowReference = this; 

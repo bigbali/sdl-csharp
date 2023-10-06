@@ -1,5 +1,4 @@
-﻿using sdl_csharp;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace sdl_csharp.Resource.Control

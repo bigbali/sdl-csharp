@@ -1,7 +1,9 @@
 ﻿using sdl_csharp.Model.Entry;
 using sdl_csharp.Utility;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Threading;
 
 namespace sdl_csharp.Resource.Model
@@ -11,7 +13,7 @@ namespace sdl_csharp.Resource.Model
         private static Settings _instance;
         private Settings()
         {
-            //URLEntries.CollectionChanged += URLEntriesChanged;
+            Entries.CollectionChanged += EntriesChanged;
         }
 
         public static Settings Instance
@@ -36,7 +38,7 @@ namespace sdl_csharp.Resource.Model
         private string _subFolderPath    = string.Empty;
 
         public readonly SynchronizationContext UIContext  = SynchronizationContext.Current;
-        public ObservableCollection<Entry> URLEntries { get; set; } = new();
+        public ObservableCollection<Entry> Entries { get; set; } = new();
 
         public bool UseSubFolderPath
         {
@@ -76,13 +78,14 @@ namespace sdl_csharp.Resource.Model
             get => _subFolderPath;
             set => Set(ref _subFolderPath, value);
         }
-        //private void URLEntriesChanged(object sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    if (e.Action == NotifyCollectionChangedAction.Add)
-        //    {
-        //        URLEntry newUrl = (URLEntry)e.NewItems[0];
-        //        Download.FetchData(newUrl);
-        //    }
-        //}
+        private void EntriesChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                Utility.Logger.Log("New entry added to collection");
+                Entry entry = (Entry) e.NewItems[0];
+                _ = entry.FetchAsync();
+            }
+        }
     }
 }

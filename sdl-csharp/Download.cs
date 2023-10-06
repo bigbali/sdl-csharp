@@ -19,13 +19,13 @@ namespace sdl_csharp
         private static DateTime downloadStartedAt;
         private static void ProcessExited(Entry entry, EventArgs e) // sender will already be destroyed
         {
-            Console.WriteLine($"Exit: {entry.URL}");
+            Utility.Logger.Log($"Exit: {entry.URL}");
 
             SDLWindowReference.WindowSettings.UIContext.Send((x) => // allow changing URLEntries from a thread other than main
             {
                 if (SDLWindowReference.WindowSettings.RemoveEntries)
                 {
-                    SDLWindowReference.WindowSettings.URLEntries.Remove(entry);
+                    SDLWindowReference.WindowSettings.Entries.Remove(entry);
                     return;
                 }
 
@@ -37,7 +37,7 @@ namespace sdl_csharp
         // At this point, process has net yet been terminated
         private static void ProcessHasFaulted(Entry entry, object sender, DataReceivedEventArgs e)
         {
-            Console.WriteLine($"Fault: {e.Data}");
+            Utility.Logger.Log($"Fault: {e.Data}");
         }
 
         private static readonly object _logLock = new();
@@ -52,13 +52,13 @@ namespace sdl_csharp
                     $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\{$"sdl-{downloadStartedAt.ToString("yyyy-MM-dd_HH-mm-ss")}.txt"}", 
                     $"{entry.URL}: {e.Data}{Environment.NewLine}");
             }
-            Console.WriteLine(e.Data);
+            Utility.Logger.Log(e.Data);
         }
 
         // MOVE TO ENTRY ITSELF
         public static void BeginDownload(Entry entry, string folderPath, bool isPlaylist)
         {
-            Console.WriteLine("BEGIN DOWNLOAD");
+            Utility.Logger.Log("BEGIN DOWNLOAD");
             string _folderPath = folderPath != string.Empty
                 ? folderPath // If there is no folder path set, use desktop instead
                 : Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\SDL Downloads";
@@ -72,15 +72,15 @@ namespace sdl_csharp
             {
                 if (entry.Type is VideoType.PLAYLIST)
                 {
-                    _folderPath += $"/{(entry.Data as Playlist).Title}";
+                    _folderPath += $"/{(entry.Data as EntryDataPlaylist).Title}";
                 }
                 if (entry.Type is VideoType.MEMBER)
                 {
-                    _folderPath += $"/{(entry.Data as Member).PlaylistTitle}";
+                    _folderPath += $"/{(entry.Data as EntryDataMember).PlaylistTitle}";
                 }
             }
 
-            Console.WriteLine($"Download folder: {_folderPath}");
+            Utility.Logger.Log($"Download folder: {_folderPath}");
 
             downloadStartedAt = DateTime.Now;
 
@@ -121,7 +121,7 @@ namespace sdl_csharp
                     EnableRaisingEvents = true
                 };
 
-                Console.WriteLine(process.Arguments);
+                Utility.Logger.Log(process.Arguments);
 
                 downloadProcess.Exited             += (sender, e) => ProcessExited(entry, e);
                 downloadProcess.OutputDataReceived += (sender, e) => ProcessHasReceivedOutput(entry, sender, e);

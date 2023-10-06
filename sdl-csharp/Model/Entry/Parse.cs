@@ -2,32 +2,31 @@
 using System;
 using System.Collections.Specialized;
 using System.Web;
-using static sdl_csharp.Model.Entry.Entry;
 
 namespace sdl_csharp.Model.Entry
 {
-    public partial class Data : NotifyPropertyChanged
+    public partial class Entry : NotifyPropertyChanged
     {
         public static VideoType? GetType(string url, ref string vId, ref string pId)
         {
-            Console.WriteLine("GETTYPE");
+            Logger.Log("GETTYPE");
             try
             {
                 UriBuilder uri = new(url);
                 NameValueCollection queryParams = HttpUtility.ParseQueryString(uri.Query);
 
-                if (Single(url, queryParams, ref vId))            return VideoType.SINGLE;
-                if (Member(url, queryParams, ref vId, ref pId))   return VideoType.MEMBER;
-                if (Playlist(url, queryParams, ref vId, ref pId)) return VideoType.PLAYLIST;
+                if (ParseSingle(url, queryParams, ref vId))            return VideoType.SINGLE;
+                if (ParseMember(url, queryParams, ref vId, ref pId))   return VideoType.MEMBER;
+                if (ParsePlaylist(url, queryParams, ref vId, ref pId)) return VideoType.PLAYLIST;
             }
             catch (Exception e)
             {
-                Console.WriteLine($"DEBUG_GET_VIDEO_KIND_BY_URL_EXCEPTION: {e.Message}");
+                Logger.Log($"DEBUG_GET_VIDEO_KIND_BY_URL_EXCEPTION: {e.Message}");
             }
 
             return null;
         }
-        private static bool Single(string url, NameValueCollection queryParams, ref string vId)
+        private static bool ParseSingle(string url, NameValueCollection queryParams, ref string vId)
         {
             if (url.StartsWith("https://www.youtube.com/watch"))
             {
@@ -50,7 +49,7 @@ namespace sdl_csharp.Model.Entry
 
             return false;
         }
-        private static bool Member(string url, NameValueCollection queryParams, ref string vId, ref string pId)
+        private static bool ParseMember(string url, NameValueCollection queryParams, ref string vId, ref string pId)
         {
             if (url.StartsWith("https://www.youtube.com/watch"))
             {
@@ -82,13 +81,13 @@ namespace sdl_csharp.Model.Entry
             return false;
         }
 
-        private static bool Playlist(string url, NameValueCollection queryParams, ref string vId, ref string pId)
+        private static bool ParsePlaylist(string url, NameValueCollection queryParams, ref string vId, ref string pId)
         {
             if (url.StartsWith("https://www.youtube.com/watch"))
             {
                 if (queryParams["list"] is not null)
                 {
-                    Console.WriteLine("PLAYLIST");
+                    Logger.Log("PLAYLIST");
 
                     pId = queryParams["list"];
 
