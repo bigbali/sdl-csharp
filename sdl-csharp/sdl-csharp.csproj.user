@@ -14,6 +14,12 @@
     <Compile Update="Resource\Control\Entry\EntrySingle.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Resource\Control\FadeIn.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Resource\Control\ImageWithFallback.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Resource\Control\Entry\EntryControls.xaml">
@@ -26,6 +32,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Resource\Control\Entry\EntrySingle.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resource\Control\FadeIn.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resource\Control\ImageWithFallback.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Resource\Style\TextBox.xaml">

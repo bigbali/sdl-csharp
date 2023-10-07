@@ -4,10 +4,10 @@ namespace sdl_csharp.Model.Entry
 {
     public class EntryDataSingle : NotifyPropertyChanged, Entry.IEntryData
     {
-        string author;
-        string title;
-        string duration;
-        string thumbnail;
+        string author = null;
+        string title = null;
+        string duration = null;
+        string thumbnail = null;
 
         public string Author { get => author; set => Set(ref author, value); }
         public string Title { get => title; set => Set(ref title, value); }

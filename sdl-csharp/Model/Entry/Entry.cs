@@ -8,11 +8,11 @@ namespace sdl_csharp.Model.Entry
 {
     public partial class Entry : NotifyPropertyChanged
     {
-        private VideoType  type;
-        private IEntryData data;
-        private string url = null;
-        private string videoId = null;
-        private string playlistId = null;
+        VideoType type;
+        IEntryData data;
+        string url = null;
+        string videoId = null;
+        string playlistId = null;
 
         public VideoType Type { get => type; private set => Set(ref type, value); }
 
@@ -20,7 +20,7 @@ namespace sdl_csharp.Model.Entry
 
         public string URL { get => url; private set => Set(ref url, value); }
 
-        public interface IEntryData {};
+        public interface IEntryData { };
 
         public enum VideoType
         {
@@ -62,14 +62,17 @@ namespace sdl_csharp.Model.Entry
                 if (Type is VideoType.SINGLE)
                 {
                     await FetchSingleAsync(client);
-                } else if (Type is VideoType.MEMBER && playlistId is not null)
+                }
+                else if (Type is VideoType.MEMBER && playlistId is not null)
                 {
                     await FetchMemberAsync(client);
                 }
-            } else if (playlistId is not null && Type is VideoType.PLAYLIST)
+            }
+            else if (playlistId is not null && Type is VideoType.PLAYLIST)
             {
                 await FetchPlaylistAsync(client);
-            } else
+            }
+            else
             {
                 Logger.Log($"URL appears to be invalid: {URL}");
             }
@@ -84,8 +87,9 @@ namespace sdl_csharp.Model.Entry
                 data.Title = v.Title;
                 data.Thumbnail = v.Thumbnails[0].Url;
                 data.Duration = v.Duration.ToString();
-                data.Author = v.Author.ChannelTitle;
+                data.Author = v.Author?.ChannelTitle ?? "[Unknown Author]";
                 Logger.Log(data.Title);
+                Logger.Log(data.Thumbnail);
             }
         }
 
@@ -101,10 +105,10 @@ namespace sdl_csharp.Model.Entry
                 data.Title = v.Title;
                 data.Thumbnail = v.Thumbnails[0].Url;
                 data.Duration = v.Duration.ToString();
-                data.Author = v.Author.ChannelTitle;
+                data.Author = v.Author?.ChannelTitle ?? "[Unknown Author]";
                 data.PlaylistTitle = p.Title;
                 data.PlaylistThumbnail = p.Thumbnails[0].Url;
-                data.PlaylistCount = (ushort) pAll.Count;
+                data.PlaylistCount = (ushort)pAll.Count;
                 Logger.Log(data.Title);
             }
         }
@@ -119,8 +123,8 @@ namespace sdl_csharp.Model.Entry
             {
                 data.Title = p.Title;
                 data.Thumbnail = p.Thumbnails[0].Url;
-                data.Author = p.Author?.ChannelTitle ?? "Anyád";
-                data.Count = (ushort) pAll.Count;
+                data.Author = p.Author?.ChannelTitle ?? "[Unknown Author]";
+                data.Count = (ushort)pAll.Count;
                 Logger.Log(data.Title);
             }
         }
