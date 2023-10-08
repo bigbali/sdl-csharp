@@ -15,52 +15,36 @@
     mc:Ignorable="d"
     d:DesignWidth="1600"
     DataContext="{Binding RelativeSource={RelativeSource Self}, Path=WindowSettings}"
-    FontFamily="Raleway"
-    FontSize="16"
     SizeToContent="WidthAndHeight"
+    UseLayoutRounding="True"
     Title="Simple YouTube Downloader">
     <Window.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resource/Style/Button.xaml" />
-                <ResourceDictionary Source="Resource/Style/Label.xaml" />
-                <ResourceDictionary Source="Resource/Style/TextBox.xaml" />
-                <ResourceDictionary Source="Resource/Style/URLQueueEntry.xaml" />
-                <ResourceDictionary Source="Resource/Style/General.xaml" />
-            </ResourceDictionary.MergedDictionaries>
             <DataTemplate x:Key="SingleTemplate">
                 <entrycontrol:EntrySingle DataContext="{Binding}" />
             </DataTemplate>
             <DataTemplate x:Key="MemberTemplate">
-                <Label Background="Green" Content="MEMBER" />
+                <entrycontrol:EntryMember DataContext="{Binding}" />
             </DataTemplate>
             <DataTemplate x:Key="PlaylistTemplate">
-                <Label Background="Red" Content="PLAYLIST" />
+                <entrycontrol:EntryPlaylist DataContext="{Binding}" />
             </DataTemplate>
             <viewmodel:EntrySelector
                 x:Key="EntrySelector"
                 MemberTemplate="{StaticResource MemberTemplate}"
                 PlaylistTemplate="{StaticResource PlaylistTemplate}"
                 SingleTemplate="{StaticResource SingleTemplate}" />
-            <Style TargetType="ListBox">
-                <Setter Property="Padding" Value="5, 7, 5, 7" />
-                <Style.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="6" />
-                    </Style>
-                </Style.Resources>
-            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Grid
         x:Name="MasterGrid"
         MinWidth="1400"
         MinHeight="960"
-        Background="{StaticResource Color.Window.Background}"
-        UseLayoutRounding="True">
+        HorizontalAlignment="Stretch"
+        Background="{StaticResource Color.Window.Background}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="600" />
         </Grid.ColumnDefinitions>
         <Grid
             x:Name="URLGroup"
@@ -108,12 +92,12 @@
                         Content="Queue"
                         Foreground="White"
                         Padding="15,10,15,5" />
-                    <!-- Separate into own component -->
                     <ListBox
                         x:Name="URLList"
                         Margin="15,108,15,0"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
                         VerticalContentAlignment="Top"
                         Background="{StaticResource Color.URLQueue.Background}"
                         BorderBrush="{StaticResource Color.URLQueue.Border}"
@@ -121,12 +105,17 @@
                         d:ItemsSource="{d:SampleData ItemCount=5 }"
                         ItemsSource="{Binding Entries}"
                         ItemTemplateSelector="{StaticResource EntrySelector}"
-                        Padding="0">
-                        <!--ListBox.ItemTemplate-->
-                        <!--DataTemplate-->
-                        <!--control:URLEntry SDLWindowReference="{Binding Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/-->
-                        <!--/DataTemplate-->
-                        <!--/ListBox.ItemTemplate-->
+                        Padding="4">
+                        <ListBox.Resources>
+                            <Style TargetType="ListBox">
+                                <Setter Property="Padding" Value="5, 7, 5, 7" />
+                                <Style.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="6" />
+                                    </Style>
+                                </Style.Resources>
+                            </Style>
+                        </ListBox.Resources>
                     </ListBox>
                 </Grid>
             </Border>

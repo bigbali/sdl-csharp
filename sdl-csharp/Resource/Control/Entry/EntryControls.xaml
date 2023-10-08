@@ -11,16 +11,6 @@
     d:DataContext="{d:DesignInstance Type=entry:Entry}"
     d:DesignHeight="35"
     d:DesignWidth="800">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/General.xaml" />
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/TextBox.xaml" />
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/Button.xaml" />
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/Label.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
     <Grid Height="35">
         <Grid Height="33" VerticalAlignment="Top">
             <Border
@@ -90,7 +80,7 @@
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Bottom"
                         Content="{Binding Path=Label, FallbackValue='Download'}"
-                        Foreground="White"
+                        Foreground="{StaticResource Color.Text}"
                         Padding="8, 0, 0, 0" />
                     <Ellipse
                         Width="20"
@@ -187,9 +177,9 @@
             <Button
                 Width="96"
                 HorizontalAlignment="Right"
-                Click="ForwardToRemoveEntry"
-                Content="Remove"
-                Padding="5,3,5,3" />
+                Click="ForwardToRemoveEntry">
+                <Label HorizontalAlignment="Stretch" Content="Remove" />
+            </Button>
         </Grid>
     </Grid>
 </UserControl>

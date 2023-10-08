@@ -52,7 +52,7 @@
                         <Setter Property="Margin" Value="60, 0, 0, 0" />
                         <Setter Property="Padding" Value="5,0,5,0" />
                         <Setter Property="VerticalContentAlignment" Value="Center" />
-                        <Setter Property="Foreground" Value="{StaticResource TextColor}" />
+                        <Setter Property="Foreground" Value="{StaticResource Color.Text}" />
                         <Setter Property="Content" Value="{Binding Content, FallbackValue='No content'}" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding State}"

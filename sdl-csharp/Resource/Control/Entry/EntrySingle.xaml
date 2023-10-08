@@ -12,42 +12,52 @@
     d:DataContext="{d:DesignInstance Type=entry:Entry}"
     d:DesignHeight="166"
     d:DesignWidth="800">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/General.xaml" />
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/Label.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    <Border BorderBrush="{StaticResource Color.Border}" BorderThickness="1" CornerRadius="8" Padding="8">
+    <Border
+        BorderBrush="{StaticResource Color.Border}"
+        BorderThickness="1"
+        CornerRadius="8"
+        Padding="8">
         <Grid Height="150">
             <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
-            <Grid
-                VerticalAlignment="Bottom"
-                Name="EntryDetails_SINGLE">
+            <Grid VerticalAlignment="Bottom" Name="EntryDetails_SINGLE">
                 <control:FadeIn Value="{Binding Data.Title}">
                     <control:ImageWithFallback Source="{Binding Data.Thumbnail}" />
                 </control:FadeIn>
-                <Grid
-                    Margin="200,0,0,0"
-                    HorizontalAlignment="Left">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                <Grid Margin="200,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <control:FadeIn Value="{Binding Data.Title}" Grid.Row="0">
-                        <Label Content="{Binding Data.Title}" d:Content="Title" ToolTip="Video title" />
+                    <control:FadeIn Grid.Row="0" Value="{Binding Data.Title}">
+                        <Label
+                            Content="{Binding Data.Title}"
+                            d:Content="Title"
+                            ToolTip="Video title" />
                     </control:FadeIn>
-                    <control:FadeIn Value="{Binding Data.Title}" Grid.Row="1">
+                    <control:FadeIn Grid.Row="1" Value="{Binding Data.Author}">
+                        <Label
+                            Content="{Binding Data.Author}"
+                            d:Content="Author"
+                            FontWeight="Medium"
+                            ToolTip="Video author" />
+                    </control:FadeIn>
+                    <control:FadeIn
+                        Grid.Row="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Value="{Binding Data.Title}"
+                        FontWeight="Medium">
                         <Label Content="Single" ToolTip="Video type" />
                     </control:FadeIn>
-                    <control:FadeIn Value="{Binding Data.Duration}" Grid.Row="2">
-                        <Label Content="{Binding Data.Duration}" d:Content="00:00" ToolTip="Video duration" VerticalAlignment="Bottom" />
+                    <control:FadeIn Grid.Row="3" Value="{Binding Data.Duration}" FontFamily="{StaticResource UbuntuMono}">
+                        <Label
+                            VerticalAlignment="Bottom"
+                            Content="{Binding Data.Duration}"
+                            d:Content="00:00"
+                            FontFamily="{StaticResource UbuntuMono}"
+                            ToolTip="Video duration" />
                     </control:FadeIn>
                 </Grid>
             </Grid>

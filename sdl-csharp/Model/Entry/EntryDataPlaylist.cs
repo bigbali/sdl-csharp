@@ -4,9 +4,9 @@ namespace sdl_csharp.Model.Entry
 {
     class EntryDataPlaylist : NotifyPropertyChanged, Entry.IEntryData
     {
-        string author;
-        string title;
-        string thumbnail;
+        string author = null;
+        string title = null;
+        string thumbnail = null;
         ushort count;
 
         public string Author { get => author; set => Set(ref author, value); }

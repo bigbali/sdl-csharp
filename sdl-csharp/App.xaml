@@ -4,9 +4,41 @@
              xmlns:local="clr-namespace:sdl_csharp"
              StartupUri="SDLWindow.xaml">
     <Application.Resources>
-        <SolidColorBrush x:Key="TextColor" Color="#E5FFFFFF" />
-        <Style x:Key="Raleway">
-            <Setter Property="TextElement.FontFamily" Value="Resource/Font/#Raleway" />
-        </Style>
+        <ResourceDictionary>
+            <SolidColorBrush x:Key="Color.Text"                     Color="#FFEBEBEB"/>
+            <SolidColorBrush x:Key="Color.Window.Background"        Color="#FF1F2021"/>
+            <SolidColorBrush x:Key="Color.Border"                   Color="#FF393C42"/>
+            <SolidColorBrush x:Key="Color.Border.Background"        Color="#FF28282A"/>
+
+            <SolidColorBrush x:Key="Color.URLQueue.Background"      Color="#FF232326"/>
+            <SolidColorBrush x:Key="Color.URLQueue.Border"          Color="#FF393C42"/>
+
+            <SolidColorBrush x:Key="Color.TextBox.Border"           Color="#FF393C42" />
+            <SolidColorBrush x:Key="Color.TextBox.Border.Hover"     Color="#FF8C8C8C" />
+            <SolidColorBrush x:Key="Color.TextBox.Border.Focus"     Color="#FF5C7561" />
+            <SolidColorBrush x:Key="Color.TextBox.Background"       Color="#FF242426" />
+
+            <SolidColorBrush x:Key="Color.Button.Border"            Color="#FF8C8C8C" />
+            <SolidColorBrush x:Key="Color.Button.Border.Hover"      Color="#FFC8C8C8" />
+            <SolidColorBrush x:Key="Color.Button.Border.Focus"      Color="#FFC8C8C8" />
+            <SolidColorBrush x:Key="Color.Button.Background"        Color="#FF2A2A2C" />
+            <SolidColorBrush x:Key="Color.Button.Background.Hover"  Color="#FF323232" />
+            <SolidColorBrush x:Key="Color.Button.Background.Focus"  Color="#FF464646" />
+
+            <FontFamily x:Key="UbuntuMono">Resource/Font/#Ubuntu Mono</FontFamily>
+
+            <!--<Style x:Key="Raleway">
+                <Setter Property="TextElement.FontFamily" Value="Resource/Font/#Raleway" />
+            </Style>-->
+            <!--<Style x:Key="UbuntuMono">
+                <Setter Property="TextElement.FontFamily" Value=" />
+            </Style>-->
+
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/Button.xaml"/>
+                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/Label.xaml"/>
+                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/TextBox.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -9,13 +9,6 @@
     d:DataContext="{d:DesignInstance Type=local:ImageWithFallback}"
     d:DesignHeight="108"
     d:DesignWidth="192">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/General.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
     <Grid
         Width="192"
         Height="108"

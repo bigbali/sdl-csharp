@@ -49,7 +49,11 @@
     <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resource\Font\UbuntuMono-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
     <Resource Include="Resource\Font\Raleway.ttf" />
+    <Resource Include="Resource\Font\UbuntuMono-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="youtube-dl.exe">
