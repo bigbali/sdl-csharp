@@ -70,7 +70,7 @@
                 Width="150"
                 Margin="0,2,101,1"
                 HorizontalAlignment="Right"
-                Click="ForwardToInitIndividualDownload"
+                Click="DownloadEntry"
                 Padding="0">
                 <!-- Individual download button -->
                 <Grid Width="140">
@@ -177,7 +177,7 @@
             <Button
                 Width="96"
                 HorizontalAlignment="Right"
-                Click="ForwardToRemoveEntry">
+                Click="RemoveEntry">
                 <Label HorizontalAlignment="Stretch" Content="Remove" />
             </Button>
         </Grid>

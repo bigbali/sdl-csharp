@@ -12,42 +12,49 @@
     d:DataContext="{d:DesignInstance Type=entry:Entry}"
     d:DesignHeight="166"
     d:DesignWidth="800">
-    <Border BorderBrush="{StaticResource Color.Border}" BorderThickness="1" CornerRadius="8" Padding="8">
+    <Border
+        BorderBrush="{StaticResource Color.Border}"
+        BorderThickness="1"
+        CornerRadius="8"
+        Padding="8">
         <Grid Height="150">
             <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
-            <Grid
-                VerticalAlignment="Bottom"
-                Name="EntryDetails_SINGLE">
+            <Grid VerticalAlignment="Bottom">
                 <control:FadeIn Value="{Binding Data.Title}">
                     <control:ImageWithFallback Source="{Binding Data.Thumbnail}" />
                 </control:FadeIn>
-                <Grid
-                    Margin="200,0,0,0"
-                    >
+                <Grid Margin="200,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="96" />
-                        </Grid.ColumnDefinitions>
-                        <control:FadeIn Value="{Binding Data.Title}" Grid.Column="0">
-                            <Label Content="{Binding Data.Title}" d:Content="Title" ToolTip="Video title" />
-                        </control:FadeIn>
-                        <control:FadeIn Value="{Binding Data.Title}" Grid.Column="1" HorizontalAlignment="Center">
-                            <Label Content="Playlist" ToolTip="Video type" />
-                        </control:FadeIn>
-                    </Grid>
-                    <control:FadeIn Value="{Binding Data.Author}" Grid.Row="1">
-                        <Label Content="{Binding Data.Author}" d:Content="Author" ToolTip="Video author" FontWeight="Medium"/>
+                    <control:FadeIn Grid.Row="0" Value="{Binding Data.Title}">
+                        <Label
+                            Content="{Binding Data.Title}"
+                            d:Content="Title"
+                            ToolTip="Playlist title" />
                     </control:FadeIn>
-                    <control:FadeIn Value="{Binding Data.Title}" Grid.Row="2">
-                        <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" ToolTip="Number of entries in playlist">
+                    <control:FadeIn Grid.Row="1" Value="{Binding Data.Author}">
+                        <Label
+                            Content="{Binding Data.Author}"
+                            d:Content="Author"
+                            FontWeight="Medium"
+                            ToolTip="Playlist author" />
+                    </control:FadeIn>
+                    <control:FadeIn
+                        Grid.Row="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Value="{Binding Data.Title}"
+                        FontWeight="Medium">
+                        <Label Content="Playlist" ToolTip="This entry is a playlist" />
+                    </control:FadeIn>
+                    <control:FadeIn Grid.Row="3" Value="{Binding Data.Title}">
+                        <StackPanel Orientation="Horizontal" ToolTip="Number of entries in playlist">
                             <Label Content="{Binding Data.Count}" d:Content="11" />
-                            <Label Content=" Entries"  />
+                            <Label Content=" Entries" />
                         </StackPanel>
                     </control:FadeIn>
                 </Grid>

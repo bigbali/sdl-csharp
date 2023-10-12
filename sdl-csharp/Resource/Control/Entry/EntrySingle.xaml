@@ -19,7 +19,7 @@
         Padding="8">
         <Grid Height="150">
             <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
-            <Grid VerticalAlignment="Bottom" Name="EntryDetails_SINGLE">
+            <Grid VerticalAlignment="Bottom">
                 <control:FadeIn Value="{Binding Data.Title}">
                     <control:ImageWithFallback Source="{Binding Data.Thumbnail}" />
                 </control:FadeIn>
@@ -49,14 +49,13 @@
                         VerticalAlignment="Bottom"
                         Value="{Binding Data.Title}"
                         FontWeight="Medium">
-                        <Label Content="Single" ToolTip="Video type" />
+                        <Label Content="Single" ToolTip="This entry is a single video" />
                     </control:FadeIn>
-                    <control:FadeIn Grid.Row="3" Value="{Binding Data.Duration}" FontFamily="{StaticResource UbuntuMono}">
+                    <control:FadeIn Grid.Row="3" Value="{Binding Data.Duration}">
                         <Label
-                            VerticalAlignment="Bottom"
                             Content="{Binding Data.Duration}"
                             d:Content="00:00"
-                            FontFamily="{StaticResource UbuntuMono}"
+                            FontFamily="{StaticResource CourierPrime}"
                             ToolTip="Video duration" />
                     </control:FadeIn>
                 </Grid>

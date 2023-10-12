@@ -6,6 +6,7 @@
         <Setter Property="Foreground" Value="{DynamicResource Color.Text}" />
         <Setter Property="Padding" Value="10, 3, 10, 3" />
         <Setter Property="Height" Value="30" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBoxBase}">

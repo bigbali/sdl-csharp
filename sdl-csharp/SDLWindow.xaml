@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entry="clr-namespace:sdl_csharp.Model.Entry"
     xmlns:entrycontrol="clr-namespace:sdl_csharp.Resource.Control.Entry"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
     Width="Auto"
@@ -16,8 +17,8 @@
     d:DesignWidth="1600"
     DataContext="{Binding RelativeSource={RelativeSource Self}, Path=WindowSettings}"
     SizeToContent="WidthAndHeight"
-    UseLayoutRounding="True"
-    Title="Simple YouTube Downloader">
+    Title="Simple YouTube Downloader"
+    UseLayoutRounding="True">
     <Window.Resources>
         <ResourceDictionary>
             <DataTemplate x:Key="SingleTemplate">
@@ -95,9 +96,9 @@
                     <ListBox
                         x:Name="URLList"
                         Margin="15,108,15,0"
+                        HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
-                        HorizontalAlignment="Stretch"
                         VerticalContentAlignment="Top"
                         Background="{StaticResource Color.URLQueue.Background}"
                         BorderBrush="{StaticResource Color.URLQueue.Border}"
@@ -197,6 +198,52 @@
                         Content1="Audio"
                         Content2="Video"
                         State="{Binding IsAudio}" />
+                    <Grid
+                        Margin="15,375,0,0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0">
+                            <Label Content="Output Template" />
+                            <TextBox
+                                Height="50"
+                                d:Text='"puiu/Compact/%(playlist_title)s/%(playlist_index)s %(title)s.%(ext)s" -x --audio-format mp3 --yes-playlist'
+                                FontFamily="{StaticResource CourierPrime}"
+                                IsReadOnly="True"
+                                Text="{Binding ArgTemplate.Template}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1">
+                            <Label Content="Applied Output Template" />
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    Grid.Column="0"
+                                    Height="50"
+                                    d:Text='"puiu/Compact/%(playlist_title)s/%(playlist_index)s %(title)s.%(ext)s" -x --audio-format mp3 --yes-playlist'
+                                    FontFamily="{StaticResource CourierPrime}"
+                                    Text="{Binding ArgTemplateString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="TextChanged">
+                                            <i:InvokeCommandAction Command="{Binding ArgTemplateTextChangedCommand}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </TextBox>
+                                <Button
+                                    Grid.Column="1"
+                                    Command="{Binding ResetCommand}"
+                                    Content="Reset"
+                                    Padding="10,3,10,3" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
                     <control:ToggleButton
                         Width="320"
                         Margin="15,229,0,0"

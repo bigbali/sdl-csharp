@@ -49,9 +49,11 @@
     <LangVersion>9</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resource\Font\CourierPrime-Regular.ttf" />
     <None Remove="Resource\Font\UbuntuMono-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resource\Font\CourierPrime-Regular.ttf" />
     <Resource Include="Resource\Font\Raleway.ttf" />
     <Resource Include="Resource\Font\UbuntuMono-Regular.ttf" />
   </ItemGroup>
@@ -74,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="1.0.5" />
+    <PackageReference Include="Expression.Blend.Sdk" Version="1.0.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Core" Version="1.1.0.2" />
     <PackageReference Include="Microsoft.WindowsAPICodePack-Shell" Version="1.1.0.0" />

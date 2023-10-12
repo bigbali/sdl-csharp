@@ -1,6 +1,11 @@
-﻿using sdl_csharp.Utility;
+﻿using AngleSharp.Dom;
+using sdl_csharp.Properties;
+using sdl_csharp.Utility;
+using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Windows;
 using YoutubeExplode;
 using YoutubeExplode.Common;
 
@@ -36,18 +41,96 @@ namespace sdl_csharp.Model.Entry
             Logger.Log($"Entry {url}");
 
             Type = GetType(url, ref videoId, ref playlistId) ?? Type;
-            Data = CreateVideoData();
-        }
-
-        private IEntryData CreateVideoData()
-        {
-            return Type switch
+            Data = Type switch
             {
                 VideoType.SINGLE => new EntryDataSingle(),
                 VideoType.MEMBER => new EntryDataMember(),
                 VideoType.PLAYLIST => new EntryDataPlaylist(),
                 _ => null
             };
+        }
+
+        public async Task Download()
+        {
+            var settings = Settings.Instance;
+            var downloadStartedAt = DateTime.Now;
+
+            string folderPath = settings.FolderPath != string.Empty
+                ? settings.FolderPath // If there is no folder path set, use desktop instead
+                : Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\SDL Downloads";
+
+            if (settings.UseSubFolderPath)
+            {
+                folderPath += $"/{settings.SubFolderPath}";
+            }
+
+            if (settings.InferSubFolderPath) // If inferring is enabled, infer from playlist title
+            {
+                if (Type is VideoType.PLAYLIST)
+                {
+                    folderPath += $"/{(Data as EntryDataPlaylist).Title}";
+                }
+                if (Type is VideoType.MEMBER)
+                {
+                    folderPath += $"/{(Data as EntryDataMember).PlaylistTitle}";
+                }
+            }
+                
+
+            string _format = settings.IsAudio
+                ? " --extract-audio --audio-format mp3"
+                : " --format \"bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b\"";
+
+            string numbering = settings.AutomaticNumbering
+                ? "%(playlist_index)s "
+                : "";
+
+            string playlist = settings.IsPlaylist
+                ? " --yes-playlist"
+                : " --no-playlist";
+
+            StatusDownloading();
+
+            //Task.Run
+
+            await Task.Run(() =>
+            {
+                ProcessStartInfo process = new("./youtube-dl.exe")
+                {
+                    Arguments = (
+                        $"\"{URL}\"" +
+                        $" -o \"{folderPath}/{numbering}%(title)s.%(ext)s\"" +
+                        _format +
+                        playlist
+                    ),
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                using Process downloadProcess = new()
+                {
+                    StartInfo = process,
+                    EnableRaisingEvents = true
+                };
+
+                Utility.Logger.Log(process.Arguments);
+
+                downloadProcess.Exited += (sender, e) => sdl_csharp.Download.ProcessExited(this, e);
+                downloadProcess.OutputDataReceived += (sender, e) => sdl_csharp.Download.ProcessHasReceivedOutput(this, sender, e);
+                downloadProcess.ErrorDataReceived += (sender, e) => sdl_csharp.Download.ProcessHasFaulted(this, sender, e);
+
+                downloadProcess.Start();
+                downloadProcess.BeginOutputReadLine();
+                downloadProcess.BeginErrorReadLine();
+
+                downloadProcess.WaitForExit();
+            }).ContinueWith(
+                (x) => { /* no-op */ }
+            );
+
         }
 
         public async Task FetchAsync()

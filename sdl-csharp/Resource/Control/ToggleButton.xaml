@@ -4,13 +4,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        mc:Ignorable="d" 
-        d:DesignHeight="100"
-        d:DesignWidth="400">
+        mc:Ignorable="d">
     <Button.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/Button.xaml"/>
                 <ResourceDictionary>
                     <SolidColorBrush x:Key="ToggleButtonBorder.Brush"           Color="#59426380"/>
                     <SolidColorBrush x:Key="ToggleButtonBorder.Brush.MouseOver" Color="#FF577D9A"/>
@@ -23,8 +20,8 @@
                         <Setter Property="BorderThickness"            Value="0" />
                         <Setter Property="Padding"                    Value="0" />
                         <Setter Property="Cursor"                     Value="Hand" />
-                        <d:Setter Property="Width"                    Value="300"/>
-                        <Setter Property="Template"> <!-- Override hover color on button container border -->
+                        <Setter Property="Background"                 Value="Transparent" />
+                        <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
                                     <Border x:Name="border">
@@ -32,7 +29,7 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="{StaticResource Color.Button.Background.Hover}" TargetName="border"/>
+                                            <Setter Property="Background" Value="Transparent" TargetName="border"/>
                                         </Trigger>
                                     </ControlTemplate.Triggers>
                                 </ControlTemplate>
@@ -44,7 +41,7 @@
                         <Setter Property="BorderThickness" Value="1" />
                         <Setter Property="BorderBrush" Value="{StaticResource Color.Border}" />
                         <Setter Property="CornerRadius" Value="12" />
-                        <Setter Property="Width" Value="60" />
+                        <Setter Property="Width" Value="48" />
                         <Setter Property="HorizontalAlignment" Value="Left" />
                     </Style>
                     <!-- Label -->
@@ -54,6 +51,7 @@
                         <Setter Property="VerticalContentAlignment" Value="Center" />
                         <Setter Property="Foreground" Value="{StaticResource Color.Text}" />
                         <Setter Property="Content" Value="{Binding Content, FallbackValue='No content'}" />
+                        <d:Setter Property="Content" Value="ToggleButton" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding State}"
                                          Value="False">
@@ -75,7 +73,7 @@
                         </Setter>
                         <d:Setter Property="RenderTransform">
                             <Setter.Value>
-                                <TranslateTransform X="36" />
+                                <TranslateTransform X="24" />
                             </Setter.Value>
                         </d:Setter>
                         <Style.Triggers>
@@ -83,7 +81,7 @@
                                 <DataTrigger.EnterActions>
                                     <BeginStoryboard>
                                         <Storyboard TargetProperty="(RenderTransform).(TranslateTransform.X)">
-                                            <DoubleAnimation To="36" 
+                                            <DoubleAnimation To="24" 
                                                              Duration="0:0:0.2">
                                                 <DoubleAnimation.EasingFunction>
                                                     <CircleEase EasingMode="EaseOut" />
@@ -115,12 +113,17 @@
         <ControlTemplate>
             <Button Style="{StaticResource ToggleButton}">
                 <Grid DataContext="{Binding ElementName=ToggleButtonElement}">
-                    <Border Style="{StaticResource ToggleButton.Border}">
-                        <Button Style="{StaticResource ToggleButton.Button}"/>
+                    <Border Style="{StaticResource ToggleButton.Border}" x:Name="Button">
+                        <Button Style="{StaticResource ToggleButton.Button}" />
                     </Border>
                     <Label Style="{StaticResource ToggleButton.Label}"/>
                 </Grid>
             </Button>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource Color.Button.Background.Hover}" TargetName="Button"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
         </ControlTemplate>
     </Button.Template>
 </Button>

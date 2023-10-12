@@ -1,69 +1,109 @@
-﻿using sdl_csharp.Model.Entry;
-using sdl_csharp.Utility;
-using System;
+﻿using sdl_csharp.Utility;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace sdl_csharp.Resource.Model
+namespace sdl_csharp.Model
 {
     public class Settings: NotifyPropertyChanged
     {
-        private static Settings _instance;
         private Settings()
         {
             Entries.CollectionChanged += EntriesChanged;
+
+            ArgTemplate = new YTDLArgTemplate(this);
+            ArgTemplateString = ArgTemplate.Template;
+
+            ResetCommand = new RelayCommand(ResetTemplate);
+            ArgTemplateTextChangedCommand = new RelayCommand(ArgTemplateTextChanged);
         }
 
+        public RelayCommand ResetCommand { get; }
+        public RelayCommand ArgTemplateTextChangedCommand { get; }
+
+
+        private static Settings _instance;
         public static Settings Instance
         {
             get
             {
-                if (_instance == null)
-                {
-                    _instance = new Settings();
-                }
+                _instance ??= new Settings();
                 return _instance;
             }
         }
 
-        private bool _useSubFolderPath   = false;
-        private bool _inferSubFolderPath = false;
-        private bool _automaticNumbering = false;
-        private bool _removeEntries      = false;
-        private bool _isPlaylist         = true;
-        private bool _isAudio            = true;
-        private string _folderPath       = string.Empty;
-        private string _subFolderPath    = string.Empty;
+         bool _useSubFolderPath   = false;
+         bool _inferSubFolderPath = false;
+         bool _automaticNumbering = false;
+         bool _removeEntries      = false;
+         bool _isPlaylist         = true;
+         bool _isAudio            = true;
+         string _folderPath       = string.Empty;
+         string _subFolderPath    = string.Empty;
+         string argTemplateString;
+
+        public void ArgTemplateTextChanged(object obj)
+        {
+            isChanged = ArgTemplateString != ArgTemplate.Template;
+        }
+
+        bool isChanged = false;
+        public string ArgTemplateString { get => argTemplateString; set => Set(ref argTemplateString, value); }
+
+        private void UpdateArgSet<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            Set(ref storage, value, propertyName);
+            ArgTemplate = new YTDLArgTemplate(this);
+
+            if (!isChanged)
+                ArgTemplateString = ArgTemplate.Template;
+
+            Logger.Log(isChanged.ToString());
+        }
 
         public readonly SynchronizationContext UIContext  = SynchronizationContext.Current;
-        public ObservableCollection<Entry> Entries { get; set; } = new();
+        public ObservableCollection<Entry.Entry> Entries { get; set; } = new();
+
+        YTDLArgTemplate argTemplate;
+        public YTDLArgTemplate ArgTemplate
+        {
+            get => argTemplate;
+            set =>Set(ref argTemplate, value);
+        }
+
+        public void ResetTemplate(object obj)
+        {
+            Logger.Log($"SET to {ArgTemplate.Template}");
+            ArgTemplateString = ArgTemplate.Template;
+        }
+
+        
 
         public bool UseSubFolderPath
         {
             get => _useSubFolderPath;
-            set => Set(ref _useSubFolderPath, value);
+            set => UpdateArgSet(ref _useSubFolderPath, value);
         }
         public bool InferSubFolderPath
         {
             get => _inferSubFolderPath;
-            set => Set(ref _inferSubFolderPath, value);
+            set => UpdateArgSet(ref _inferSubFolderPath, value);
         }
         public bool IsPlaylist
         {
             get => _isPlaylist;
-            set => Set(ref _isPlaylist, value);
+            set => UpdateArgSet(ref _isPlaylist, value);
         }
         public bool IsAudio
         {
             get => _isAudio;
-            set => Set(ref _isAudio, value);
+            set => UpdateArgSet(ref _isAudio, value);
         }
         public bool AutomaticNumbering
         {
             get => _automaticNumbering;
-            set => Set(ref _automaticNumbering, value);
+            set => UpdateArgSet(ref _automaticNumbering, value);
         }
         public bool RemoveEntries
         {
@@ -72,18 +112,18 @@ namespace sdl_csharp.Resource.Model
         }
         public string FolderPath {
             get => _folderPath;
-            set => Set(ref _folderPath, value);
+            set => UpdateArgSet(ref _folderPath, value);
         }
         public string SubFolderPath { 
             get => _subFolderPath;
-            set => Set(ref _subFolderPath, value);
+            set => UpdateArgSet(ref _subFolderPath, value);
         }
         private void EntriesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                Utility.Logger.Log("New entry added to collection");
-                Entry entry = (Entry) e.NewItems[0];
+                Logger.Log("New entry added to collection");
+                Entry.Entry entry = (Entry.Entry) e.NewItems[0];
                 _ = entry.FetchAsync();
             }
         }

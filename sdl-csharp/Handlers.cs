@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using sdl_csharp.Model;
 using sdl_csharp.Model.Entry;
 
 namespace sdl_csharp
@@ -13,7 +14,7 @@ namespace sdl_csharp
         {
             Button button = sender as Button;
             Entry entry = (Entry) button.DataContext;
-            WindowSettings.Entries.Remove(entry);
+            Settings.Instance.Entries.Remove(entry);
         }
         public void AddEntry(object sender, RoutedEventArgs e)
         {
@@ -21,7 +22,7 @@ namespace sdl_csharp
             URLInput.Clear();
             Utility.Logger.Log($"Add entry {newURL}");
 
-            if (newURL.Contains("list=RDMM"))
+            if (newURL.Contains("list=RDMM") || newURL.Contains("list=RDGM"))
             {
                 MessageBox.Show("This playlist cannot be downloaded because it's personalised (is bound to your YouTube profile).",
                                 "EntryDataPlaylist is not valid",
@@ -32,7 +33,7 @@ namespace sdl_csharp
             if (newURL != string.Empty
                 && (newURL.StartsWith("https://youtu.be") || newURL.StartsWith("https://www.youtube.com"))) {
                 Entry urlEntry = new(newURL);
-                WindowSettings.Entries.Add(urlEntry);
+                Settings.Instance.Entries.Add(urlEntry);
 
                 //Utility.Logger.Log(urlEntry.ToString());
 
@@ -44,38 +45,11 @@ namespace sdl_csharp
                             "URL is invalid",
                             MessageBoxButton.OK);
         }
-        public void InitIndividualDownload(object sender, RoutedEventArgs e)
-        {
-            Utility.Logger.Log("INIT INDIVIDUAL DOWNLOAD");
-
-            Button button = sender as Button;
-            Entry url = (Entry) button.DataContext;
-
-            if (url.IsDownloading)
-            {
-                MessageBox.Show("This entry has not yet finished downloading.\nPlease wait.",
-                                "Entry is downloading",
-                                MessageBoxButton.OK);
-                return;
-
-            }
-
-            bool retry = url.IsDone
-                && MessageBox.Show("This entry has already been downloaded.\nDo you want to retry?",
-                                    "Entry already downloaded",
-                                    MessageBoxButton.YesNo) == MessageBoxResult.Yes;
-
-            if (retry)
-            {
-                url.Reset();
-            }
-
-            Download.BeginDownload(url, WindowSettings.FolderPath, WindowSettings.IsPlaylist);
-        }
+        
         private void InitDownload(object sender, RoutedEventArgs e)
         {
             Utility.Logger.Log("INIT DOWNLOAD");
-            if (WindowSettings.Entries.Count == 0)
+            if (Settings.Instance.Entries.Count == 0)
             {
                 MessageBox.Show("Please specify some URLs to be downloaded!",
                                 "No entries to download",
@@ -86,7 +60,7 @@ namespace sdl_csharp
 
             bool includesDownloadedEntry = false;
             bool includesDownloadingEntry = false;
-            foreach (Entry entry in WindowSettings.Entries) // Preminilary checks
+            foreach (Entry entry in Settings.Instance.Entries) // Preminilary checks
             {
                 if (entry.IsDone && !includesDownloadedEntry)
                 {
@@ -116,14 +90,14 @@ namespace sdl_csharp
 
             }
 
-            foreach (Entry entry in WindowSettings.Entries) // For every URL, start a new thread with a download process
+            foreach (Entry entry in Settings.Instance.Entries) // For every URL, start a new thread with a download process
             {
                 if (entry.IsDone)
                 {
                     entry.Reset();
                 }
 
-                Download.BeginDownload(entry, WindowSettings.FolderPath, WindowSettings.IsPlaylist);
+                //Download.BeginDownload(entry, WindowSettings.YTDLArgTemplate, WindowSettings.IsPlaylist);
             }
         }
         private void SelectFolder(object sender, RoutedEventArgs e)
@@ -133,10 +107,10 @@ namespace sdl_csharp
 
             if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                WindowSettings.FolderPath = folderDialog.FileName;
+                Settings.Instance.FolderPath = folderDialog.FileName;
             }
 
-            if (WindowSettings.FolderPath == string.Empty)
+            if (Settings.Instance.FolderPath == string.Empty)
             {
                 MessageBox.Show("Please select a folder.",
                                 "No folder selected",
@@ -147,28 +121,28 @@ namespace sdl_csharp
         }
         private void ToggleNumbering(object sender, RoutedEventArgs e)
         {
-            Utility.Logger.Log($"numbering {!WindowSettings.AutomaticNumbering}");
-            WindowSettings.AutomaticNumbering = !WindowSettings.AutomaticNumbering;
+            Utility.Logger.Log($"numbering {!Settings.Instance.AutomaticNumbering}");
+            Settings.Instance.AutomaticNumbering = !Settings.Instance.AutomaticNumbering;
         }
         private void TogglePlaylist(object sender, RoutedEventArgs e)
         {
-            WindowSettings.IsPlaylist = !WindowSettings.IsPlaylist;
+            Settings.Instance.IsPlaylist = !Settings.Instance.IsPlaylist;
         }
         private void ToggleAudio(object sender, RoutedEventArgs e)
         {
-            WindowSettings.IsAudio = !WindowSettings.IsAudio;
+            Settings.Instance.IsAudio = !Settings.Instance.IsAudio;
         }
         private void ToggleUseSubFolderPath(object sender, RoutedEventArgs e)
         {
-            WindowSettings.UseSubFolderPath = !WindowSettings.UseSubFolderPath;
+            Settings.Instance.UseSubFolderPath = !Settings.Instance.UseSubFolderPath;
         }
         private void ToggleInferSubFolderPath(object sender, RoutedEventArgs e)
         {
-            WindowSettings.InferSubFolderPath = !WindowSettings.InferSubFolderPath;
+            Settings.Instance.InferSubFolderPath = !Settings.Instance.InferSubFolderPath;
         }
         private void ToggleRemoveEntries(object sender, RoutedEventArgs e)
         {
-            WindowSettings.RemoveEntries = !WindowSettings.RemoveEntries;
+            Settings.Instance.RemoveEntries = !Settings.Instance.RemoveEntries;
         }
     }
 }

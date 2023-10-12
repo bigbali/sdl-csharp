@@ -7,159 +7,63 @@
     xmlns:entry="clr-namespace:sdl_csharp.Model.Entry"
     xmlns:entrycontrol="clr-namespace:sdl_csharp.Resource.Control.Entry"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
-    Height="140"
-    Margin="0,0,0,-6"
+    Height="166"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=entry:Entry}"
-    d:DesignHeight="140"
+    d:DesignHeight="166"
     d:DesignWidth="800">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/General.xaml" />
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/TextBox.xaml" />
-                <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/Button.xaml" />
-                <ResourceDictionary x:Name="LabelStyle" Source="/sdl-csharp;component/Resource/Style/Label.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    <Grid Height="140">
-        <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
-        <Grid
-            Height="97"
-            Margin="0,38,0,0"
-            VerticalAlignment="Top"
-            Name="EntryDetails_SINGLE">
-            <Grid
-                Width="120"
-                Height="97"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Background="{StaticResource Color.Border.Background}">
-                <Border CornerRadius="6">
-                    <Border.Background>
-                        <ImageBrush Stretch="UniformToFill" d:ImageSource="https://miro.medium.com/max/1600/1*oVzDjN7eCObQsmkRZpHEVQ.jpeg">
-                            <ImageBrush.ImageSource>
-                                <Binding Path="Data.Thumbnail">
-                                    <Binding.TargetNullValue>
-                                        <x:Null />
-                                    </Binding.TargetNullValue>
-                                </Binding>
-                            </ImageBrush.ImageSource>
-                        </ImageBrush>
-                    </Border.Background>
-                    <Border.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="Opacity" Value="0" />
-                            <d:Setter Property="Opacity" Value="1" />
-                            <Style.Triggers>
-                                <DataTrigger Value="{x:Null}" Binding="{Binding Data.Thumbnail}">
-                                    <DataTrigger.ExitActions>
-                                        <BeginStoryboard>
-                                            <Storyboard>
-                                                <DoubleAnimation
-                                                    Duration="0:0:0.5"
-                                                    Storyboard.TargetProperty="Opacity"
-                                                    To="1" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </DataTrigger.ExitActions>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Resources>
-                </Border>
+    <Border
+        BorderBrush="{StaticResource Color.Border}"
+        BorderThickness="1"
+        CornerRadius="8"
+        Padding="8">
+        <Grid Height="150">
+            <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
+            <Grid VerticalAlignment="Bottom">
+                <control:FadeIn Value="{Binding Data.Title}">
+                    <control:ImageWithFallback Source="{Binding Data.PlaylistThumbnail}" />
+                </control:FadeIn>
+                <Grid Margin="200,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <control:FadeIn Grid.Row="0" Value="{Binding Data.Title}">
+                        <Label
+                            Content="{Binding Data.Title}"
+                            d:Content="Title"
+                            ToolTip="Playlist title" />
+                    </control:FadeIn>
+                    <control:FadeIn Grid.Row="1" Value="{Binding Data.Author}">
+                        <Label
+                            Content="{Binding Data.Author}"
+                            d:Content="Author"
+                            FontWeight="Medium"
+                            ToolTip="Playlist author" />
+                    </control:FadeIn>
+                    <control:FadeIn
+                        Grid.Row="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Value="{Binding Data.Title}">
+                        <StackPanel Orientation="Horizontal" ToolTip="This entry is a member of a playlist">
+                            <Label Content="From " />
+                            <Label
+                                Content="{Binding Data.PlaylistTitle}"
+                                d:Content="Example Playlist"
+                                FontWeight="Medium" />
+                        </StackPanel>
+                    </control:FadeIn>
+                    <control:FadeIn Grid.Row="3" Value="{Binding Data.Title}">
+                        <StackPanel Orientation="Horizontal" ToolTip="Number of entries in playlist">
+                            <Label Content="{Binding Data.PlaylistCount}" d:Content="11" />
+                            <Label Content=" Entries" />
+                        </StackPanel>
+                    </control:FadeIn>
+                </Grid>
             </Grid>
-            <Label
-                Height="25"
-                Margin="120,0,0,0"
-                VerticalAlignment="Top"
-                Content="{Binding Data.Title}"
-                d:Content="Title"
-                Padding="10,0">
-                <Label.Resources>
-                    <Style BasedOn="{StaticResource {x:Type Label}}" TargetType="Label">
-                        <Setter Property="Opacity" Value="0" />
-                        <d:Setter Property="Opacity" Value="1" />
-                        <Style.Triggers>
-                            <DataTrigger Value="{x:Null}" Binding="{Binding Data.Title}">
-                                <DataTrigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                                                Duration="0:0:0.5"
-                                                Storyboard.TargetProperty="Opacity"
-                                                To="1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.ExitActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Label.Resources>
-            </Label>
-            <Label
-                Height="25"
-                Margin="120,25,0,0"
-                VerticalAlignment="Top"
-                Content="Single"
-                Foreground="{StaticResource Color.Text}"
-                Padding="10,0">
-                <Label.Resources>
-                    <Style BasedOn="{StaticResource {x:Type Label}}" TargetType="Label">
-                        <Setter Property="Opacity" Value="0" />
-                        <d:Setter Property="Opacity" Value="1" />
-                        <Style.Triggers>
-                            <DataTrigger Value="{x:Null}" Binding="{Binding Data.Title}">
-                                <DataTrigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                                                Duration="0:0:0.5"
-                                                Storyboard.TargetProperty="Opacity"
-                                                To="1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.ExitActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Label.Resources>
-            </Label>
-            <Label
-                Height="25"
-                Margin="120,50,0,0"
-                VerticalAlignment="Bottom"
-                VerticalContentAlignment="Bottom"
-                Content="{Binding Data.Duration}"
-                d:Content="00:00"
-                Padding="10,0">
-                <Label.Resources>
-                    <Style BasedOn="{StaticResource {x:Type Label}}" TargetType="Label">
-                        <Setter Property="Opacity" Value="0" />
-                        <d:Setter Property="Opacity" Value="1" />
-                        <Style.Triggers>
-                            <DataTrigger Value="{x:Null}" Binding="{Binding Data.Title}">
-                                <DataTrigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation
-                                                Duration="0:0:0.5"
-                                                Storyboard.TargetProperty="Opacity"
-                                                To="1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.ExitActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Label.Resources>
-            </Label>
         </Grid>
-        <Border
-            Height="1"
-            VerticalAlignment="Bottom"
-            Background="{StaticResource Color.Border}" />
-    </Grid>
+    </Border>
 </UserControl>

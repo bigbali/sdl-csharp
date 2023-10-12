@@ -27,9 +27,10 @@
                         <Setter   Property="Padding"                    Value="10, 3, 10, 3" />
                         <Setter   Property="Foreground"                 Value="Gray"  />
                         <Setter   Property="IsHitTestVisible"           Value="False" /> <!-- Since the placeholder overlaps TextBox, allow clicks to pass through -->
-                        <Setter   Property="Opacity"                    Value="0" />
+                        <Setter   Property="Visibility"                 Value="Hidden" />
+                        <Setter   Property="FontSize"                   Value="16" />
                         <Setter   Property="Content"                    Value="{Binding Placeholder}" />
-                        <d:Setter Property="Opacity"                    Value="1" />
+                        <d:Setter Property="Visibility"                 Value="Visible" />
                         <d:Setter Property="Content"                    Value="Placeholder" />
                         <Style.Triggers>
                             <MultiDataTrigger>
@@ -37,7 +38,7 @@
                                     <Condition Value="False" Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Children[0].IsFocused}" />
                                     <Condition Value=""      Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Children[0].Text}" />
                                 </MultiDataTrigger.Conditions>
-                                <Setter Property="Opacity" Value="1"/>
+                                <Setter Property="Visibility" Value="Visible" />
                             </MultiDataTrigger>
                         </Style.Triggers>
                     </Style>

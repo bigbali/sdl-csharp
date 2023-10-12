@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using sdl_csharp.Utility;
+using System.Windows;
 using System.Windows.Controls;
+using sdl_csharp.Model.Entry;
+using sdl_csharp.Model;
 
 namespace sdl_csharp.Resource.Control.Entry
 {
@@ -13,14 +16,18 @@ namespace sdl_csharp.Resource.Control.Entry
             InitializeComponent();
         }
 
-        private void ForwardToInitIndividualDownload(object sender, RoutedEventArgs e)
+        private void DownloadEntry(object sender, RoutedEventArgs e)
         {
-            Download.SDLWindowReference.InitIndividualDownload(sender, e);
+            Button button = sender as Button;
+            var entry = (Model.Entry.Entry)button.DataContext;
+            _ = entry.Download();
         }
 
-        private void ForwardToRemoveEntry(object sender, RoutedEventArgs e)
+        private void RemoveEntry(object sender, RoutedEventArgs e)
         {
-            Download.SDLWindowReference.RemoveEntry(sender, e);
+            Button button = sender as Button;
+            var entry = (Model.Entry.Entry)button.DataContext;
+            Settings.Instance.Entries.Remove(entry);
         }
     }
 }

@@ -6,6 +6,7 @@
         <Setter Property="Foreground" Value="{DynamicResource Color.Text}" />
         <Setter Property="Padding" Value="5, 3, 5, 3" />
         <Setter Property="Height" Value="30" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>

@@ -25,14 +25,8 @@
             <SolidColorBrush x:Key="Color.Button.Background.Hover"  Color="#FF323232" />
             <SolidColorBrush x:Key="Color.Button.Background.Focus"  Color="#FF464646" />
 
-            <FontFamily x:Key="UbuntuMono">Resource/Font/#Ubuntu Mono</FontFamily>
-
-            <!--<Style x:Key="Raleway">
-                <Setter Property="TextElement.FontFamily" Value="Resource/Font/#Raleway" />
-            </Style>-->
-            <!--<Style x:Key="UbuntuMono">
-                <Setter Property="TextElement.FontFamily" Value=" />
-            </Style>-->
+            <FontFamily x:Key="CourierPrime">Resource/Font/#Courier Prime</FontFamily>
+            <FontFamily x:Key="Raleway">Resource/Font/#Raleway</FontFamily>
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/sdl-csharp;component/Resource/Style/Button.xaml"/>
