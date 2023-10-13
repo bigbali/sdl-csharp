@@ -20,6 +20,12 @@
     <Compile Update="Resource\Control\ImageWithFallback.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="View\ActionsView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="View\EntriesView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Resource\Control\Entry\EntryControls.xaml">
@@ -41,6 +47,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Resource\Style\TextBox.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\ActionsView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="View\EntriesView.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

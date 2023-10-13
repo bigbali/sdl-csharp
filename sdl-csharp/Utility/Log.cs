@@ -11,7 +11,7 @@ namespace sdl_csharp.Utility
         [CallerMemberName] string member = "",
         [CallerLineNumber] int line = 0)
         {
-            Trace.WriteLine($"{Path.GetFileName(file)} {member} line {line}{(text is null ? "" : $": {text}")}");
+            Trace.WriteLine($"{Path.GetFileName(file)} {member} line {line}{(text is null ? string.Empty : $": {text}")}");
         }
     }
 }

@@ -6,6 +6,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <SolidColorBrush x:Key="Color.Text"                     Color="#FFEBEBEB"/>
+            <SolidColorBrush x:Key="Color.Text.Faded"               Color="#FFD2D2D2"/>
             <SolidColorBrush x:Key="Color.Window.Background"        Color="#FF1F2021"/>
             <SolidColorBrush x:Key="Color.Border"                   Color="#FF393C42"/>
             <SolidColorBrush x:Key="Color.Border.Background"        Color="#FF28282A"/>

@@ -27,16 +27,16 @@ namespace sdl_csharp.Utility
 
         private static string BuildFolderPath(Model.Settings s)
         {
-            string folderPath = s.FolderPath != string.Empty
-                ? s.FolderPath
+            string folderPath = s.folderPath != string.Empty
+                ? s.folderPath
                 : Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\SDL Downloads";
 
-            if (s.UseSubFolderPath)
+            if (s.useSubFolderPath)
             {
-                folderPath += @$"\{s.SubFolderPath}";
+                folderPath += @$"\{s.subFolderPath}";
             }
 
-            if (s.InferSubFolderPath)
+            if (s.inferSubFolderPath)
             {
                 folderPath += @"\%(playlist_title)s";
             }
@@ -44,20 +44,20 @@ namespace sdl_csharp.Utility
             return folderPath;
         }
 
-        private static string BuildFormat(Model.Settings s) => s.IsAudio
+        private static string BuildFormat(Model.Settings s) => s.isAudio
                 ? " --extract-audio --audio-format mp3"
                 : " --format \"bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b\"";
 
         private static string BuildFileName(Model.Settings s)
         {
-            string numbering = s.AutomaticNumbering
+            string numbering = s.automaticNumbering
                 ? "%(playlist_index)s "
                 : string.Empty;
 
             return @$"\{numbering}%(title)s.%(ext)s\";
         }
 
-        private static string BuildKind(Model.Settings s) => s.IsPlaylist
+        private static string BuildKind(Model.Settings s) => s.isPlaylist
                 ? " --yes-playlist"
                 : " --no-playlist";
     }

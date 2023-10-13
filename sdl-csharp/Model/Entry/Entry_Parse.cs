@@ -15,8 +15,8 @@ namespace sdl_csharp.Model.Entry
                 UriBuilder uri = new(url);
                 NameValueCollection queryParams = HttpUtility.ParseQueryString(uri.Query);
 
-                if (ParseSingle(url, queryParams, ref vId))            return VideoType.SINGLE;
-                if (ParseMember(url, queryParams, ref vId, ref pId))   return VideoType.MEMBER;
+                if (ParseSingle(url, queryParams, ref vId)) return VideoType.SINGLE;
+                if (ParseMember(url, queryParams, ref vId, ref pId)) return VideoType.MEMBER;
                 if (ParsePlaylist(url, queryParams, ref vId, ref pId)) return VideoType.PLAYLIST;
             }
             catch (Exception e)

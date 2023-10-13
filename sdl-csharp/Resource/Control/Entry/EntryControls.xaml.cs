@@ -1,8 +1,6 @@
-﻿using sdl_csharp.Utility;
+﻿using sdl_csharp.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
-using sdl_csharp.Model.Entry;
-using sdl_csharp.Model;
 
 namespace sdl_csharp.Resource.Control.Entry
 {
@@ -27,7 +25,7 @@ namespace sdl_csharp.Resource.Control.Entry
         {
             Button button = sender as Button;
             var entry = (Model.Entry.Entry)button.DataContext;
-            Settings.Instance.Entries.Remove(entry);
+            SettingsViewModel.Instance.Entries.Remove(entry);
         }
     }
 }

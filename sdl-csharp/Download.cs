@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using sdl_csharp.Model.Entry;
+using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Web;
-using System.Windows;
-using YoutubeExplode;
-using System.Net.Http;
-using YoutubeExplode.Common;
-using static sdl_csharp.Model.Entry.Entry;
 using System.IO;
-using sdl_csharp.Model.Entry;
-using sdl_csharp.Model;
 
 namespace sdl_csharp
 {
@@ -20,17 +11,17 @@ namespace sdl_csharp
         private static DateTime downloadStartedAt;
         public static void ProcessExited(Entry entry, EventArgs e) // sender will already be destroyed
         {
-            var settings = Settings.Instance;
-            settings.UIContext.Send((x) => // allow changing URLEntries from a thread other than main
-            {
-                if (settings.RemoveEntries)
-                {
-                    settings.Entries.Remove(entry);
-                    return;
-                }
+            //var settings = Settings.Instance;
+            //settings.UIContext.Send((x) => // allow changing URLEntries from a thread other than main
+            //{
+            //    if (settings.RemoveEntries)
+            //    {
+            //        settings.Entries.Remove(entry);
+            //        return;
+            //    }
 
-                entry.StatusDone();
-            }, null);
+            //    entry.StatusDone();
+            //}, null);
         }
 
         // Called regardless of error status, apparently
@@ -49,7 +40,7 @@ namespace sdl_csharp
             lock (_logLock)
             {
                 File.AppendAllText(
-                    $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\{$"sdl-{downloadStartedAt.ToString("yyyy-MM-dd_HH-mm-ss")}.txt"}", 
+                    $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\{$"sdl-{downloadStartedAt.ToString("yyyy-MM-dd_HH-mm-ss")}.txt"}",
                     $"{entry.URL}: {e.Data}{Environment.NewLine}");
             }
             Utility.Logger.Log(e.Data);

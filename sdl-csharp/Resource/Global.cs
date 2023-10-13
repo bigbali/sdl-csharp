@@ -4,9 +4,9 @@
     {
         public static class DownloadLabel
         {
-            public static readonly string Default     = "Download";
+            public static readonly string Default = "Download";
             public static readonly string Downloading = "Downloading...";
-            public static readonly string Done        = "Done";
+            public static readonly string Done = "Done";
         }
     }
 }

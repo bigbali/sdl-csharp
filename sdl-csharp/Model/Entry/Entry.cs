@@ -1,11 +1,8 @@
-﻿using AngleSharp.Dom;
-using sdl_csharp.Properties;
-using sdl_csharp.Utility;
+﻿using sdl_csharp.Utility;
 using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Windows;
 using YoutubeExplode;
 using YoutubeExplode.Common;
 
@@ -48,6 +45,8 @@ namespace sdl_csharp.Model.Entry
                 VideoType.PLAYLIST => new EntryDataPlaylist(),
                 _ => null
             };
+
+            _ = FetchAsync();
         }
 
         public async Task Download()
@@ -55,16 +54,16 @@ namespace sdl_csharp.Model.Entry
             var settings = Settings.Instance;
             var downloadStartedAt = DateTime.Now;
 
-            string folderPath = settings.FolderPath != string.Empty
-                ? settings.FolderPath // If there is no folder path set, use desktop instead
+            string folderPath = settings.folderPath != string.Empty
+                ? settings.folderPath // If there is no folder path set, use desktop instead
                 : Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\SDL Downloads";
 
-            if (settings.UseSubFolderPath)
+            if (settings.useSubFolderPath)
             {
-                folderPath += $"/{settings.SubFolderPath}";
+                folderPath += $"/{settings.subFolderPath}";
             }
 
-            if (settings.InferSubFolderPath) // If inferring is enabled, infer from playlist title
+            if (settings.inferSubFolderPath) // If inferring is enabled, infer from playlist title
             {
                 if (Type is VideoType.PLAYLIST)
                 {
@@ -75,17 +74,17 @@ namespace sdl_csharp.Model.Entry
                     folderPath += $"/{(Data as EntryDataMember).PlaylistTitle}";
                 }
             }
-                
 
-            string _format = settings.IsAudio
+
+            string _format = settings.isAudio
                 ? " --extract-audio --audio-format mp3"
                 : " --format \"bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b\"";
 
-            string numbering = settings.AutomaticNumbering
+            string numbering = settings.automaticNumbering
                 ? "%(playlist_index)s "
-                : "";
+                : string.Empty;
 
-            string playlist = settings.IsPlaylist
+            string playlist = settings.isPlaylist
                 ? " --yes-playlist"
                 : " --no-playlist";
 

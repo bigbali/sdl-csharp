@@ -34,5 +34,10 @@ namespace sdl_csharp.Resource.Control
             get { return (string)GetValue(Content2Property); }
             set { SetValue(Content2Property, value); }
         }
+
+        public void Switch(object sender,  RoutedEventArgs e)
+        {
+            State = !State;
+        }
     }
 }

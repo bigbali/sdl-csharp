@@ -7,7 +7,7 @@ namespace sdl_csharp.Utility
     /// Implements INotifyPropertyChanged. <br/>
     /// Call Set() in property setter to automatically invoke PropertyChanged.
     /// </summary>
-    public class NotifyPropertyChanged: INotifyPropertyChanged
+    public class NotifyPropertyChanged : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

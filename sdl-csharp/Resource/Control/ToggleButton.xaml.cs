@@ -10,13 +10,18 @@ namespace sdl_csharp.Resource.Control
             InitializeComponent();
         }
 
-        public static readonly DependencyProperty StateProperty = 
+        public static readonly DependencyProperty StateProperty =
             DependencyProperty.Register("State", typeof(bool), typeof(ToggleButton), new PropertyMetadata(false));
 
         public bool State
         {
             get { return (bool)GetValue(StateProperty); }
             set { SetValue(StateProperty, value); }
+        }
+
+        public void Toggle(object sender,  RoutedEventArgs e)
+        {
+            State = !State;
         }
     }
 }
