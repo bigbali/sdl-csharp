@@ -1,11 +1,11 @@
 ﻿using sdl_csharp.Model;
-using sdl_csharp.Model.Entry;
 using sdl_csharp.Utility;
-using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 
 namespace sdl_csharp.ViewModel
@@ -28,12 +28,16 @@ namespace sdl_csharp.ViewModel
         SettingsViewModel()
         {
             settings = Settings.Instance;
+            EntryViewModels = new ObservableCollection<EntryViewModel>(settings.entries.Select(entry => new EntryViewModel(entry)));
+            EntryViewModels.CollectionChanged += SyncEntryModels;
 
             ResetCommand = new RelayCommand(ResetTemplate);
+            SelectFolderCommand = new RelayCommand(SelectFolder);
             ArgTemplateTextChangedCommand = new RelayCommand(ArgTemplateTextChanged);
         }
 
         public ICommand ResetCommand { get; }
+        public ICommand SelectFolderCommand { get; }
         public ICommand ArgTemplateTextChangedCommand { get; }
 
         public YTDLArgTemplate ArgTemplate
@@ -42,7 +46,7 @@ namespace sdl_csharp.ViewModel
             set => Set(ref settings.argTemplate, value);
         }
 
-        public ObservableCollection<Entry> Entries { get; set; } = new();
+        public ObservableCollection<EntryViewModel> EntryViewModels { get; set; }
         public string ArgTemplateString { get => settings.argTemplateString; set => Set(ref settings.argTemplateString, value); }
 
         public bool UseSubFolderPath
@@ -103,6 +107,41 @@ namespace sdl_csharp.ViewModel
         private void ResetTemplate(object obj)
         {
             ArgTemplateString = ArgTemplate.Template;
+        }
+
+        private void SyncEntryModels(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var newItem in e.NewItems.Cast<EntryViewModel>())
+                {
+                    settings.entries.Add(newItem.entry);
+                }
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                foreach (var oldItem in e.OldItems.Cast<EntryViewModel>())
+                {
+                    EntryViewModel modelToRemove = EntryViewModels.FirstOrDefault(viewmodel => viewmodel.entry == oldItem.entry);
+                    if (modelToRemove != null)
+                    {
+                        settings.entries.Remove(modelToRemove.entry);
+                    }
+                }
+            }
+        }
+
+        private void SelectFolder(object obj)
+        {
+            FolderBrowserDialog dialog = new();
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                if (string.IsNullOrEmpty(dialog.SelectedPath))
+                    return;
+
+                FolderPath = dialog.SelectedPath;
+            }
         }
     }
 }

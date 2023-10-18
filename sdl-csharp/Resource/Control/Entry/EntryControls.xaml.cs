@@ -1,4 +1,6 @@
-﻿using sdl_csharp.ViewModel;
+﻿using Microsoft.VisualBasic.Logging;
+using sdl_csharp.Utility;
+using sdl_csharp.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -17,15 +19,15 @@ namespace sdl_csharp.Resource.Control.Entry
         private void DownloadEntry(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            var entry = (Model.Entry.Entry)button.DataContext;
-            _ = entry.Download();
+            var entryvm = (EntryViewModel)button.DataContext;
+            _ = entryvm.Download();
         }
 
         private void RemoveEntry(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            var entry = (Model.Entry.Entry)button.DataContext;
-            SettingsViewModel.Instance.Entries.Remove(entry);
+            var entryvm = (EntryViewModel)button.DataContext;
+            SettingsViewModel.Instance.EntryViewModels.Remove(entryvm);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using sdl_csharp.ViewModel;
+using System;
 using System.Linq;
 using System.Windows.Controls;
 
@@ -12,6 +13,7 @@ namespace sdl_csharp.Resource.Control.Entry
         public EntryMember()
         {
             InitializeComponent();
+            //DataContext = new EntryViewModel(DataContext as Model.Entry.Entry);
         }
     }
 }

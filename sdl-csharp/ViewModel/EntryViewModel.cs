@@ -1,5 +1,8 @@
-﻿using sdl_csharp.Model.Entry;
+﻿using sdl_csharp.Model;
+using sdl_csharp.Model.Entry;
 using sdl_csharp.Utility;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -9,19 +12,34 @@ namespace sdl_csharp.ViewModel
 {
     public class EntryViewModel : NotifyPropertyChanged
     {
-        private object data;
+        public Entry entry;
         public static ICommand AddEntryCommand { get; set; }
+        public EntryType Type { get => entry.type; }
+        public dynamic Data { get => entry.data; }
+        public string URL { get => entry.url; }
+        public EntryStatusViewModel StatusViewModel { get; set; }
 
-        public object Data
-        {
-            get => data;
-            set => Set(ref data, value);
-        }
-
+        private float? downloadPercent;
+        public float? DownloadPercent { get => downloadPercent; set => Set(ref downloadPercent, value) ; }
         static EntryViewModel()
         {
             AddEntryCommand = new RelayCommand(AddEntry);
         }
+
+        public EntryViewModel(string url)
+        {
+            entry = new Entry(url);
+            StatusViewModel = new EntryStatusViewModel(entry);
+            entry.PropertyChanged += EntryPropertyChanged;
+        }
+
+        public EntryViewModel(Entry entry)
+        {
+            this.entry = entry;
+            StatusViewModel = new EntryStatusViewModel(entry);
+        }
+
+        public async Task Download() => await entry.Download();
 
         public static void AddEntry(object arg)
         {
@@ -42,8 +60,8 @@ namespace sdl_csharp.ViewModel
             if (newUrl != string.Empty
                 && (newUrl.StartsWith("https://youtu.be") || newUrl.StartsWith("https://www.youtube.com")))
             {
-                Entry urlEntry = new(newUrl);
-                SettingsViewModel.Instance.Entries.Add(urlEntry);
+                EntryViewModel urlEntry = new(newUrl);
+                SettingsViewModel.Instance.EntryViewModels.Add(urlEntry);
 
                 return;
             }
@@ -52,6 +70,14 @@ namespace sdl_csharp.ViewModel
                             "A valid URL must link to a YouTube video or playlist.",
                             "URL is invalid",
                             MessageBoxButton.OK);
+        }
+
+        private void EntryPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "DownloadPercent")
+            {
+                DownloadPercent = ((Entry)sender).DownloadPercent;
+            }
         }
     }
 
@@ -63,13 +89,13 @@ namespace sdl_csharp.ViewModel
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
-            IEntryData type = (item as Entry).Data;
+            dynamic type = (item as EntryViewModel).Data;
 
             return type switch
             {
-                EntryDataSingle => SingleTemplate,
-                EntryDataMember => MemberTemplate,
-                EntryDataPlaylist => PlaylistTemplate,
+                EntrySingleData => SingleTemplate,
+                EntryMemberData => MemberTemplate,
+                EntryPlaylistData => PlaylistTemplate,
                 _ => base.SelectTemplate(item, container)
             };
         }

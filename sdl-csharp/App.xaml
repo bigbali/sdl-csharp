@@ -26,6 +26,8 @@
             <SolidColorBrush x:Key="Color.Button.Background.Hover"  Color="#FF323232" />
             <SolidColorBrush x:Key="Color.Button.Background.Focus"  Color="#FF464646" />
 
+            <SolidColorBrush x:Key="Color.ProgressBar.Fill"         Color="#ff0c4d20" />
+
             <FontFamily x:Key="CourierPrime">Resource/Font/#Courier Prime</FontFamily>
             <FontFamily x:Key="Raleway">Resource/Font/#Raleway</FontFamily>
 

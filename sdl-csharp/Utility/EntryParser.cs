@@ -1,13 +1,13 @@
-﻿using sdl_csharp.Utility;
+﻿using sdl_csharp.Model.Entry;
 using System;
 using System.Collections.Specialized;
 using System.Web;
 
-namespace sdl_csharp.Model.Entry
+namespace sdl_csharp.Utility
 {
-    public partial class Entry : NotifyPropertyChanged
+    public static class EntryParser
     {
-        public static VideoType? GetType(string url, ref string vId, ref string pId)
+        public static EntryType? GetType(string url, ref string vId, ref string pId)
         {
             Logger.Log("GETTYPE");
             try
@@ -15,13 +15,13 @@ namespace sdl_csharp.Model.Entry
                 UriBuilder uri = new(url);
                 NameValueCollection queryParams = HttpUtility.ParseQueryString(uri.Query);
 
-                if (ParseSingle(url, queryParams, ref vId)) return VideoType.SINGLE;
-                if (ParseMember(url, queryParams, ref vId, ref pId)) return VideoType.MEMBER;
-                if (ParsePlaylist(url, queryParams, ref vId, ref pId)) return VideoType.PLAYLIST;
+                if (ParseSingle(url, queryParams, ref vId)) return EntryType.SINGLE;
+                if (ParseMember(url, queryParams, ref vId, ref pId)) return EntryType.MEMBER;
+                if (ParsePlaylist(url, queryParams, ref vId, ref pId)) return EntryType.PLAYLIST;
             }
             catch (Exception e)
             {
-                Logger.Log($"DEBUG_GET_VIDEO_KIND_BY_URL_EXCEPTION: {e.Message}");
+                Logger.Log($"Couldn't get type for URL {url}: {e.Message}");
             }
 
             return null;

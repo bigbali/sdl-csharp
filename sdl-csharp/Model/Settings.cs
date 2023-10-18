@@ -1,4 +1,6 @@
 ﻿using sdl_csharp.Utility;
+using sdl_csharp.ViewModel;
+using System.Collections.ObjectModel;
 
 namespace sdl_csharp.Model
 {
@@ -29,5 +31,6 @@ namespace sdl_csharp.Model
         public string subFolderPath = string.Empty;
         public string argTemplateString;
         public YTDLArgTemplate argTemplate;
+        public ObservableCollection<Entry.Entry> entries = new();
     }
 }

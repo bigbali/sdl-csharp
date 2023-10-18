@@ -17,13 +17,13 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <DataTemplate x:Key="SingleTemplate">
-                <entrycontrol:EntrySingle DataContext="{Binding}" />
+                <entrycontrol:EntrySingle />
             </DataTemplate>
             <DataTemplate x:Key="MemberTemplate">
-                <entrycontrol:EntryMember DataContext="{Binding}" />
+                <entrycontrol:EntryMember />
             </DataTemplate>
             <DataTemplate x:Key="PlaylistTemplate">
-                <entrycontrol:EntryPlaylist DataContext="{Binding}" />
+                <entrycontrol:EntryPlaylist />
             </DataTemplate>
             <viewmodel:EntrySelector
                 x:Key="EntrySelector"

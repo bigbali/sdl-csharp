@@ -5,11 +5,12 @@
     xmlns:control="clr-namespace:sdl_csharp.Resource.Control"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entry="clr-namespace:sdl_csharp.Model.Entry"
+    xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
     xmlns:entrycontrol="clr-namespace:sdl_csharp.Resource.Control.Entry"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Height="166"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=entry:Entry}"
+    d:DataContext="{d:DesignInstance Type=viewmodel:EntryViewModel}"
     d:DesignHeight="166"
     d:DesignWidth="800">
     <Border
