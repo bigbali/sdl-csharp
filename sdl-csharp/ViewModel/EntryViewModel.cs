@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static sdl_csharp.Model.Entry.Entry;
 
 namespace sdl_csharp.ViewModel
 {
@@ -19,8 +18,6 @@ namespace sdl_csharp.ViewModel
         public string URL { get => entry.url; }
         public EntryStatusViewModel StatusViewModel { get; set; }
 
-        private float? downloadPercent;
-        public float? DownloadPercent { get => downloadPercent; set => Set(ref downloadPercent, value) ; }
         static EntryViewModel()
         {
             AddEntryCommand = new RelayCommand(AddEntry);
@@ -30,7 +27,7 @@ namespace sdl_csharp.ViewModel
         {
             entry = new Entry(url);
             StatusViewModel = new EntryStatusViewModel(entry);
-            entry.PropertyChanged += EntryPropertyChanged;
+            entry.PropertyChanged += SynchronizeViewModelPropertiesToModelProperties(entry, this);
         }
 
         public EntryViewModel(Entry entry)
@@ -40,6 +37,8 @@ namespace sdl_csharp.ViewModel
         }
 
         public async Task Download() => await entry.Download();
+
+        public void Remove() => entry.Remove();
 
         public static void AddEntry(object arg)
         {
@@ -74,9 +73,18 @@ namespace sdl_csharp.ViewModel
 
         private void EntryPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "DownloadPercent")
+            foreach (var modelProperty in sender.GetType().GetProperties())
             {
-                DownloadPercent = ((Entry)sender).DownloadPercent;
+                var viewmodelProperty = GetType().GetProperty(modelProperty.Name);
+
+                if (viewmodelProperty != null)
+                {
+                    // Get the value from the model
+                    var modelValue = modelProperty.GetValue(sender);
+
+                    // Initialize the value on the ViewModel
+                    viewmodelProperty.SetValue(this, modelValue);
+                }
             }
         }
     }
@@ -101,3 +109,7 @@ namespace sdl_csharp.ViewModel
         }
     }
 }
+
+
+
+

@@ -1,28 +1,21 @@
 ﻿using sdl_csharp.Model;
-using sdl_csharp.Model.Entry;
 using sdl_csharp.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace sdl_csharp.Converter
 {
-    public class PlaylistProgressConverter : IValueConverter
+    public class PlaylistProgressCounterConverter : IValueConverter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (parameter is null) return value;
+            uint index = (uint)value;
+            EntryViewModel vm = ((TextBox)parameter).DataContext as EntryViewModel;
 
-            FrameworkElement element = (FrameworkElement)parameter;
-            EntryViewModel entry = (EntryViewModel)element.DataContext;
-            uint count = (entry.Data as EntryPlaylistData).PlaylistMemberCount;
-
-            return $"{value}/{count}";
+            return $"{index}/{vm.Data.PlaylistMemberCount}";
         }
 
         object IValueConverter.ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

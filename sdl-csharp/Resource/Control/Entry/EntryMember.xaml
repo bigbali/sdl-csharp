@@ -5,9 +5,9 @@
     xmlns:control="clr-namespace:sdl_csharp.Resource.Control"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entry="clr-namespace:sdl_csharp.Model.Entry"
-    xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
     xmlns:entrycontrol="clr-namespace:sdl_csharp.Resource.Control.Entry"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
     Height="166"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodel:EntryViewModel}"
@@ -20,51 +20,53 @@
         Padding="8">
         <Grid Height="150">
             <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
-            <Grid VerticalAlignment="Bottom">
-                <control:FadeIn Value="{Binding Data.Title}">
-                    <control:ImageWithFallback Source="{Binding Data.PlaylistThumbnail}" />
-                </control:FadeIn>
-                <Grid Margin="200,0,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <control:FadeIn Grid.Row="0" Value="{Binding Data.Title}">
+            <control:FadeIn Value="{Binding Data.IsLoaded}">
+                <Grid VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <control:FadeIn Grid.Column="0" Value="{Binding Data.PlaylistThumbnail}">
+                        <control:ImageWithFallback Source="{Binding Data.PlaylistThumbnail}" />
+                    </control:FadeIn>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <Label
                             Content="{Binding Data.Title}"
                             d:Content="Title"
                             ToolTip="Playlist title" />
-                    </control:FadeIn>
-                    <control:FadeIn Grid.Row="1" Value="{Binding Data.Author}">
                         <Label
+                            Grid.Row="1"
                             Content="{Binding Data.Author}"
                             d:Content="Author"
                             FontWeight="Medium"
                             ToolTip="Playlist author" />
-                    </control:FadeIn>
-                    <control:FadeIn
-                        Grid.Row="2"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        Value="{Binding Data.Title}">
-                        <StackPanel Orientation="Horizontal" ToolTip="This entry is a member of a playlist">
-                            <Label Content="From " />
+                        <StackPanel
+                            Grid.Row="2"
+                            Orientation="Horizontal"
+                            ToolTip="This entry is a member of a playlist">
+                            <Label VerticalAlignment="Bottom" Content="From " />
                             <Label
+                                VerticalAlignment="Bottom"
                                 Content="{Binding Data.PlaylistTitle}"
                                 d:Content="Example Playlist"
                                 FontWeight="Medium" />
                         </StackPanel>
-                    </control:FadeIn>
-                    <control:FadeIn Grid.Row="3" Value="{Binding Data.Title}">
-                        <StackPanel Orientation="Horizontal" ToolTip="Number of entries in playlist">
-                            <Label Content="{Binding Data.PlaylistCount}" d:Content="11" />
+                        <StackPanel
+                            Grid.Row="3"
+                            Orientation="Horizontal"
+                            ToolTip="Number of entries in playlist">
+                            <Label Content="{Binding Data.PlaylistMemberCount}" d:Content="11" />
                             <Label Content=" Entries" />
                         </StackPanel>
-                    </control:FadeIn>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </control:FadeIn>
         </Grid>
     </Border>
 </UserControl>

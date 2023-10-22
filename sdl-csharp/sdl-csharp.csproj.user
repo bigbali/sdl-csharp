@@ -8,6 +8,9 @@
     <Compile Update="Resource\Control\Entry\EntryMember.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Resource\Control\Entry\EntryOutput.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Resource\Control\Entry\EntryPlaylist.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -32,6 +35,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Resource\Control\Entry\EntryMember.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Resource\Control\Entry\EntryOutput.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Resource\Control\Entry\EntryPlaylist.xaml">

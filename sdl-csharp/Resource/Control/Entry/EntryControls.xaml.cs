@@ -26,8 +26,8 @@ namespace sdl_csharp.Resource.Control.Entry
         private void RemoveEntry(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
-            var entryvm = (EntryViewModel)button.DataContext;
-            SettingsViewModel.Instance.EntryViewModels.Remove(entryvm);
+            EntryViewModel entryvm = (EntryViewModel)button.DataContext;
+            entryvm.Remove();
         }
     }
 }

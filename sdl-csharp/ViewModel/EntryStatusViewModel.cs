@@ -1,12 +1,6 @@
 ﻿using sdl_csharp.Model.Entry;
 using sdl_csharp.Utility;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sdl_csharp.ViewModel
 {
@@ -30,6 +24,7 @@ namespace sdl_csharp.ViewModel
                 OnPropertyChanged(nameof(IsDownloading));
                 OnPropertyChanged(nameof(IsConverting));
                 OnPropertyChanged(nameof(Label));
+                OnPropertyChanged(nameof(Status));
             }
         }
 
@@ -37,6 +32,7 @@ namespace sdl_csharp.ViewModel
         public bool IsDone => entry.Status is EntryStatus.DONE;
         public bool IsDownloading => entry.Status is EntryStatus.DOWNLOADING;
         public bool IsConverting => entry.Status is EntryStatus.CONVERTING;
+        public EntryStatus Status => entry.Status;
 
         public string Label => entry.Status switch
         {

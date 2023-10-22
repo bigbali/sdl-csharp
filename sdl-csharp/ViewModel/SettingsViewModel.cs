@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 
@@ -29,7 +28,7 @@ namespace sdl_csharp.ViewModel
         {
             settings = Settings.Instance;
             EntryViewModels = new ObservableCollection<EntryViewModel>(settings.entries.Select(entry => new EntryViewModel(entry)));
-            EntryViewModels.CollectionChanged += SyncEntryModels;
+            EntryViewModels.CollectionChanged += SyncModelToViewModel;
 
             ResetCommand = new RelayCommand(ResetTemplate);
             SelectFolderCommand = new RelayCommand(SelectFolder);
@@ -46,7 +45,7 @@ namespace sdl_csharp.ViewModel
             set => Set(ref settings.argTemplate, value);
         }
 
-        public ObservableCollection<EntryViewModel> EntryViewModels { get; set; }
+        public ObservableCollection<EntryViewModel> EntryViewModels { get; set; } = new();
         public string ArgTemplateString { get => settings.argTemplateString; set => Set(ref settings.argTemplateString, value); }
 
         public bool UseSubFolderPath
@@ -109,7 +108,7 @@ namespace sdl_csharp.ViewModel
             ArgTemplateString = ArgTemplate.Template;
         }
 
-        private void SyncEntryModels(object sender, NotifyCollectionChangedEventArgs e)
+        private void SyncModelToViewModel(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {

@@ -1,6 +1,8 @@
 ﻿using sdl_csharp.Utility;
+using sdl_csharp.ViewModel;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,7 +27,7 @@ namespace sdl_csharp.Model.Entry
         PLAYLIST
     }
 
-    public partial class Entry : NotifyPropertyChanged
+    public class Entry : NotifyPropertyChanged
     {
         public EntryType type;
         public dynamic data;
@@ -33,9 +35,6 @@ namespace sdl_csharp.Model.Entry
         public string videoId;
         public string playlistId;
         public DateTime downloadStart;
-
-        private float? downloadPercent;
-        public float? DownloadPercent { get => downloadPercent; set  { Logger.Log(value.ToString()); Set(ref downloadPercent, value); } }
 
         // this is updated from inside the class
         private EntryStatus status;
@@ -56,6 +55,11 @@ namespace sdl_csharp.Model.Entry
             };
 
             _ = FetchAsync();
+        }
+
+        public void Remove()
+        {
+            SettingsViewModel.Instance.EntryViewModels.Remove(SettingsViewModel.Instance.EntryViewModels.First((vm) => vm.entry == this));
         }
 
         public async Task Download()
@@ -87,9 +91,15 @@ namespace sdl_csharp.Model.Entry
                         EnableRaisingEvents = true
                     };
 
-                    downloadProcess.Exited += (sender, e) => sdl_csharp.Download.ProcessExited(this, e);
-                    downloadProcess.OutputDataReceived += (sender, e) => sdl_csharp.Download.ProcessHasReceivedOutput(this, sender, e);
-                    downloadProcess.ErrorDataReceived += (sender, e) => sdl_csharp.Download.ProcessHasFaulted(this, sender, e);
+                    Logger logger = new();
+
+                    downloadProcess.Exited += (sender, e) => Event.DownloadProcess.Exited(this, e);
+                    downloadProcess.ErrorDataReceived += (sender, e) => Event.DownloadProcess.ErrorDataReceived(this, sender, e);
+                    downloadProcess.OutputDataReceived += (sender, e) =>
+                    {
+                        Event.DownloadProcess.OutputDataReceived(this, sender, e);
+                        logger.LogToFile(this, e.Data);
+                    };
 
                     downloadProcess.Start();
                     downloadProcess.BeginOutputReadLine();
@@ -139,7 +149,7 @@ namespace sdl_csharp.Model.Entry
             Video video = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={videoId}");
             if (data is EntrySingleData singleData)
             {
-                singleData.Set(video);
+                singleData.Initialize(video);
             }
         }
 
@@ -151,8 +161,8 @@ namespace sdl_csharp.Model.Entry
 
             if (data is EntryMemberData memberData)
             {
-                memberData.Set(video);
-                memberData.Set(playlist, playlistEntries);
+                memberData.Initialize(video);
+                memberData.Initialize(playlist, playlistEntries);
             }
         }
 
@@ -163,7 +173,7 @@ namespace sdl_csharp.Model.Entry
 
             if (data is EntryPlaylistData playlistData)
             {
-                playlistData.Set(playlist, playlistEntries);
+                playlistData.Initialize(playlist, playlistEntries);
             }
         }
     }

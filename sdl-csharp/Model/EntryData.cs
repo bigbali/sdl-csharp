@@ -1,6 +1,7 @@
 ﻿using sdl_csharp.Utility;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using YoutubeExplode.Playlists;
 using YoutubeExplode.Videos;
 
@@ -23,7 +24,11 @@ namespace sdl_csharp.Model
 
         public uint PlaylistMemberCount { get; set; }
 
-        public void Set(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries);
+        public float PlaylistMemberDownloadPercent { get; set; }
+
+        public float PlaylistOverallDownloadPercent { get; set; }
+
+        public void Initialize(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries);
     }
 
     public interface IEntrySingleData : IEntry
@@ -34,9 +39,11 @@ namespace sdl_csharp.Model
 
         public string Thumbnail { get; set; }
 
+        public float DownloadPercent { get; set; }
+
         public TimeSpan? Duration { get; set; }
 
-        public void Set(Video videoMetadata);
+        public void Initialize(Video videoMetadata);
     }
 
     public class EntrySingleData : NotifyPropertyChanged, IEntrySingleData
@@ -45,6 +52,7 @@ namespace sdl_csharp.Model
         string author;
         string title;
         string thumbnail;
+        float downloadPercent;
         TimeSpan? duration;
 
         public bool IsLoaded { get => isLoaded; set => Set(ref isLoaded, value); }
@@ -55,9 +63,11 @@ namespace sdl_csharp.Model
 
         public string Thumbnail { get => thumbnail; set => Set(ref thumbnail, value); }
 
+        public float DownloadPercent { get => downloadPercent; set => Set(ref downloadPercent, value); }
+
         public TimeSpan? Duration { get => duration; set => Set(ref duration, value); }
 
-        public void Set(Video videoMetadata)
+        public void Initialize(Video videoMetadata)
         {
             Title = videoMetadata.Title;
             Thumbnail = videoMetadata.Thumbnails[0].Url;
@@ -75,6 +85,8 @@ namespace sdl_csharp.Model
         string playlistThumbnail;
         uint playlistDownloadIndex;
         uint playlistMemberCount;
+        float playlistMemberDownloadPercent;
+        float playlistOverallDownloadPercent;
 
         public bool IsLoaded { get => isLoaded; set => Set(ref isLoaded, value); }
 
@@ -92,7 +104,33 @@ namespace sdl_csharp.Model
 
         public uint PlaylistMemberCount { get => playlistMemberCount; set => Set(ref playlistMemberCount, value); }
 
-        public void Set(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries)
+        public float PlaylistMemberDownloadPercent {
+            get => playlistMemberDownloadPercent;
+            set
+            {
+                Set(ref playlistMemberDownloadPercent, value);
+
+                float members = Math.Max(PlaylistMemberCount, 1.0f);
+                float index = Math.Max(PlaylistDownloadIndex, 1.0f);
+
+                float maxPercentPerMember = 1.0f / members * 100.0f;
+                float basePercent = maxPercentPerMember * index - maxPercentPerMember;
+
+                float memberPercent = value / 100.0f * maxPercentPerMember;
+
+                float totalPercent = basePercent + memberPercent;
+
+                PlaylistOverallDownloadPercent = totalPercent;
+            }
+        }
+
+        public float PlaylistOverallDownloadPercent {
+            get => playlistOverallDownloadPercent;
+            set => Set(ref playlistOverallDownloadPercent, value);
+        }
+
+
+        public void Initialize(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries)
         {
             PlaylistTitle = playlistMetadata.Title;
             PlaylistThumbnail = playlistMetadata.Thumbnails[0].Url;
@@ -109,12 +147,15 @@ namespace sdl_csharp.Model
         string author;
         string title;
         string thumbnail;
+        float downloadPercent;
         TimeSpan? duration;
         string playlistAuthor;
         string playlistTitle;
         string playlistThumbnail;
         uint playlistDownloadIndex;
         uint playlistMemberCount;
+        float playlistMemberDownloadPercent;
+        float playlistOverallDownloadPercent;
 
         public bool IsLoaded { get => isLoaded; set => Set(ref isLoaded, value); }
 
@@ -140,7 +181,36 @@ namespace sdl_csharp.Model
 
         public uint PlaylistMemberCount { get => playlistMemberCount; set => Set(ref playlistMemberCount, value); }
 
-        public void Set(Video videoMetadata)
+        public float PlaylistMemberDownloadPercent
+        {
+            get => playlistMemberDownloadPercent;
+            set
+            {
+                Set(ref playlistMemberDownloadPercent, value);
+
+                float members = Math.Max(PlaylistMemberCount, 1.0f);
+                float index = Math.Max(PlaylistDownloadIndex, 1.0f);
+
+                float maxPercentPerMember = 1.0f / members * 100.0f;
+                float basePercent = maxPercentPerMember * index - maxPercentPerMember;
+
+                float memberPercent = value / 100.0f * maxPercentPerMember;
+
+                float totalPercent = basePercent + memberPercent;
+
+                PlaylistOverallDownloadPercent = totalPercent;
+            }
+        }
+
+        public float PlaylistOverallDownloadPercent
+        {
+            get => playlistOverallDownloadPercent;
+            set => Set(ref playlistOverallDownloadPercent, value);
+        }
+
+        public float DownloadPercent { get => downloadPercent; set => Set(ref downloadPercent, value); }
+
+        public void Initialize(Video videoMetadata)
         {
             Title = videoMetadata.Title;
             Thumbnail = videoMetadata.Thumbnails[0].Url;
@@ -151,15 +221,16 @@ namespace sdl_csharp.Model
             if (isPartLoaded) IsLoaded = true;
         }
 
-        public void Set(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries)
+        public void Initialize(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries)
         {
             PlaylistTitle = playlistMetadata.Title;
             PlaylistThumbnail = playlistMetadata.Thumbnails[0].Url;
             PlaylistAuthor = playlistMetadata.Author?.ChannelTitle;
             PlaylistMemberCount = (uint)playlistEntries.Count;
-            isPartLoaded = true;
 
-            if (isPartLoaded) IsLoaded = true;
+            
+            IsLoaded = isPartLoaded;
+            isPartLoaded = true;
         }
     }
 }

@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:entry="clr-namespace:sdl_csharp.Model.Entry"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:sdl_csharp.Model"
     xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
     Height="35"
     Margin="0,0,0,-6"
@@ -14,7 +15,9 @@
     d:DesignHeight="35"
     d:DesignWidth="800">
     <UserControl.Resources>
-        <converter:PlaylistProgressConverter x:Key="playlistProgressConverter" />
+        <converter:PlaylistProgressCounterConverter x:Key="playlistProgressCounterConverter" />
+        <converter:PlaylistProgressVisibilityConverter x:Key="playlistProgressVisibilityConverter" />
+        <converter:EntryStatusAnimationConverter x:Key="entryStatusAnimationConverter" />
     </UserControl.Resources>
     <Grid Height="35">
         <Grid Height="33" VerticalAlignment="Top">
@@ -61,39 +64,93 @@
                                                     </VisualBrush.Visual>
                                                 </VisualBrush>
                                             </Grid.OpacityMask>
-                                            <ProgressBar
-                                                HorizontalAlignment="Stretch"
-                                                Value="{Binding DownloadPercent, TargetNullValue='0'}"
-                                                Background="Transparent"
-                                                BorderBrush="Transparent"
-                                                BorderThickness="0"
-                                                d:Value="100"
-                                                Foreground="{StaticResource Color.ProgressBar.Fill}" />
+                                            <ContentControl Content="{Binding Data}">
+                                                <d:ContentControl.Content>
+                                                    <d:ProgressBar
+                                                        d:Background="Transparent"
+                                                        d:BorderBrush="Transparent"
+                                                        d:BorderThickness="0"
+                                                        d:Foreground="{StaticResource Color.ProgressBar.Fill}"
+                                                        d:HorizontalAlignment="Stretch"
+                                                        d:Value="50" />
+                                                </d:ContentControl.Content>
+                                                <ContentControl.Resources>
+                                                    <DataTemplate DataType="{x:Type model:EntrySingleData}">
+                                                        <ProgressBar
+                                                            HorizontalAlignment="Stretch"
+                                                            Value="{Binding DownloadPercent}"
+                                                            Background="Transparent"
+                                                            BorderBrush="Transparent"
+                                                            BorderThickness="0"
+                                                            Foreground="{StaticResource Color.ProgressBar.Fill}" />
+                                                    </DataTemplate>
+
+                                                    <DataTemplate DataType="{x:Type model:EntryPlaylistData}">
+                                                        <ProgressBar
+                                                            HorizontalAlignment="Stretch"
+                                                            Value="{Binding PlaylistOverallDownloadPercent}"
+                                                            Background="Transparent"
+                                                            BorderBrush="Transparent"
+                                                            BorderThickness="0"
+                                                            Foreground="{StaticResource Color.ProgressBar.Fill}" />
+                                                    </DataTemplate>
+
+                                                    <DataTemplate DataType="{x:Type model:EntryMemberData}">
+                                                        <ProgressBar
+                                                            HorizontalAlignment="Stretch"
+                                                            Value="{Binding PlaylistOverallDownloadPercent}"
+                                                            Background="Transparent"
+                                                            BorderBrush="Transparent"
+                                                            BorderThickness="0"
+                                                            Foreground="{StaticResource Color.ProgressBar.Fill}" />
+                                                    </DataTemplate>
+                                                </ContentControl.Resources>
+                                            </ContentControl>
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <ScrollViewer
                                                     x:Name="PART_ContentHost"
-                                                    Focusable="false"
                                                     Grid.Column="0"
+                                                    Focusable="false"
                                                     HorizontalScrollBarVisibility="Hidden"
                                                     VerticalScrollBarVisibility="Hidden" />
-                                                <Label
-                                                    FontFamily="{StaticResource CourierPrime}"
-                                                    Grid.Column="1"
-                                                    Margin="4, 0, 4, 0"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    Content="{Binding Data.PlaylistDownloadIndex, TargetNullValue={x:Null}, Converter={StaticResource playlistProgressConverter}, ConverterParameter={x:Reference textbox}}"
-                                                    d:Content="13/13">
-                                                    <!--<Label.Style>
-                                                        <Style.Triggers>
-                                                            <DataTrigger />
-                                                        </Style.Triggers>
-                                                    </Label.Style>-->
-                                                </Label>
+                                                <ContentControl Content="{Binding Data}" Grid.Column="1">
+                                                    <d:ContentControl.Content>
+                                                        <d:Label
+                                                            d:Grid.Column="1"
+                                                            d:Margin="4, 0, 4, 0"
+                                                            d:HorizontalAlignment="Right"
+                                                            d:VerticalAlignment="Center"
+                                                            d:Content="3/13"
+                                                            d:FontFamily="{StaticResource CourierPrime}" />
+                                                    </d:ContentControl.Content>
+                                                    <ContentControl.Resources>
+                                                        <DataTemplate DataType="{x:Type model:EntrySingleData}">
+                                                        </DataTemplate>
+                                                        <DataTemplate DataType="{x:Type model:EntryPlaylistData}">
+                                                            <Label
+                                                                Grid.Column="1"
+                                                                Margin="4, 0, 4, 0"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Center"
+                                                                Content="{Binding PlaylistDownloadIndex, Converter={StaticResource playlistProgressCounterConverter}, ConverterParameter={x:Reference Name='textbox'}}"                                                              
+                                                                FontFamily="{StaticResource CourierPrime}" />
+                                                        </DataTemplate>
+
+                                                        <DataTemplate DataType="{x:Type model:EntryMemberData}">
+                                                            <Label
+                                                                Grid.Column="1"
+                                                                Margin="4, 0, 4, 0"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Center"
+                                                                Content="{Binding PlaylistDownloadIndex, Converter={StaticResource playlistProgressCounterConverter}, ConverterParameter={x:Reference Name='textbox'}}"
+                                                                FontFamily="{StaticResource CourierPrime}" />
+                                                        </DataTemplate>
+                                                    </ContentControl.Resources>
+                                                </ContentControl>
                                             </Grid>
                                         </Grid>
                                     </Border>
@@ -181,7 +238,7 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
-                                    <DataTrigger Value="True" Binding="{Binding StatusViewModel.IsDownloading}">
+                                    <DataTrigger Value="True" Binding="{Binding StatusViewModel.Status, Converter={StaticResource entryStatusAnimationConverter}}">
                                         <DataTrigger.EnterActions>
                                             <BeginStoryboard>
                                                 <Storyboard>
@@ -201,26 +258,8 @@
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </DataTrigger.EnterActions>
-                                        <DataTrigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        AutoReverse="False"
-                                                        Duration="0:0:0.2"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        To="0" />
-                                                    <DoubleAnimation
-                                                        AutoReverse="False"
-                                                        Duration="0:0:3"
-                                                        From="0"
-                                                        RepeatBehavior="Forever"
-                                                        Storyboard.TargetProperty="(TextBox.RenderTransform).(RotateTransform.Angle)"
-                                                        To="360" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.ExitActions>
                                     </DataTrigger>
-                                    <DataTrigger Value="True" Binding="{Binding StatusViewModel.IsConverting}">
+                                    <DataTrigger Value="True" Binding="{Binding StatusViewModel.IsDone}">
                                         <DataTrigger.EnterActions>
                                             <BeginStoryboard>
                                                 <Storyboard>
@@ -228,36 +267,10 @@
                                                         AutoReverse="False"
                                                         Duration="0:0:0.2"
                                                         Storyboard.TargetProperty="Opacity"
-                                                        To="1" />
-                                                    <DoubleAnimation
-                                                        AutoReverse="False"
-                                                        Duration="0:0:3"
-                                                        FillBehavior="Stop"
-                                                        From="0"
-                                                        RepeatBehavior="Forever"
-                                                        Storyboard.TargetProperty="(TextBox.RenderTransform).(RotateTransform.Angle)"
-                                                        To="360" />
+                                                        To="0" />
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </DataTrigger.EnterActions>
-                                        <DataTrigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        AutoReverse="False"
-                                                        Duration="0:0:0.2"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        To="0" />
-                                                    <DoubleAnimation
-                                                        AutoReverse="False"
-                                                        Duration="0:0:3"
-                                                        From="0"
-                                                        RepeatBehavior="Forever"
-                                                        Storyboard.TargetProperty="(TextBox.RenderTransform).(RotateTransform.Angle)"
-                                                        To="360" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.ExitActions>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>

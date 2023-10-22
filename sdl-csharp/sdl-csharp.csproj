@@ -107,7 +107,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Event\" />
     <Folder Include="Resource\Asset\" />
   </ItemGroup>
 </Project>
