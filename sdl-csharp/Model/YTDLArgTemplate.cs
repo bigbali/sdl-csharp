@@ -21,8 +21,9 @@ namespace sdl_csharp.Model
             string fileName = BuildFileName(s);
             string format = BuildFormat(s);
             string kind = BuildKind(s);
+            string misc = BuildMisc(s);
 
-            Template = $"\"{folderPath + fileName}\"" + format + kind;
+            Template = $"\"{folderPath + fileName}\"" + format + kind + misc;
         }
 
         private static string BuildFolderPath(Settings s)
@@ -60,5 +61,7 @@ namespace sdl_csharp.Model
         private static string BuildKind(Settings s) => s.isPlaylist
                 ? " --yes-playlist"
                 : " --no-playlist";
+
+        private static string BuildMisc(Settings s) => " --force-overwrites";
     }
 }

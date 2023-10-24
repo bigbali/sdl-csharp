@@ -117,40 +117,51 @@
                                                     Focusable="false"
                                                     HorizontalScrollBarVisibility="Hidden"
                                                     VerticalScrollBarVisibility="Hidden" />
-                                                <ContentControl Content="{Binding Data}" Grid.Column="1">
-                                                    <d:ContentControl.Content>
-                                                        <d:Label
-                                                            d:Grid.Column="1"
-                                                            d:Margin="4, 0, 4, 0"
-                                                            d:HorizontalAlignment="Right"
-                                                            d:VerticalAlignment="Center"
-                                                            d:Content="3/13"
-                                                            d:FontFamily="{StaticResource CourierPrime}" />
-                                                    </d:ContentControl.Content>
-                                                    <ContentControl.Resources>
-                                                        <DataTemplate DataType="{x:Type model:EntrySingleData}">
-                                                        </DataTemplate>
-                                                        <DataTemplate DataType="{x:Type model:EntryPlaylistData}">
-                                                            <Label
-                                                                Grid.Column="1"
-                                                                Margin="4, 0, 4, 0"
-                                                                HorizontalAlignment="Right"
-                                                                VerticalAlignment="Center"
-                                                                Content="{Binding PlaylistDownloadIndex, Converter={StaticResource playlistProgressCounterConverter}, ConverterParameter={x:Reference Name='textbox'}}"                                                              
-                                                                FontFamily="{StaticResource CourierPrime}" />
-                                                        </DataTemplate>
-
-                                                        <DataTemplate DataType="{x:Type model:EntryMemberData}">
-                                                            <Label
-                                                                Grid.Column="1"
-                                                                Margin="4, 0, 4, 0"
-                                                                HorizontalAlignment="Right"
-                                                                VerticalAlignment="Center"
-                                                                Content="{Binding PlaylistDownloadIndex, Converter={StaticResource playlistProgressCounterConverter}, ConverterParameter={x:Reference Name='textbox'}}"
-                                                                FontFamily="{StaticResource CourierPrime}" />
-                                                        </DataTemplate>
-                                                    </ContentControl.Resources>
-                                                </ContentControl>
+                                                <Grid Grid.Column="1">
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding StatusViewModel.IsInitialized}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Style>
+                                                    <ContentControl Content="{Binding Data}">
+                                                        <d:ContentControl.Content>
+                                                            <d:Label
+                                                                d:Grid.Column="1"
+                                                                d:Margin="4, 0, 4, 0"
+                                                                d:HorizontalAlignment="Right"
+                                                                d:VerticalAlignment="Center"
+                                                                d:Content="3/13"
+                                                                d:FontFamily="{StaticResource CourierPrime}" />
+                                                        </d:ContentControl.Content>
+                                                        <ContentControl.Resources>
+                                                            <DataTemplate DataType="{x:Type model:EntrySingleData}">
+                                                            </DataTemplate>
+                                                            <DataTemplate DataType="{x:Type model:EntryPlaylistData}">
+                                                                <Label
+                                                                    Grid.Column="1"
+                                                                    Margin="4, 0, 4, 0"
+                                                                    HorizontalAlignment="Right"
+                                                                    VerticalAlignment="Center"
+                                                                    Content="{Binding PlaylistDownloadIndex, Converter={StaticResource playlistProgressCounterConverter}, ConverterParameter={x:Reference Name='textbox'}}"                                                              
+                                                                    FontFamily="{StaticResource CourierPrime}">
+                                                                </Label>
+                                                            </DataTemplate>
+                                                            <DataTemplate DataType="{x:Type model:EntryMemberData}">
+                                                                <Label
+                                                                    Grid.Column="1"
+                                                                    Margin="4, 0, 4, 0"
+                                                                    HorizontalAlignment="Right"
+                                                                    VerticalAlignment="Center"
+                                                                    Content="{Binding PlaylistDownloadIndex, Converter={StaticResource playlistProgressCounterConverter}, ConverterParameter={x:Reference Name='textbox'}}"
+                                                                    FontFamily="{StaticResource CourierPrime}" />
+                                                            </DataTemplate>
+                                                        </ContentControl.Resources>
+                                                    </ContentControl>
+                                                </Grid>
                                             </Grid>
                                         </Grid>
                                     </Border>

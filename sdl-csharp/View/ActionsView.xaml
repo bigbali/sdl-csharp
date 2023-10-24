@@ -6,158 +6,197 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:local="clr-namespace:sdl_csharp.View"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
+    mc:Ignorable="d"
+    d:Background="{StaticResource Color.Window.Background}"
     d:DataContext="{d:DesignInstance viewmodel:SettingsViewModel}"
-    mc:Ignorable="d">
+    d:DesignHeight="960"
+    d:DesignWidth="700">
     <Grid
         x:Name="ActionsViewGrid"
-        Grid.Column="1"
         MinWidth="500"
         MinHeight="400"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch">
-        <Border
-            Margin="5,10,10,10"
-            Background="{StaticResource Color.Border.Background}"
-            BorderBrush="{StaticResource Color.Border}"
-            BorderThickness="1"
-            CornerRadius="6">
+        <Border Padding="8">
             <Grid>
-                <Label
-                    x:Name="FolderLabel"
-                    VerticalAlignment="Top"
-                    VerticalContentAlignment="Center"
-                    Panel.ZIndex="103"
-                    Content="Folder"
-                    Padding="15,10,15,5" />
-                <control:TextInput
-                    x:Name="FolderPathInput"
-                    Margin="15,34,140,0"
-                    VerticalAlignment="Top"
-                    VerticalContentAlignment="Center"
-                    Placeholder="Select folder"
-                    Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                    TextWrapping="Wrap" />
-                <Button
-                    x:Name="SelectedFolderInbput"
-                    Width="120"
-                    Command="{Binding SelectFolderCommand}"
-                    Margin="0,34,15,0"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top"
-                    Content="Select Folder" />
-                <control:TextInput
-                    x:Name="SubFolderPathInput"
-                    Height="30"
-                    Margin="270,70,15,0"
-                    VerticalAlignment="Top"
-                    VerticalContentAlignment="Center"
-                    Placeholder="Select subfolder"
-                    Text="{Binding SubFolderPath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
-                <control:ToggleButton
-                    Width="250"
-                    Margin="15,73,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Put contents in subfolder"
-                    State="{Binding UseSubFolderPath, Mode=TwoWay}" />
-                <control:ToggleButton
-                    Width="300"
-                    Margin="15,106,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Infer subfolder from playlist title"
-                    State="{Binding InferSubFolderPath, Mode=TwoWay}" />
-                <control:SwitchButton
-                    Margin="15,139,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content1="Playlist"
-                    Content2="Single"
-                    State="{Binding IsPlaylist, Mode=TwoWay}" />
-                <control:SwitchButton
-                    Margin="185,139,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content1="Audio"
-                    Content2="Video"
-                    State="{Binding IsAudio, Mode=TwoWay}" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <Label
+                        x:Name="FolderLabel"
+                        Margin="0, 0, 0, 4"
+                        VerticalContentAlignment="Center"
+                        Content="Folder"
+                        Foreground="{StaticResource Color.Text.Faded}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <control:TextInput
+                            x:Name="FolderPathInput"
+                            Grid.Column="0"
+                            VerticalContentAlignment="Center"
+                            Placeholder="Select folder"
+                            Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            TextWrapping="Wrap" />
+                        <Button
+                            x:Name="SelectedFolderInbput"
+                            Grid.Column="1"
+                            Width="120"
+                            Margin="4, 0, 0, 0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding SelectFolderCommand}"
+                            Content="Select Folder" />
+                    </Grid>
+                    <Grid Margin="0, 16, 0, 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <control:ToggleButton
+                            Grid.Column="0"
+                            Width="250"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Content="Put contents in subfolder"
+                            State="{Binding UseSubFolderPath, Mode=TwoWay}" />
+                        <control:TextInput
+                            x:Name="SubFolderPathInput"
+                            Grid.Column="1"
+                            Margin="4, 0, 0, 0"
+                            VerticalAlignment="Top"
+                            VerticalContentAlignment="Center"
+                            Placeholder="Select subfolder"
+                            Text="{Binding SubFolderPath, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                    </Grid>
+                    <control:ToggleButton
+                        Width="300"
+                        Margin="0, 16, 0, 0"
+                        HorizontalAlignment="Left"
+                        Content="Infer subfolder from playlist title"
+                        State="{Binding InferSubFolderPath, Mode=TwoWay}" />
+                    <control:SwitchButton
+                        Margin="0, 16, 0, 0"
+                        HorizontalAlignment="Left"
+                        Content1="Playlist"
+                        Content2="Single"
+                        State="{Binding IsPlaylist, Mode=TwoWay}" />
+                    <control:SwitchButton
+                        Margin="0, 16, 0, 0"
+                        HorizontalAlignment="Left"
+                        Content1="Audio"
+                        Content2="Video"
+                        State="{Binding IsAudio, Mode=TwoWay}" />
+                    <control:ToggleButton
+                        Width="320"
+                        Margin="0, 16, 0, 0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Automatic numbering"
+                        State="{Binding AutomaticNumbering, Mode=TwoWay}" />
+                    <control:ToggleButton
+                        Width="320"
+                        Margin="0, 16, 0, 0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Content="Remove entries when downloaded"
+                        State="{Binding RemoveEntries, Mode=TwoWay}" />
+                </StackPanel>
                 <Grid
-                    Margin="15,375,0,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Top">
+                    Grid.Row="1"
+                    Margin="0, 16, 0, 0"
+                    VerticalAlignment="Bottom">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0">
-                        <Label Content="Output Template" />
-                        <TextBox
-                            Height="50"
-                            d:Text='"puiu/Compact/%(playlist_title)s/%(playlist_index)s %(title)s.%(ext)s" -x --audio-format mp3 --yes-playlist'
-                            FontFamily="{StaticResource CourierPrime}"
-                            IsReadOnly="True"
-                            Text="{Binding ArgTemplate.Template}"
-                            TextWrapping="Wrap" />
-                    </StackPanel>
-                    <StackPanel Grid.Row="1">
-                        <Label Content="Applied Output Template" />
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0">
+                            <Label Content="Output Template" />
                             <TextBox
-                                Grid.Column="0"
                                 Height="50"
+                                Margin="0, 4, 0, 0"
                                 d:Text='"puiu/Compact/%(playlist_title)s/%(playlist_index)s %(title)s.%(ext)s" -x --audio-format mp3 --yes-playlist'
                                 FontFamily="{StaticResource CourierPrime}"
-                                Text="{Binding ArgTemplateString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                TextWrapping="Wrap">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="TextChanged">
-                                        <i:InvokeCommandAction Command="{Binding ArgTemplateTextChangedCommand}" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </TextBox>
-                            <Button
-                                Grid.Column="1"
-                                Command="{Binding ResetCommand}"
-                                Content="Reset"
-                                Padding="10,3,10,3" />
-                        </Grid>
-                    </StackPanel>
+                                IsReadOnly="True"
+                                Text="{Binding ArgTemplate.Template}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Margin="0, 16, 0, 0">
+                            <Label Content="Applied Output Template" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBox
+                                    Grid.Row="0"
+                                    Height="50"
+                                    Margin="0, 4, 0, 0"
+                                    d:Text='"puiu/Compact/%(playlist_title)s/%(playlist_index)s %(title)s.%(ext)s" -x --audio-format mp3 --yes-playlist'
+                                    FontFamily="{StaticResource CourierPrime}"
+                                    Text="{Binding ArgTemplateString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    TextWrapping="Wrap">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="TextChanged">
+                                            <i:InvokeCommandAction Command="{Binding ArgTemplateTextChangedCommand}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </TextBox>
+                                <Button
+                                    Grid.Row="1"
+                                    Width="150"
+                                    Margin="4, 8, 0, 0"
+                                    HorizontalAlignment="Right"
+                                    Command="{Binding ResetCommand}"
+                                    Content="Reset" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Row="1" Margin="0, 16, 0, 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button
+                            Height="40"
+                            VerticalAlignment="Top"
+                            VerticalContentAlignment="Center"
+                            Command="{Binding DownloadAllCommand}"
+                            Content="Download selected"
+                            FontSize="18"
+                            Padding="0,2,0,0">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="20" />
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <Button
+                            Grid.Column="1"
+                            Height="40"
+                            Margin="4, 0, 0, 0"
+                            VerticalContentAlignment="Center"
+                            Content="Remove selected"
+                            FontSize="18"
+                            Padding="0,2,0,0">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="20" />
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </Grid>
                 </Grid>
-                <control:ToggleButton
-                    Width="320"
-                    Margin="15,229,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Automatic numbering"
-                    State="{Binding AutomaticNumbering, Mode=TwoWay}" />
-                <control:ToggleButton
-                    Width="320"
-                    Margin="15,264,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Content="Remove entries when downloaded"
-                    State="{Binding RemoveEntries, Mode=TwoWay}" />
-                <Button
-                    Width="180"
-                    Height="40"
-                    Margin="15,304,0,0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    VerticalContentAlignment="Center"
-                    Content="Download all"
-                    FontSize="18"
-                    Padding="0,2,0,0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="20" />
-                        </Style>
-                    </Button.Resources>
-                </Button>
             </Grid>
         </Border>
     </Grid>

@@ -9,36 +9,30 @@
     xmlns:viewmodel="clr-namespace:sdl_csharp.ViewModel"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodel:EntryViewModel}"
-    d:Height="100"
-    d:Width="200">
+    VerticalAlignment="Top"
+    Height="106"
+    d:Width="250">
     <Grid>
-        <Border
-            BorderBrush="{StaticResource Color.Border}"
+        <ListBox
+            x:Name="Out"
+            Background="{StaticResource Color.URLQueue.Background}"
+            BorderBrush="{StaticResource Color.URLQueue.Border}"
             BorderThickness="1"
-            CornerRadius="4">
-            <!--<TextBlock
-                x:Name="Out"
-                VerticalAlignment="Stretch"
-                d:Text="Entry Output"
-                FontFamily="{StaticResource CourierPrime}"
-                Foreground="{StaticResource Color.Text}"
-             />-->
-            <ListBox
-                x:Name="Out"
-                ItemsSource="{Binding ElementName=entryOutput, Path=Lines}"
-                Background="{StaticResource Color.URLQueue.Background}"
-                BorderBrush="{StaticResource Color.URLQueue.Border}"
-                BorderThickness="1">
-                <ListBox.Resources>
-                    <Style TargetType="ListBox">
-                        <Style.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="6" />
-                            </Style>
-                        </Style.Resources>
-                    </Style>
-                </ListBox.Resources>
-            </ListBox>
-        </Border>
+            ItemsSource="{Binding ElementName=entryOutput, Path=Lines}">
+            <ListBox.Resources>
+                <Style TargetType="ListBox">
+                    <Style.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6" />
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding}" FontFamily="{StaticResource CourierPrime}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

@@ -59,63 +59,121 @@ namespace sdl_csharp.Model.Entry
 
         public void Remove()
         {
-            SettingsViewModel.Instance.EntryViewModels.Remove(SettingsViewModel.Instance.EntryViewModels.First((vm) => vm.entry == this));
+            var entryvms = SettingsViewModel.Instance.EntryViewModels;
+            Thread.ThreadSafeAction(() => entryvms.Remove(entryvms.First((vm) => vm.entry == this)));
         }
 
         public async Task Download()
         {
-            ProcessStartInfo process = new("./youtube-dl.exe")
+            try
             {
-                Arguments = (
-                    $"\"{url}\" -o {Settings.Instance.argTemplateString}"
-                ),
-                RedirectStandardError = true,
-                RedirectStandardOutput = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
 
-            Logger.Log(process.Arguments);
+                ((IEntry)data).Reset();
+
+                ProcessStartInfo process = new("./youtube-dl.exe")
+                {
+                    Arguments = (
+                        $"\"{url}\" -o {Settings.Instance.argTemplateString}"
+                    ),
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardInput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
            
-            Task task = Task.Run(() =>
-            {
+                Task task = Task.Run(async () =>
+                {
+                    //try
+                    //{
+                        downloadStart = DateTime.Now;
+                        Status = EntryStatus.DOWNLOADING;
+
+                        using Process downloadProcess = new()
+                        {
+                            StartInfo = process,
+                            EnableRaisingEvents = true,
+                        };
+
+                        Logger logger = new(this);
+
+                        downloadProcess.Exited += (sender, e) =>
+                        {
+                            try
+                            {
+                                Event.DownloadProcess.Exited(this, sender, e);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("ERR exited" + ex.Message);
+                            }
+                        };
+
+                        downloadProcess.ErrorDataReceived += (sender, e) =>
+                        {
+                            try
+                            {
+                                Event.DownloadProcess.ErrorDataReceived(this, sender, e);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("ERR error data received " + ex.Message);
+                            }
+                        };
+
+                        downloadProcess.OutputDataReceived += (sender, e) =>
+                        {
+                            try
+                            {
+                                Event.DownloadProcess.OutputDataReceived(this, sender, e);
+                                logger.LogToFile(this, e.Data);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("ERR output data received " + ex.Message);
+
+                            }
+                        };
+
+                        downloadProcess.Start();
+                        downloadProcess.BeginOutputReadLine();
+                        downloadProcess.BeginErrorReadLine();
+
+                        //downloadProcess.WaitForExit();
+
+                        await downloadProcess.WaitForExitAsync();
+
+                        //MessageBox.Show("WaitForExitAsync");
+
+                        //downloadProcess.CancelOutputRead();
+                        //downloadProcess.CancelErrorRead();
+                        //downloadProcess.Close();
+
+                    //    Status = EntryStatus.DONE;
+                    //}
+                    //catch
+                    //{
+                    //    Status = EntryStatus.ERROR;
+                    //}
+                });
+
                 try
                 {
-                    downloadStart = DateTime.Now;
-                    Status = EntryStatus.DOWNLOADING;
-
-                    using Process downloadProcess = new()
-                    {
-                        StartInfo = process,
-                        EnableRaisingEvents = true
-                    };
-
-                    Logger logger = new();
-
-                    downloadProcess.Exited += (sender, e) => Event.DownloadProcess.Exited(this, e);
-                    downloadProcess.ErrorDataReceived += (sender, e) => Event.DownloadProcess.ErrorDataReceived(this, sender, e);
-                    downloadProcess.OutputDataReceived += (sender, e) =>
-                    {
-                        Event.DownloadProcess.OutputDataReceived(this, sender, e);
-                        logger.LogToFile(this, e.Data);
-                    };
-
-                    downloadProcess.Start();
-                    downloadProcess.BeginOutputReadLine();
-                    downloadProcess.BeginErrorReadLine();
-
-                    downloadProcess.WaitForExit();
-
+                    await task;
                     Status = EntryStatus.DONE;
                 }
-                catch
+                catch (Exception e)
                 {
+                    Logger.Log("wtf " + e.Message);
                     Status = EntryStatus.ERROR;
                 }
-            });
+            }
+            catch (Exception e)
+            {
+                Logger.Log("miapicsa ", e.Message);
+                MessageBox.Show("miapicsa ", e.Message);
 
-            await task;
+            }
         }
 
         public async Task FetchAsync()

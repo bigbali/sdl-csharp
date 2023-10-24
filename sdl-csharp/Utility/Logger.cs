@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace sdl_csharp.Utility
 {
@@ -31,28 +32,46 @@ namespace sdl_csharp.Utility
         }
 
         uint logCount;
+        readonly string dirPath;
+        readonly string logPath;
+
+        public Logger(Entry entry)
+        {
+            dirPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\sdl_logs";
+
+            string rawLogPath = $"{dirPath}\\{$"sdl-{GetEntryTitle(entry)}.txt"}";
+
+            // sanitize file name
+            logPath = string.Join(null, rawLogPath.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
+
+        }
 
         public void LogToFile(Entry entry, string data)
         {
             if (data is null) return;
 
-            string dirPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\sdl_logs";
-            string logPath = $"{dirPath}\\{$"sdl-{GetEntryTitle(entry)}.txt"}";
-
-            if (!Directory.Exists(dirPath))
+            try
             {
-                Directory.CreateDirectory(dirPath);
-            }
 
-            if (!File.Exists(logPath))
+                if (!Directory.Exists(dirPath))
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
+
+                if (!File.Exists(logPath))
+                {
+                    File.Create(logPath).Close();
+                }
+
+                File.AppendAllText(
+                    logPath,
+                    $"{entry.url}: {data}{Environment.NewLine}");
+                logCount++;
+            }
+            catch (Exception ex)
             {
-                File.Create(logPath).Close();
+                MessageBox.Show($"Couldn't write to file {logPath}\n" + ex.Message);
             }
-
-            File.AppendAllText(
-                logPath,
-                $"{entry.url}: {data}{Environment.NewLine}");
-            logCount++;
         }
     }
 }

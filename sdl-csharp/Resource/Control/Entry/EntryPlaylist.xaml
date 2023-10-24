@@ -29,8 +29,8 @@
                 <Grid VerticalAlignment="Bottom">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="2*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="250" />
                     </Grid.ColumnDefinitions>
                     <control:FadeIn Grid.Column="0" Value="{Binding Data.PlaylistThumbnail}">
                         <control:ImageWithFallback Source="{Binding Data.PlaylistThumbnail}" />
