@@ -16,11 +16,11 @@ namespace sdl_csharp.Resource.Control.Entry
             InitializeComponent();
         }
 
-        private void DownloadEntry(object sender, RoutedEventArgs e)
+        private void DownloadOrStop(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
             var entryvm = (EntryViewModel)button.DataContext;
-            _ = entryvm.Download();
+            entryvm.DownloadOrStop();
         }
 
         private void RemoveEntry(object sender, RoutedEventArgs e)

@@ -64,7 +64,7 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             Content="Put contents in subfolder"
-                            State="{Binding UseSubFolderPath, Mode=TwoWay}" />
+                            State="{Binding UseSubFolder, Mode=TwoWay}" />
                         <control:TextInput
                             x:Name="SubFolderPathInput"
                             Grid.Column="1"
@@ -78,8 +78,14 @@
                         Width="300"
                         Margin="0, 16, 0, 0"
                         HorizontalAlignment="Left"
-                        Content="Infer subfolder from playlist title"
-                        State="{Binding InferSubFolderPath, Mode=TwoWay}" />
+                        Content="Infer folder from playlist title"
+                        State="{Binding InferFolderByPlaylistTitle, Mode=TwoWay}" />
+                    <control:ToggleButton
+                        Width="300"
+                        Margin="0, 16, 0, 0"
+                        HorizontalAlignment="Left"
+                        Content="Infer folder from author"
+                        State="{Binding InferFolderByAuthor, Mode=TwoWay}" />
                     <control:SwitchButton
                         Margin="0, 16, 0, 0"
                         HorizontalAlignment="Left"

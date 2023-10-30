@@ -10,7 +10,7 @@ namespace sdl_csharp.Converter
     {
         object IValueConverter.Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            uint index = (uint)value;
+            int index = (int)value;
             EntryViewModel vm = ((TextBox)parameter).DataContext as EntryViewModel;
 
             return $"{Math.Max(index, 1)}/{vm.Data.PlaylistMemberCount}";

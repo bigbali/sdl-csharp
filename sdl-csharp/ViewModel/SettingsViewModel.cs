@@ -1,5 +1,4 @@
 ﻿using sdl_csharp.Model;
-using sdl_csharp.Model.Entry;
 using sdl_csharp.Utility;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -48,7 +47,7 @@ namespace sdl_csharp.ViewModel
 
         public ICommand DownloadAllCommand { get; }
 
-        public YTDLArgTemplate ArgTemplate { get => settings.argTemplate; set => Set(ref settings.argTemplate, value); }
+        public ArgTemplate ArgTemplate { get => settings.argTemplate; set => Set(ref settings.argTemplate, value); }
 
         public ObservableCollection<EntryViewModel> EntryViewModels { get; set; } = new();
 
@@ -58,17 +57,24 @@ namespace sdl_csharp.ViewModel
             set => Set(ref settings.argTemplateString, value);
         }
 
-        public bool UseSubFolderPath
+        public bool UseSubFolder
         {
-            get => settings.useSubFolderPath;
-            set => UpdateArgSet(ref settings.useSubFolderPath, value);
+            get => settings.useSubFolder;
+            set => UpdateArgSet(ref settings.useSubFolder, value);
         }
 
-        public bool InferSubFolderPath
+        public bool InferFolderByAuthor
         {
-            get => settings.inferSubFolderPath;
-            set => UpdateArgSet(ref settings.inferSubFolderPath, value);
+            get => settings.inferFolderByAuthor;
+            set => UpdateArgSet(ref settings.inferFolderByAuthor, value);
         }
+
+        public bool InferFolderByPlaylistTitle
+        {
+            get => settings.inferFolderByPlaylistTitle;
+            set => UpdateArgSet(ref settings.inferFolderByPlaylistTitle, value);
+        }
+
 
         public bool IsPlaylist { get => settings.isPlaylist; set => UpdateArgSet(ref settings.isPlaylist, value); }
 
@@ -93,7 +99,7 @@ namespace sdl_csharp.ViewModel
         private void UpdateArgSet<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             Set(ref storage, value, propertyName);
-            ArgTemplate = new YTDLArgTemplate(settings);
+            ArgTemplate = new ArgTemplate(settings);
 
             if (!isAppliedTemplateChanged)
                 ArgTemplateString = ArgTemplate.Template;
@@ -145,7 +151,7 @@ namespace sdl_csharp.ViewModel
                 }
 
 
-                _ = vm.Download();
+                _ = vm.entry.Download();
             }
 
             if (downloading.Count > 0)
@@ -176,7 +182,7 @@ namespace sdl_csharp.ViewModel
                 {
                     foreach (EntryViewModel vm in done)
                     {
-                        _ = vm.Download();
+                        _ = vm.entry.Download();
                     };
                 }
             }

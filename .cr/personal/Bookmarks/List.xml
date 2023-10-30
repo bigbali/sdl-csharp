@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Root Type="DevExpress.CodeRush.Foundation.Markers.SolutionBookmarksContainer">
+  <Options Language="Neutral">
+    <Items>
+      <Item Id="{488bd5d7-96d2-47c6-8757-c5f0fb53a30b}">
+        <Id>3</Id>
+        <File>sdl-csharp\sdl-csharp\Resource\Control\Entry\EntryOutput.xaml.cs</File>
+        <Line>153</Line>
+        <Character>43</Character>
+        <ViewportTop>117</ViewportTop>
+        <ViewportTopMax>163</ViewportTopMax>
+        <TopLine>117</TopLine>
+      </Item>
+    </Items>
+  </Options>
+</Root>

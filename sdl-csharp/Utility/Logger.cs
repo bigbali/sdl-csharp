@@ -33,17 +33,19 @@ namespace sdl_csharp.Utility
 
         uint logCount;
         readonly string dirPath;
+        readonly string filePath;
         readonly string logPath;
 
         public Logger(Entry entry)
         {
             dirPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\\sdl_logs";
 
-            string rawLogPath = $"{dirPath}\\{$"sdl-{GetEntryTitle(entry)}.txt"}";
+            string unsafeFilePath = $"sdl-{GetEntryTitle(entry)}.txt";
 
             // sanitize file name
-            logPath = string.Join(null, rawLogPath.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
+            filePath = string.Join(null, unsafeFilePath.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries)).TrimEnd('.');
 
+            logPath = @$"{dirPath}\{filePath}";
         }
 
         public void LogToFile(Entry entry, string data)
@@ -52,7 +54,6 @@ namespace sdl_csharp.Utility
 
             try
             {
-
                 if (!Directory.Exists(dirPath))
                 {
                     Directory.CreateDirectory(dirPath);

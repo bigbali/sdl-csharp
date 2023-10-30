@@ -1,5 +1,4 @@
 ﻿using sdl_csharp.Utility;
-using sdl_csharp.ViewModel;
 using System.Collections.ObjectModel;
 
 namespace sdl_csharp.Model
@@ -17,12 +16,13 @@ namespace sdl_csharp.Model
         }
         Settings()
         {
-            argTemplate = new YTDLArgTemplate(this);
+            argTemplate = new ArgTemplate(this);
             argTemplateString = argTemplate.Template;
         }
 
-        public bool useSubFolderPath;
-        public bool inferSubFolderPath;
+        public bool useSubFolder;
+        public bool inferFolderByPlaylistTitle;
+        public bool inferFolderByAuthor;
         public bool automaticNumbering;
         public bool removeEntries;
         public bool isPlaylist = true;
@@ -30,7 +30,7 @@ namespace sdl_csharp.Model
         public string folderPath = string.Empty;
         public string subFolderPath = string.Empty;
         public string argTemplateString;
-        public YTDLArgTemplate argTemplate;
+        public ArgTemplate argTemplate;
         public ObservableCollection<Entry.Entry> entries = new();
     }
 }

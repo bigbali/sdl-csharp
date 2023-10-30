@@ -25,6 +25,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" MinWidth="300" MaxWidth="600"/>
                     </Grid.ColumnDefinitions>
                     <control:FadeIn Grid.Column="0" Value="{Binding Data.PlaylistThumbnail}">
                         <control:ImageWithFallback Source="{Binding Data.PlaylistThumbnail}" />
@@ -65,6 +66,7 @@
                             <Label Content=" Entries" />
                         </StackPanel>
                     </Grid>
+                    <entrycontrol:EntryOutput Grid.Column="2" Source="{Binding}" />
                 </Grid>
             </control:FadeIn>
         </Grid>

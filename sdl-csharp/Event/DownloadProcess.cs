@@ -1,9 +1,8 @@
 ﻿using sdl_csharp.Model.Entry;
 using sdl_csharp.Model;
+using sdl_csharp.Utility;
 using System;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Windows;
 
 namespace sdl_csharp.Event
 {
@@ -11,17 +10,11 @@ namespace sdl_csharp.Event
     {
         public static void Exited(Entry entry, object sender, EventArgs e)
         {
-            var p = ((Process)sender);
-            //p.CancelOutputRead();
-            //p.CancelErrorRead();
-            //entry.Status = EntryStatus.DONE;
-
 #if DEBUG
-            MessageBox.Show("EXIT " + p.ExitCode + "\n" + p.ExitTime);
+            Process p = ((Process)sender);
+            Logger.Log("EXIT " + p.ExitCode + "\n" + p.ExitTime);
 #endif
-
-
-            if (Settings.Instance.removeEntries)
+            if (Settings.Instance.removeEntries && entry.Status is not EntryStatus.ERROR)
             {
                 entry.Remove();
             }
@@ -31,11 +24,11 @@ namespace sdl_csharp.Event
         {
             try
             {
-                Utility.Logger.Log($"ErrorDataReceived: {e.Data}");
+                Logger.Log($"ErrorDataReceived: {e.Data}");
             }
             catch (Exception ex)
             {
-                Utility.Logger.Log($"ErrorDataReceived threw: {ex.Message}");
+                Logger.Log($"ErrorDataReceived threw: {ex.Message}");
             }
         }
 
@@ -43,46 +36,13 @@ namespace sdl_csharp.Event
         {
             try
             {
-                if (e.Data == null) return;
+                if (e.Data == null) return;                
 
-                if (e.Data.Contains("[download]"))
-                {
-                    entry.Status = EntryStatus.DOWNLOADING;
-
-                    // when starting download of a playlist member
-                    if (e.Data.Contains("Downloading item") && (entry.type is EntryType.PLAYLIST || entry.type is EntryType.MEMBER))
-                    {
-                        entry.data.PlaylistDownloadIndex++;
-                    }
-
-                    // extract download percent from output
-                    Match match = Regex.Match(e.Data, @"(\d+\.\d+)%");
-
-                    if (match.Success)
-                    {
-                        string floatString = match.Value.Trim('%');
-
-                        float floatValue = float.Parse(floatString);
-
-                        if (entry.data is EntrySingleData)
-                        {
-                            ((EntrySingleData)entry.data).DownloadPercent = floatValue;
-                        }
-                        else
-                        {
-                            entry.data.PlaylistMemberDownloadPercent = floatValue;
-                        }
-                    }
-                }
-
-                if (e.Data.Contains("[ExtractAudio]"))
-                {
-                    entry.Status = EntryStatus.CONVERTING;
-                }
+                EntryProgressParser.ParseOutput(entry, e.Data);
             }
             catch (Exception ex)
             {
-                Utility.Logger.Log($"OutputDataReceived threw: {ex.Message}");
+                Logger.Log($"OutputDataReceived threw: {ex.Message}");
             }
         }
     }

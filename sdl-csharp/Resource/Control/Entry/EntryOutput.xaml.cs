@@ -14,12 +14,13 @@ namespace sdl_csharp.Resource.Control.Entry
     public partial class EntryOutput : UserControl
     {
         public ObservableCollection<string> Lines { get; set; } = new();
+        bool isRedownload;
 
         public EntryOutput()
         {
             InitializeComponent();
 
-            DataContextChanged += ApplyOnPercentChanged;
+            DataContextChanged += ApplyOnProgressChanged;
         }
 
         public static readonly DependencyProperty SourceProperty =
@@ -31,56 +32,79 @@ namespace sdl_csharp.Resource.Control.Entry
             set => Utility.Thread.ThreadSafeAction(() => SetValue(SourceProperty, value));
         }
 
-        void ApplyOnPercentChanged(object sender, DependencyPropertyChangedEventArgs e)
+        void ApplyOnProgressChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue is null) return;
 
             if (e.NewValue is EntryViewModel vm)
             {
-                vm.StatusViewModel.PropertyChanged += UpdateWhenStatusDone;
+                vm.StatusViewModel.PropertyChanged += UpdateWhenDoneOrCancelled;
 
-                if (vm.Data is EntryPlaylistData playlist)
+                if (vm.Data is EntrySingleData)
                 {
-                    playlist.PropertyChanged += OnPercentChanged;
+                    return;
                 }
 
-                if (vm.Data is EntryMemberData member)
-                {
-                    member.PropertyChanged += OnPercentChanged;
-                }
+                ((BindingList<PlaylistMember>)vm.entry.data.PlaylistMembers).ListChanged += OnMembersChanged;
             }
         }
 
-        void OnPercentChanged(object sender, PropertyChangedEventArgs e)
+        void OnMembersChanged(object sender, ListChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(EntryPlaylistData.PlaylistOverallDownloadPercent))
+            Update();
+        }
+
+        void UpdateWhenDoneOrCancelled(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(EntryStatusViewModel.IsDone) || e.PropertyName == nameof(EntryStatusViewModel.IsCancelled))
             {
                 Update();
             }
         }
 
-        void UpdateWhenStatusDone(object sender, PropertyChangedEventArgs e)
+        string GetDownloadSpeed(PlaylistMember member)
         {
-            if (e.PropertyName == "IsDone")
+            float? value = member.DownloadSpeed;
+
+            if (!value.HasValue) return string.Empty;
+
+            int speed = 0;
+            if ((int)value > 0)
             {
-                Update();
+                speed = (int)value / 1_000_000;
             }
+
+            return $" ({speed} MB/s)";
         }
 
-        void Update()
+        /// <summary>
+        /// Update the contents of each line based on <see cref="IEntryPlaylistData.PlaylistMembers"/>.
+        /// </summary>
+        void UpdateForEach()
         {
             IEntryPlaylistData data = Source.Data;
-            int currentIndex = (int)Math.Max(data.PlaylistDownloadIndex, 1);
-            int i = Math.Max(currentIndex - 1, 0);
 
-            string state = $"[{currentIndex}]: {data.PlaylistMemberDownloadPercent}%";
-
-            Utility.Thread.ThreadSafeAction(() =>
+            int i = 0;
+            foreach(PlaylistMember member in data.PlaylistMembers)
             {
-                if ((int)data.PlaylistOverallDownloadPercent == 100 && Source.StatusViewModel.IsDone)
+                if (i >= data.PlaylistDownloadIndex) continue;
+
+                string status = member.State switch
                 {
-                    Lines.Add($"Done: {data.PlaylistTitle}");
-                }
+                    PlaylistMemberState.FETCHING => "fetching",
+                    PlaylistMemberState.DOWNLOADING => $"downloading{GetDownloadSpeed(member)}",
+                    PlaylistMemberState.CONVERTING => "converting",
+                    PlaylistMemberState.DONE => "done",
+                    _ => null
+                };
+
+                string statusPart = status switch
+                {
+                    null => "",
+                    string part => $" | {part}"
+                };
+
+                string state = $"[{i + 1}]: {member.DownloadPercent:0.0}%{statusPart}";
 
                 if (Lines.Count <= i)
                 {
@@ -91,7 +115,68 @@ namespace sdl_csharp.Resource.Control.Entry
                     Lines[i] = state;
                 }
 
-                Out.ScrollIntoView(Out.Items[^1]);
+                i++;
+            }
+        }
+
+        bool HandleRedownload()
+        {
+            if (Source.StatusViewModel.IsCancelled)
+            {
+                Utility.Thread.ThreadSafeAction(() =>
+                {
+                    Lines.Clear();
+                    Lines.Add("Download cancelled");
+                });
+
+                return true;
+            }
+
+            if (Source.StatusViewModel.IsInProgress && isRedownload)
+            {
+                Utility.Thread.ThreadSafeAction(() =>
+                {
+                    Lines.Clear();
+                });
+
+                isRedownload = false;
+            }
+
+            if (isRedownload)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        void Update()
+        {
+            if (HandleRedownload())
+            {
+                return;
+            }
+
+            IEntryPlaylistData data = Source.Data;
+
+            Utility.Thread.ThreadSafeAction(() =>
+            {
+                if (!isRedownload && Source.StatusViewModel.IsDone)
+                {
+                    isRedownload = true;
+
+                    TimeSpan span = DateTime.Now - Source.entry.downloadStart;
+                    string elapsed = $"{span:mm\\:ss}";
+
+                    Lines.Add($"Done in {elapsed}");
+                }
+
+                UpdateForEach();
+
+                if (Out.Items.Count > 0)
+                {
+                    Out.ScrollIntoView(Out.Items[^1]);
+                }
             });
         }
     }

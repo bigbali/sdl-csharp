@@ -26,7 +26,7 @@ namespace sdl_csharp.Utility
 
             return null;
         }
-        private static bool ParseSingle(string url, NameValueCollection queryParams, ref string vId)
+        static bool ParseSingle(string url, NameValueCollection queryParams, ref string vId)
         {
             if (url.StartsWith("https://www.youtube.com/watch"))
             {
@@ -49,7 +49,7 @@ namespace sdl_csharp.Utility
 
             return false;
         }
-        private static bool ParseMember(string url, NameValueCollection queryParams, ref string vId, ref string pId)
+        static bool ParseMember(string url, NameValueCollection queryParams, ref string vId, ref string pId)
         {
             if (url.StartsWith("https://www.youtube.com/watch"))
             {
@@ -81,7 +81,7 @@ namespace sdl_csharp.Utility
             return false;
         }
 
-        private static bool ParsePlaylist(string url, NameValueCollection queryParams, ref string vId, ref string pId)
+        static bool ParsePlaylist(string url, NameValueCollection queryParams, ref string vId, ref string pId)
         {
             if (url.StartsWith("https://www.youtube.com/watch"))
             {

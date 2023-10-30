@@ -1,52 +1,108 @@
 ﻿using sdl_csharp.Utility;
 using System;
 using System.Collections.Generic;
-using System.Windows;
-using YoutubeExplode;
+using System.ComponentModel;
 using YoutubeExplode.Playlists;
 using YoutubeExplode.Videos;
 
 namespace sdl_csharp.Model
 {
+    public enum PlaylistMemberState
+    {
+        INITIALIZED,
+        FETCHING,
+        DOWNLOADING,
+        CONVERTING,
+        DONE,
+        UNAVAILABLE,
+        UNKNOWN
+    }
+
+    public class PlaylistMember: NotifyPropertyChanged
+    {
+        int totalBytes;
+        int downloadedBytes;
+        float downloadPercent;
+        float conversionPercent;
+        PlaylistMemberState state;
+        PlaylistVideo video;
+
+        // in bytes per second
+        float? downloadSpeed;
+        float? timeElapsed;
+        int? timeLeft;
+
+        public int TotalBytes { get => totalBytes; set => Set(ref totalBytes, value); }
+        public int DownloadedBytes {
+            get => downloadedBytes;
+            set
+            {
+                Set(ref downloadedBytes, value);
+
+                if (totalBytes > 0 && downloadedBytes > 0)
+                {
+                    DownloadPercent = (float)downloadedBytes / totalBytes * 100.0f;
+                }
+            }
+        }
+        public int? TimeLeft { get => timeLeft; set => Set(ref timeLeft, value); }
+        public float? DownloadSpeed { get => downloadSpeed; set => Set(ref downloadSpeed, value); }
+        public float? TimeElapsed { get => timeElapsed; set => Set(ref timeElapsed, value); }
+        public float DownloadPercent { get => downloadPercent; set => Set(ref downloadPercent, value); }
+
+        // for now we are unable to extract this
+        public float ConversionPercent { get => conversionPercent; set => Set(ref conversionPercent, value); }
+        public PlaylistMemberState State { get => state; set => Set(ref state, value); }
+        public PlaylistVideo Video { get => video; set => Set(ref video, value); }
+
+        public void Reset()
+        {
+            State = PlaylistMemberState.INITIALIZED;
+            TotalBytes = 0;
+            DownloadedBytes = 0;
+            DownloadPercent = 0.0f;
+            ConversionPercent = 0.0f;
+            TimeElapsed = null;
+            TimeLeft = null;
+            DownloadSpeed = null;
+        }
+    }
+
     public interface IEntry
     {
-        public bool IsLoaded { get; set; }
+        bool IsLoaded { get; set; }
 
-        public void Reset();
+        void Reset();
     }
 
     public interface IEntryPlaylistData : IEntry
     {
-        public string PlaylistAuthor { get; set; }
+        string PlaylistAuthor { get; set; }
+        string PlaylistTitle { get; set; }
+        string PlaylistThumbnail { get; set; }
+        int PlaylistDownloadIndex { get; set; }
+        int PlaylistMemberCount { get; set; }
 
-        public string PlaylistTitle { get; set; }
+        // TODO eliminate this
+        float PlaylistMemberDownloadPercent { get; set; }
 
-        public string PlaylistThumbnail { get; set; }
+        // TODO PlaylistDownloadPercent
+        float PlaylistOverallDownloadPercent { get; set; }
+        BindingList<PlaylistMember> PlaylistMembers { get; set; }
+        PlaylistMember CurrentMember { get; set; }
 
-        public uint PlaylistDownloadIndex { get; set; }
-
-        public uint PlaylistMemberCount { get; set; }
-
-        public float PlaylistMemberDownloadPercent { get; set; }
-
-        public float PlaylistOverallDownloadPercent { get; set; }
-
-        public void Initialize(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries);
+        void Initialize(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries);
     }
 
     public interface IEntrySingleData : IEntry
     {
-        public string Author { get; set; }
+        string Author { get; set; }
+        string Title { get; set; }
+        string Thumbnail { get; set; }
+        float DownloadPercent { get; set; }
+        TimeSpan? Duration { get; set; }
 
-        public string Title { get; set; }
-
-        public string Thumbnail { get; set; }
-
-        public float DownloadPercent { get; set; }
-
-        public TimeSpan? Duration { get; set; }
-
-        public void Initialize(Video videoMetadata);
+        void Initialize(Video videoMetadata);
     }
 
     public class EntrySingleData : NotifyPropertyChanged, IEntrySingleData
@@ -79,10 +135,7 @@ namespace sdl_csharp.Model
             IsLoaded = true;
         }
 
-        public void Reset()
-        {
-            downloadPercent = 0.0f;
-        }
+        public void Reset() { downloadPercent = 0.0f; }
     }
 
     public class EntryPlaylistData : NotifyPropertyChanged, IEntryPlaylistData
@@ -91,18 +144,20 @@ namespace sdl_csharp.Model
         string playlistAuthor;
         string playlistTitle;
         string playlistThumbnail;
-        uint playlistDownloadIndex;
-        uint playlistMemberCount;
+        int playlistDownloadIndex;
+        int playlistMemberCount;
         float playlistMemberDownloadPercent;
         float playlistOverallDownloadPercent;
 
-        public bool IsLoaded { 
+        public bool IsLoaded
+        {
             get => isLoaded;
-            set {
-                Set(ref isLoaded, value); 
+            set
+            {
+                Set(ref isLoaded, value);
 
                 // need to update UI index binding
-                OnPropertyChanged(nameof(PlaylistDownloadIndex)); 
+                OnPropertyChanged(nameof(PlaylistDownloadIndex));
             }
         }
 
@@ -112,50 +167,58 @@ namespace sdl_csharp.Model
 
         public string PlaylistThumbnail { get => playlistThumbnail; set => Set(ref playlistThumbnail, value); }
 
-        public uint PlaylistDownloadIndex
+        public int PlaylistDownloadIndex
         {
             get => playlistDownloadIndex;
-            set => Set(ref playlistDownloadIndex, value);
+            set {
+                Set(ref playlistDownloadIndex, value);
+
+                int i = System.Math.Min(System.Math.Max(PlaylistDownloadIndex, 1) - 1, PlaylistMemberCount - 1);
+                CurrentMember = PlaylistMembers[i];
+            }
         }
 
-        public uint PlaylistMemberCount { get => playlistMemberCount; set => Set(ref playlistMemberCount, value); }
+        public int PlaylistMemberCount { get => playlistMemberCount; set => Set(ref playlistMemberCount, value); }
 
-        public float PlaylistMemberDownloadPercent {
+        public float PlaylistMemberDownloadPercent
+        {
             get => playlistMemberDownloadPercent;
             set
             {
                 Set(ref playlistMemberDownloadPercent, value);
-
-                float members = Math.Max(PlaylistMemberCount, 1.0f);
-                float index = Math.Max(PlaylistDownloadIndex, 1.0f);
-
-                float maxPercentPerMember = 1.0f / members * 100.0f;
-                float basePercent = maxPercentPerMember * index - maxPercentPerMember;
-
-                float memberPercent = value / 100.0f * maxPercentPerMember;
-
-                float totalPercent = basePercent + memberPercent;
-
-                PlaylistOverallDownloadPercent = totalPercent;
+                PlaylistOverallDownloadPercent = Utility.Math.Percent(PlaylistMemberCount, PlaylistDownloadIndex, value);
             }
         }
 
-        public float PlaylistOverallDownloadPercent {
+        public float PlaylistOverallDownloadPercent
+        {
             get => playlistOverallDownloadPercent;
             set => Set(ref playlistOverallDownloadPercent, value);
         }
+
+        public BindingList<PlaylistMember> PlaylistMembers { get; set; } = new();
+        public PlaylistMember CurrentMember { get; set; }
 
         public void Initialize(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries)
         {
             PlaylistTitle = playlistMetadata.Title;
             PlaylistThumbnail = playlistMetadata.Thumbnails[0].Url;
-            PlaylistMemberCount = (uint)playlistEntries.Count;
+            PlaylistMemberCount = playlistEntries.Count;
 
             // if there is no playlist author, assume that the playlist is generated by YouTube
             // in which case a playlist member likely has the same author
             PlaylistAuthor =
-                playlistMetadata.Author?.ChannelTitle 
-                ?? playlistEntries[0].Author?.ChannelTitle;
+                playlistMetadata.Author?.ChannelTitle ?? playlistEntries[0].Author?.ChannelTitle;
+
+            for (int i = 0; i < playlistEntries.Count; i++)
+            {
+                PlaylistMembers.Add(new PlaylistMember
+                {
+                    Video = playlistEntries[i]
+                });
+            }
+
+            CurrentMember = PlaylistMembers[0];
 
             IsLoaded = true;
         }
@@ -165,6 +228,13 @@ namespace sdl_csharp.Model
             PlaylistDownloadIndex = 0;
             PlaylistMemberDownloadPercent = 0.0f;
             PlaylistOverallDownloadPercent = 0.0f;
+
+            foreach (PlaylistMember member in PlaylistMembers)
+            {
+                member.Reset();
+            }
+
+            CurrentMember = PlaylistMembers[0];
         }
     }
 
@@ -180,8 +250,8 @@ namespace sdl_csharp.Model
         string playlistAuthor;
         string playlistTitle;
         string playlistThumbnail;
-        uint playlistDownloadIndex;
-        uint playlistMemberCount;
+        int playlistDownloadIndex;
+        int playlistMemberCount;
         float playlistMemberDownloadPercent;
         float playlistOverallDownloadPercent;
 
@@ -211,13 +281,19 @@ namespace sdl_csharp.Model
 
         public string PlaylistThumbnail { get => playlistThumbnail; set => Set(ref playlistThumbnail, value); }
 
-        public uint PlaylistDownloadIndex
+        public int PlaylistDownloadIndex
         {
             get => playlistDownloadIndex;
-            set => Set(ref playlistDownloadIndex, value);
+            set
+            {
+                Set(ref playlistDownloadIndex, value);
+
+                int i = System.Math.Min(System.Math.Max(PlaylistDownloadIndex, 1) - 1, PlaylistMemberCount - 1);
+                CurrentMember = PlaylistMembers[i];
+            }
         }
 
-        public uint PlaylistMemberCount { get => playlistMemberCount; set => Set(ref playlistMemberCount, value); }
+        public int PlaylistMemberCount { get => playlistMemberCount; set => Set(ref playlistMemberCount, value); }
 
         public float PlaylistMemberDownloadPercent
         {
@@ -225,18 +301,7 @@ namespace sdl_csharp.Model
             set
             {
                 Set(ref playlistMemberDownloadPercent, value);
-
-                float members = Math.Max(PlaylistMemberCount, 1.0f);
-                float index = Math.Max(PlaylistDownloadIndex, 1.0f);
-
-                float maxPercentPerMember = 1.0f / members * 100.0f;
-                float basePercent = maxPercentPerMember * index - maxPercentPerMember;
-
-                float memberPercent = value / 100.0f * maxPercentPerMember;
-
-                float totalPercent = basePercent + memberPercent;
-
-                PlaylistOverallDownloadPercent = totalPercent;
+                PlaylistOverallDownloadPercent = Utility.Math.Percent(PlaylistMemberCount, PlaylistDownloadIndex, value);
             }
         }
 
@@ -245,6 +310,9 @@ namespace sdl_csharp.Model
             get => playlistOverallDownloadPercent;
             set => Set(ref playlistOverallDownloadPercent, value);
         }
+
+        public BindingList<PlaylistMember> PlaylistMembers { get; set; } = new();
+        public PlaylistMember CurrentMember { get; set; }
 
         public float DownloadPercent { get => downloadPercent; set => Set(ref downloadPercent, value); }
 
@@ -256,21 +324,30 @@ namespace sdl_csharp.Model
             Author = videoMetadata.Author?.ChannelTitle;
             isPartLoaded = true;
 
-            if (isPartLoaded) IsLoaded = true;
+            if (isPartLoaded)
+                IsLoaded = true;
         }
 
         public void Initialize(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries)
         {
             PlaylistTitle = playlistMetadata.Title;
             PlaylistThumbnail = playlistMetadata.Thumbnails[0].Url;
-            PlaylistMemberCount = (uint)playlistEntries.Count;
+            PlaylistMemberCount = playlistEntries.Count;
 
             // if there is no playlist author, assume that the playlist is generated by YouTube
             // in which case a playlist member likely has the same author
             PlaylistAuthor =
-                playlistMetadata.Author?.ChannelTitle
-                ?? playlistEntries[0].Author?.ChannelTitle;
+                playlistMetadata.Author?.ChannelTitle ?? playlistEntries[0].Author?.ChannelTitle;
 
+            for (int i = 0; i < playlistEntries.Count; i++)
+            {
+                PlaylistMembers.Add(new PlaylistMember
+                {
+                    Video = playlistEntries[i]
+                });
+            }
+
+            CurrentMember = PlaylistMembers[0];
 
             IsLoaded = isPartLoaded;
             isPartLoaded = true;
@@ -281,6 +358,13 @@ namespace sdl_csharp.Model
             PlaylistDownloadIndex = 0;
             PlaylistMemberDownloadPercent = 0.0f;
             PlaylistOverallDownloadPercent = 0.0f;
+
+            foreach (PlaylistMember member in PlaylistMembers)
+            {
+                member.Reset();
+            }
+
+            CurrentMember = PlaylistMembers[0];
         }
     }
 }

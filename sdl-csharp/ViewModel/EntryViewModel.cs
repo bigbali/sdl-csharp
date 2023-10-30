@@ -36,7 +36,16 @@ namespace sdl_csharp.ViewModel
             StatusViewModel = new EntryStatusViewModel(entry);
         }
 
-        public async Task Download() => await entry.Download();
+        public async void DownloadOrStop() {
+            if (StatusViewModel.IsInProgress)
+            {
+                entry.Stop();
+            }
+            else
+            {
+                await entry.Download();
+            }
+        }
 
         public void Remove() => entry.Remove();
 

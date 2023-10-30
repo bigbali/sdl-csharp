@@ -52,13 +52,13 @@
                                         BorderThickness="3, 0, 0, 0"
                                         CornerRadius="0, 6, 6, 0"
                                         SnapsToDevicePixels="True">
-                                        <Grid x:Name="grid">
+                                        <Grid x:Name="container">
                                             <Grid.OpacityMask>
                                                 <VisualBrush>
                                                     <VisualBrush.Visual>
                                                         <Border
-                                                            Width="{Binding ActualWidth, ElementName=grid}"
-                                                            Height="{Binding ActualHeight, ElementName=grid}"
+                                                            Width="{Binding ActualWidth, ElementName=container}"
+                                                            Height="{Binding ActualHeight, ElementName=container}"
                                                             Background="Black"
                                                             CornerRadius="0, 8, 8, 0" />
                                                     </VisualBrush.Visual>
@@ -189,7 +189,7 @@
                 Width="150"
                 Margin="0,2,101,1"
                 HorizontalAlignment="Right"
-                Click="DownloadEntry"
+                Click="DownloadOrStop"
                 Padding="0">
                 <!-- Individual download button -->
                 <Grid Width="140">
@@ -249,9 +249,9 @@
                                     </Setter.Value>
                                 </Setter>
                                 <Style.Triggers>
-                                    <DataTrigger Value="True" Binding="{Binding StatusViewModel.Status, Converter={StaticResource entryStatusAnimationConverter}}">
+                                    <DataTrigger Value="True" Binding="{Binding StatusViewModel.IsInProgress}">
                                         <DataTrigger.EnterActions>
-                                            <BeginStoryboard>
+                                            <BeginStoryboard x:Name="rotateCircle">
                                                 <Storyboard>
                                                     <DoubleAnimation
                                                         AutoReverse="False"
@@ -269,19 +269,9 @@
                                                 </Storyboard>
                                             </BeginStoryboard>
                                         </DataTrigger.EnterActions>
-                                    </DataTrigger>
-                                    <DataTrigger Value="True" Binding="{Binding StatusViewModel.IsDone}">
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        AutoReverse="False"
-                                                        Duration="0:0:0.2"
-                                                        Storyboard.TargetProperty="Opacity"
-                                                        To="0" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.EnterActions>
+                                        <DataTrigger.ExitActions>
+                                            <StopStoryboard BeginStoryboardName="rotateCircle" />
+                                        </DataTrigger.ExitActions>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>

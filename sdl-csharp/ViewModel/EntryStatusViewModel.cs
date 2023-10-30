@@ -23,7 +23,9 @@ namespace sdl_csharp.ViewModel
                 OnPropertyChanged(nameof(IsDownloading));
                 OnPropertyChanged(nameof(IsConverting));
                 OnPropertyChanged(nameof(IsDone));
+                OnPropertyChanged(nameof(IsCancelled));
                 OnPropertyChanged(nameof(IsError));
+                OnPropertyChanged(nameof(IsInProgress));
                 OnPropertyChanged(nameof(Label));
                 OnPropertyChanged(nameof(Status));
             }
@@ -32,18 +34,21 @@ namespace sdl_csharp.ViewModel
         public bool IsInitialized => entry.Status is EntryStatus.INITIALIZED;
         public bool IsDownloading => entry.Status is EntryStatus.DOWNLOADING;
         public bool IsDone => entry.Status is EntryStatus.DONE;
+        public bool IsCancelled => entry.Status is EntryStatus.CANCELLED;
         public bool IsConverting => entry.Status is EntryStatus.CONVERTING;
         public bool IsError => entry.Status is EntryStatus.ERROR;
+        public bool IsInProgress => Status is (EntryStatus.DOWNLOADING or EntryStatus.CONVERTING);
         public EntryStatus Status => entry.Status;
 
         public string Label => entry.Status switch
         {
             EntryStatus.INITIALIZED => "Download",
-            EntryStatus.DOWNLOADING => "Downloading",
-            EntryStatus.CONVERTING  => "Converting",
+            EntryStatus.CANCELLED => "Download",
+            EntryStatus.DOWNLOADING => "Stop",
+            EntryStatus.CONVERTING  => "Stop",
             EntryStatus.ERROR => "Error",
             EntryStatus.DONE => "Done",
-            _ => "Unknown (wtf?)"
+            _ => "???"
         };      
     }
 }
