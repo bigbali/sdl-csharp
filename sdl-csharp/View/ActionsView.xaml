@@ -177,7 +177,7 @@
                             Height="40"
                             VerticalAlignment="Top"
                             VerticalContentAlignment="Center"
-                            Command="{Binding DownloadAllCommand}"
+                            Command="{Binding DownloadSelectedCommand}"
                             Content="Download selected"
                             FontSize="18"
                             Padding="0,2,0,0">
@@ -192,6 +192,7 @@
                             Height="40"
                             Margin="4, 0, 0, 0"
                             VerticalContentAlignment="Center"
+                            Command="{Binding RemoveSelectedCommand}"
                             Content="Remove selected"
                             FontSize="18"
                             Padding="0,2,0,0">

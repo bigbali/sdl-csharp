@@ -19,46 +19,56 @@
         CornerRadius="8"
         Padding="8">
         <Grid Height="150">
-            <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
-            <Grid VerticalAlignment="Bottom">
-                <control:FadeIn Value="{Binding Data.Title}">
-                    <control:ImageWithFallback Source="{Binding Data.Thumbnail}" />
-                </control:FadeIn>
-                <Grid Margin="200,0,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <control:FadeIn Grid.Row="0" Value="{Binding Data.Title}">
-                        <Label
-                            Content="{Binding Data.Title}"
-                            d:Content="Title"
-                            ToolTip="Video title" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Margin="0, 0, 4, 0">
+                <CheckBox IsChecked="{Binding IsSelected}" />
+            </Grid>
+            <Grid Grid.Column="1">
+
+                <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
+                <Grid VerticalAlignment="Bottom">
+                    <control:FadeIn Value="{Binding Data.Title}">
+                        <control:ImageWithFallback Source="{Binding Data.Thumbnail}" />
                     </control:FadeIn>
-                    <control:FadeIn Grid.Row="1" Value="{Binding Data.Author}">
-                        <Label
-                            Content="{Binding Data.Author}"
-                            d:Content="Author"
-                            FontWeight="Medium"
-                            ToolTip="Video author" />
-                    </control:FadeIn>
-                    <control:FadeIn
-                        Grid.Row="2"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        Value="{Binding Data.Title}"
-                        FontWeight="Medium">
-                        <Label Content="Single" ToolTip="This entry is a single video" />
-                    </control:FadeIn>
-                    <control:FadeIn Grid.Row="3" Value="{Binding Data.Duration}">
-                        <Label
-                            Content="{Binding Data.Duration}"
-                            d:Content="00:00"
-                            FontFamily="{StaticResource CourierPrime}"
-                            ToolTip="Video duration" />
-                    </control:FadeIn>
+                    <Grid Margin="200,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <control:FadeIn Grid.Row="0" Value="{Binding Data.Title}">
+                            <Label
+                                Content="{Binding Data.Title}"
+                                d:Content="Title"
+                                ToolTip="Video title" />
+                        </control:FadeIn>
+                        <control:FadeIn Grid.Row="1" Value="{Binding Data.Author}">
+                            <Label
+                                Content="{Binding Data.Author}"
+                                d:Content="Author"
+                                FontWeight="Medium"
+                                ToolTip="Video author" />
+                        </control:FadeIn>
+                        <control:FadeIn
+                            Grid.Row="2"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Value="{Binding Data.Title}"
+                            FontWeight="Medium">
+                            <Label Content="Single" ToolTip="This entry is a single video" />
+                        </control:FadeIn>
+                        <control:FadeIn Grid.Row="3" Value="{Binding Data.Duration}">
+                            <Label
+                                Content="{Binding Data.Duration}"
+                                d:Content="00:00"
+                                FontFamily="{StaticResource CourierPrime}"
+                                ToolTip="Video duration" />
+                        </control:FadeIn>
+                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

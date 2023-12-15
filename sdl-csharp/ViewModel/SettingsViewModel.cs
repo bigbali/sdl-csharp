@@ -31,12 +31,17 @@ namespace sdl_csharp.ViewModel
             settings = Settings.Instance;
             EntryViewModels = new ObservableCollection<EntryViewModel>(
                 settings.entries.Select(entry => new EntryViewModel(entry)));
-            EntryViewModels.CollectionChanged += SyncModelToViewModel;
+            EntryViewModels.CollectionChanged += SyncModelEntriesToViewModelEntries;
 
             ResetCommand = new RelayCommand(ResetTemplate);
             SelectFolderCommand = new RelayCommand(SelectFolder);
             ArgTemplateTextChangedCommand = new RelayCommand(ArgTemplateTextChanged);
-            DownloadAllCommand = new RelayCommand(DownloadAll);
+
+            DownloadSelectedCommand = new RelayCommand(DownloadSelected);
+            RemoveSelectedCommand = new RelayCommand(RemoveSelected);
+
+            SelectedEntriesSelectAllCommand = new RelayCommand(SelectedEntriesSelectAll);
+            SelectedEntriesDeselectAllCommand = new RelayCommand(SelectedEntriesDeselectAll);
         }
 
         public ICommand ResetCommand { get; }
@@ -45,7 +50,11 @@ namespace sdl_csharp.ViewModel
 
         public ICommand ArgTemplateTextChangedCommand { get; }
 
-        public ICommand DownloadAllCommand { get; }
+        public ICommand DownloadSelectedCommand { get; }
+        public ICommand RemoveSelectedCommand { get; }
+
+        public static ICommand SelectedEntriesSelectAllCommand { get; set; }
+        public static ICommand SelectedEntriesDeselectAllCommand { get; set; }
 
         public ArgTemplate ArgTemplate { get => settings.argTemplate; set => Set(ref settings.argTemplate, value); }
 
@@ -123,7 +132,7 @@ namespace sdl_csharp.ViewModel
             }
         }
 
-        private void DownloadAll(object obj)
+        private void DownloadSelected(object obj)
         {
             if (EntryViewModels.Count == 0)
             {
@@ -150,8 +159,10 @@ namespace sdl_csharp.ViewModel
                     continue;
                 }
 
-
-                _ = vm.entry.Download();
+                if (vm.IsSelected)
+                {
+                    _ = vm.entry.Download();
+                }
             }
 
             if (downloading.Count > 0)
@@ -182,13 +193,86 @@ namespace sdl_csharp.ViewModel
                 {
                     foreach (EntryViewModel vm in done)
                     {
-                        _ = vm.entry.Download();
+                        if (vm.IsSelected)
+                        {
+                            _ = vm.entry.Download();
+                        }
                     };
                 }
             }
         }
 
-        private void SyncModelToViewModel(object sender, NotifyCollectionChangedEventArgs e)
+        private void RemoveSelected(object obj)
+        {
+            List<EntryViewModel> downloading = new();
+            List<EntryViewModel> entriesToRemove = new();
+
+            foreach (EntryViewModel vm in EntryViewModels)
+            {
+                if (vm.StatusViewModel.IsDownloading)
+                {
+                    downloading.Add(vm);
+                    continue;
+                }
+
+                if (vm.IsSelected)
+                {
+                    entriesToRemove.Add(vm);
+                }
+            }
+
+            if (downloading.Count > 0)
+            {
+                if (System.Windows.MessageBox
+                    .Show(
+                        """
+                        One or more entries have not yet finished downloading.
+                        Remove anyway?.
+                        """,
+                        "Entries downloading",
+                        MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    foreach (EntryViewModel vm in EntryViewModels)
+                    {
+                        if (vm.IsSelected)
+                        {
+                            entriesToRemove.Add(vm);
+                        }
+                    }
+                }
+
+            }
+
+            Logger.Log($"Remove {entriesToRemove.Count} entries");
+            entriesToRemove.ForEach(vm => { vm.Remove(); });
+            downloading.Clear();
+        }
+
+        public static void SelectedEntriesSelectAll(object obj)
+        {
+            Logger.Log("Select all command");
+            if (instance is not null)
+            {
+                foreach (EntryViewModel entryvm in instance.EntryViewModels)
+                {
+                    entryvm.IsSelected = true;
+                    Logger.Log("Selected EntryViewModel");
+                }
+            }
+        }
+
+        public static void SelectedEntriesDeselectAll(object obj)
+        {
+            if (instance is not null)
+            {
+                foreach (EntryViewModel entryvm in instance.EntryViewModels)
+                {
+                    entryvm.IsSelected = false;
+                }
+            }
+        }
+
+        private void SyncModelEntriesToViewModelEntries(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -196,7 +280,8 @@ namespace sdl_csharp.ViewModel
                 {
                     settings.entries.Add(newItem.entry);
                 }
-            } else if (e.Action == NotifyCollectionChangedAction.Remove)
+            }
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 foreach (var oldItem in e.OldItems.Cast<EntryViewModel>())
                 {

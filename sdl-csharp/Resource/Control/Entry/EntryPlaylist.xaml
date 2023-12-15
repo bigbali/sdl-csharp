@@ -24,52 +24,61 @@
         CornerRadius="8"
         Padding="8">
         <Grid Height="150">
-            <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
-            <control:FadeIn Value="{Binding Data.IsLoaded}">
-                <Grid VerticalAlignment="Bottom">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" MinWidth="300" MaxWidth="600"/>
-                    </Grid.ColumnDefinitions>
-                    <control:FadeIn Grid.Column="0" Value="{Binding Data.PlaylistThumbnail}">
-                        <control:ImageWithFallback Source="{Binding Data.PlaylistThumbnail}" />
-                    </control:FadeIn>
-                    <Grid Grid.Column="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Label
-                            Content="{Binding Data.PlaylistTitle}"
-                            d:Content="Title"
-                            ToolTip="Playlist title" />
-                        <Label
-                            Grid.Row="1"
-                            Content="{Binding Data.PlaylistAuthor, TargetNullValue='Unknown author'}"
-                            d:Content="Author"
-                            FontWeight="Medium"
-                            ToolTip="Playlist author" />
-                        <Label
-                            Grid.Row="2"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Bottom"
-                            Content="Playlist"
-                            FontWeight="Medium"
-                            ToolTip="This entry is a playlist" />
-                        <StackPanel
-                            Grid.Row="3"
-                            Orientation="Horizontal"
-                            ToolTip="Number of entries in playlist">
-                            <Label Content="{Binding Data.PlaylistMemberCount}" d:Content="13" />
-                            <Label Content=" Entries" />
-                        </StackPanel>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Margin="0, 0, 4, 0">
+                <CheckBox IsChecked="{Binding IsSelected}" />
+            </Grid>
+            <Grid Grid.Column="1">
+                <entrycontrol:EntryControls VerticalAlignment="Top" DataContext="{Binding}" />
+                <control:FadeIn Value="{Binding Data.IsLoaded}">
+                    <Grid VerticalAlignment="Bottom">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" MinWidth="300" MaxWidth="600"/>
+                        </Grid.ColumnDefinitions>
+                        <control:FadeIn Grid.Column="0" Value="{Binding Data.PlaylistThumbnail}">
+                            <control:ImageWithFallback Source="{Binding Data.PlaylistThumbnail}" />
+                        </control:FadeIn>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label
+                                Content="{Binding Data.PlaylistTitle}"
+                                d:Content="Title"
+                                ToolTip="Playlist title" />
+                            <Label
+                                Grid.Row="1"
+                                Content="{Binding Data.PlaylistAuthor, TargetNullValue='Unknown author'}"
+                                d:Content="Author"
+                                FontWeight="Medium"
+                                ToolTip="Playlist author" />
+                            <Label
+                                Grid.Row="2"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Bottom"
+                                Content="Playlist"
+                                FontWeight="Medium"
+                                ToolTip="This entry is a playlist" />
+                            <StackPanel
+                                Grid.Row="3"
+                                Orientation="Horizontal"
+                                ToolTip="Number of entries in playlist">
+                                <Label Content="{Binding Data.PlaylistMemberCount}" d:Content="13" />
+                                <Label Content=" Entries" />
+                            </StackPanel>
+                        </Grid>
+                        <entrycontrol:EntryOutput Grid.Column="2" Source="{Binding}" />
                     </Grid>
-                    <entrycontrol:EntryOutput Grid.Column="2" Source="{Binding}" />
+                </control:FadeIn>
                 </Grid>
-            </control:FadeIn>
-        </Grid>
+            </Grid>
     </Border>
 </UserControl>

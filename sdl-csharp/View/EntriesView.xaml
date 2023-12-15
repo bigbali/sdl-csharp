@@ -1,5 +1,6 @@
 ﻿<UserControl
     x:Class="sdl_csharp.View.EntriesView"
+    x:Name="EntriesViewUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:control="clr-namespace:sdl_csharp.Resource.Control"
@@ -77,6 +78,7 @@
                 <Grid Grid.Row="1" Margin="0, 32, 0, 0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Label
@@ -85,9 +87,17 @@
                         VerticalAlignment="Top"
                         Content="Queue"
                         Foreground="{StaticResource Color.Text.Faded}" />
+                    <Grid Grid.Row="1" Margin="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" MinWidth="120" Content="Select all" Command="{x:Static viewmodel:SettingsViewModel.SelectedEntriesSelectAllCommand}" />
+                        <Button Grid.Column="1" MinWidth="120" Content="Deselect all" Margin="8, 0, 0, 0" Command="{x:Static viewmodel:SettingsViewModel.SelectedEntriesDeselectAllCommand}" />
+                    </Grid>
                     <ListBox
                         x:Name="URLList"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"

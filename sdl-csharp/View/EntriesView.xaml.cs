@@ -11,6 +11,8 @@ namespace sdl_csharp.View
         public EntriesView()
         {
             DataContext = SettingsViewModel.Instance.EntryViewModels;
+
+
             InitializeComponent();
         }
     }

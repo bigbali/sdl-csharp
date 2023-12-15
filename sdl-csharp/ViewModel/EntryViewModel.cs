@@ -2,7 +2,6 @@
 using sdl_csharp.Model.Entry;
 using sdl_csharp.Utility;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,6 +16,8 @@ namespace sdl_csharp.ViewModel
         public dynamic Data { get => entry.data; }
         public string URL { get => entry.url; }
         public EntryStatusViewModel StatusViewModel { get; set; }
+
+        public bool IsSelected { get => entry.isSelected; set => Set(ref entry.isSelected, value); }
 
         static EntryViewModel()
         {
@@ -36,7 +37,8 @@ namespace sdl_csharp.ViewModel
             StatusViewModel = new EntryStatusViewModel(entry);
         }
 
-        public async void DownloadOrStop() {
+        public async void DownloadOrStop()
+        {
             if (StatusViewModel.IsInProgress)
             {
                 entry.Stop();
@@ -51,7 +53,7 @@ namespace sdl_csharp.ViewModel
 
         public static void AddEntry(object arg)
         {
-            var urlInput = (TextBox) arg;
+            var urlInput = (TextBox)arg;
             string newUrl = urlInput.Text;
 
             Logger.Log(newUrl);
@@ -88,10 +90,7 @@ namespace sdl_csharp.ViewModel
 
                 if (viewmodelProperty != null)
                 {
-                    // Get the value from the model
-                    var modelValue = modelProperty.GetValue(sender);
-
-                    // Initialize the value on the ViewModel
+                    object modelValue = modelProperty.GetValue(sender);
                     viewmodelProperty.SetValue(this, modelValue);
                 }
             }

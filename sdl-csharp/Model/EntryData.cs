@@ -318,18 +318,21 @@ namespace sdl_csharp.Model
 
         public void Initialize(Video videoMetadata)
         {
+            Console.WriteLine("MEMBER INITIALIZE SINGLE");
             Title = videoMetadata.Title;
             Thumbnail = videoMetadata.Thumbnails[0].Url;
             Duration = videoMetadata.Duration;
             Author = videoMetadata.Author?.ChannelTitle;
-            isPartLoaded = true;
 
             if (isPartLoaded)
                 IsLoaded = true;
+
+            isPartLoaded = true;
         }
 
         public void Initialize(Playlist playlistMetadata, IReadOnlyList<PlaylistVideo> playlistEntries)
         {
+            Console.WriteLine("MEMBER INITIALIZE PLAYLIST");
             PlaylistTitle = playlistMetadata.Title;
             PlaylistThumbnail = playlistMetadata.Thumbnails[0].Url;
             PlaylistMemberCount = playlistEntries.Count;
@@ -349,8 +352,11 @@ namespace sdl_csharp.Model
 
             CurrentMember = PlaylistMembers[0];
 
-            IsLoaded = isPartLoaded;
+            if (isPartLoaded)
+                IsLoaded = true;
+
             isPartLoaded = true;
+
         }
 
         public void Reset()

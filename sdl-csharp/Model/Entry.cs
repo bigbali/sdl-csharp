@@ -39,10 +39,11 @@ namespace sdl_csharp.Model.Entry
         public string url;
         public string videoId;
         public string playlistId;
+        public bool isSelected = true;
         public DateTime downloadStart;
 
-        // this is updated from inside the class
-        private EntryStatus status;
+        EntryStatus status;
+
         public EntryStatus Status { get => status; set => Set(ref status, value); }
 
         public Entry(string _url)
@@ -182,10 +183,8 @@ namespace sdl_csharp.Model.Entry
         async Task FetchSingleAsync(YoutubeClient client)
         {
             Video video = await client.Videos.GetAsync($"https://www.youtube.com/watch?v={videoId}");
-            if (data is EntrySingleData singleData)
-            {
-                singleData.Initialize(video);
-            }
+
+            data.Initialize(video);
         }
 
         async Task FetchPlaylistAsync(YoutubeClient client)
@@ -195,12 +194,9 @@ namespace sdl_csharp.Model.Entry
                 var playlist = await client.Playlists.GetAsync($"https://youtube.com/playlist?list={playlistId}");
                 var playlistEntries = await client.Playlists.GetVideosAsync($"https://youtube.com/playlist?list={playlistId}");
 
-                if (data is EntryPlaylistData playlistData)
-                {
-                    playlistData.Initialize(playlist, playlistEntries);
-                }
+                data.Initialize(playlist, playlistEntries);
             }
-            catch (PlaylistUnavailableException) 
+            catch (PlaylistUnavailableException)
             {
                 MessageBox.Show($"Playlist at {url} is unavailable.", "Playlist unavailable", MessageBoxButton.OK);
             }
@@ -209,7 +205,7 @@ namespace sdl_csharp.Model.Entry
         async Task FetchMemberAsync(YoutubeClient client)
         {
             await FetchSingleAsync(client);
-            await FetchMemberAsync(client);
+            await FetchPlaylistAsync(client);
         }
     }
 }
